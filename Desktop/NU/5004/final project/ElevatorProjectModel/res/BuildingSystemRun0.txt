@@ -1,0 +1,1044 @@
+/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/bin/java -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=52261:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath /Users/chenyujiang/Desktop/NU/5004/final project/ElevatorProjectModel/target/classes:/Users/chenyujiang/.m2/repository/org/json/json/20231013/json-20231013.jar main.MainOneElevator
+Welcome to the Elevator System!
+This system will simulate the operation of an elevator system.
+The system will be initialized with the following parameters:
+Number of floors: 11
+Number of elevators: 1
+Number of people: 3
+The system will then be run and the results will be displayed.
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Out Of Service
+
+---------------End Report--------------
+
+Press Enter to continue...
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+start
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 5
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+r 1 0
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 5
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 4
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 3
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 2
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 1
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 2
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 3
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 4
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 5
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 6
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 7
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 8
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 9
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 10
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: true
+  - Current Floor: 10
+  - Door Open Timer: 0
+  - End Wait Timer: 5
+
+Up Requests:
+
+Down Requests:
+  - 1->0
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 9
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 8
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 7
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 6
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 5
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 4
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 3
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 2
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 3
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 2
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 1
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 1
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Running
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+stop
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Stopping
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+s
+------------Building Report------------
+Building Report:
+Number of Floors: 11
+Number of Elevators: 1
+Elevator Capacity: 3
+
+Elevator Reports:
+Elevator 1 Report:
+  - Status: false
+  - Current Floor: 0
+  - Door Open Timer: 0
+  - End Wait Timer: 0
+
+Up Requests:
+
+Down Requests:
+
+System Status: Out Of Service
+
+---------------End Report--------------
+
+[s] Run step one time
+[r start end] make a request
+[start] start building
+[stop] stop building
+[q] quit building
+
+Your command > 
+q
+
+Process finished with exit code 0
