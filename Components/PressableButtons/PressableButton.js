@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     opacity: Opacity.partialOpaque,
   },
   buttonText: {
-    // color: Colors.toggleThemeHeader,
     fontSize: Font.SizeLarge,
     fontWeight: Font.weight,
   },

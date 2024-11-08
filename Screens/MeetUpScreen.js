@@ -63,10 +63,14 @@ export default function MeetUpScreen({ navigation }) {
         onRequestClose={closeModal}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: theme.backgroundColor }]}>
             <Text style={styles.modalTitle}>Create a Meet-Up</Text>
             {/* Add your form or content for creating a meet-up here */}
-            <Button title="Close" onPress={closeModal} />
+
+            <View style={styles.buttonContainer}>
+              <PressableButton title="Cancel" onPress={closeModal} textStyle={styles.buttonTextStyle}/>
+              <PressableButton title="Save" textStyle={styles.buttonTextStyle}/>
+            </View>
           </View>
         </View>
       </Modal>
@@ -125,5 +129,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  buttonTextStyle: {
+    fontSize: 16,
   },
 });
