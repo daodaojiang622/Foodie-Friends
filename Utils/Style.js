@@ -92,8 +92,8 @@ const Icon = {
     dietIconName: 'fastfood',
     settingsIconComponent: Ionicons,
     settingsIconName: 'settings-sharp',
-    addIconComponent: FontAwesome6,
-    addIconName: 'add',
+    addIconComponent: Ionicons,
+    addIconName: 'add-circle-outline',
     deleteIconComponent: FontAwesome5,
     deleteIconName: 'trash-alt',
 };
