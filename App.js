@@ -11,10 +11,12 @@ import ScreenWrapper from './Components/ScreenWrapper';
 import ProfileScreen from './Screens/ProfileScreen';
 import MeetUpScreen from './Screens/MeetUpScreen';
 import SettingsScreen from './Screens/SettingsScreen';
+import ChangeSettingsScreen from './Screens/ChangeSettingsScreen';
+import MapScreen from './Screens/MapScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
-import MapScreen from './Screens/MapScreen';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -126,6 +128,14 @@ function AppContent() {
           <Stack.Screen 
             name="MeetUp" 
             component={MeetUpScreen} 
+            options={{ 
+              headerTintColor: Colors.tertiary,
+              headerShown: true,
+            }}
+          />
+          <Stack.Screen 
+            name="ChangeSettings" 
+            component={ChangeSettingsScreen} 
             options={{ 
               headerTintColor: Colors.tertiary,
               headerShown: true,

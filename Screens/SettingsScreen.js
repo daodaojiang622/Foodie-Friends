@@ -37,6 +37,16 @@ export default function SettingsScreen() {
       onPress={() => navigation.navigate('MeetUp')}
       buttonStyle={{marginTop: Margin.medium}}
     />
+        <PressableButton
+      title="Settings"
+      onPress={() => navigation.navigate('ChangeSettings')}
+      buttonStyle={{marginTop: Margin.xxxxlarge}}
+    />
+    <PressableButton
+      title="Support"
+      // onPress={() => navigation.navigate('MeetUp')}
+      buttonStyle={{marginTop: Margin.medium}}
+    />
     
     </View>
   );
