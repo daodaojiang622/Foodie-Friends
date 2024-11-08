@@ -1,23 +1,20 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Font, Icon } from '../Utils/Style';
+import { Ionicons } from '@expo/vector-icons';
 
 const TabBarIcon = ({ routeName, iconStyle }) => {
   let iconName;
-  let IconComponent;
 
   if (routeName === 'Activities') {
-    IconComponent = Icon.activityIconComponent;
-    iconName = Icon.activityIconName;
+    iconName = "map";
   } else if (routeName === 'Diet') {
-    IconComponent = Icon.dietIconComponent;
-    iconName = Icon.dietIconName;
+    iconName = "home";
   } else if (routeName === 'Settings') {
-    IconComponent = Icon.settingsIconComponent;
     iconName = Icon.settingsIconName;
   }
 
-  return <IconComponent name={iconName} style={[styles.icon, iconStyle]} />;
+  return <Ionicons name={iconName} style={[styles.icon, iconStyle]} />;
 };
 
 const styles = StyleSheet.create({
