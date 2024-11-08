@@ -19,7 +19,7 @@ import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function ActivitiesScreenWrapper() {
+function MapScreenWrapper() {
   return (
     <ScreenWrapper>
       <ItemsList type='activity'/>
@@ -27,7 +27,7 @@ function ActivitiesScreenWrapper() {
   );
 }
 
-function DietScreenWrapper() {
+function HomeScreenWrapper() {
   return (
     <ScreenWrapper>
       <ItemsList type='diet'/>
@@ -66,51 +66,19 @@ function BottomTabs() {
         })}
       >
         <Tab.Screen 
-          name="Activities" 
-          component={ActivitiesScreenWrapper} 
-          options={({ navigation }) => ({ 
-            headerRight: () => (
-              <TouchableOpacity 
-              onPress={() => 
-                navigation.navigate('AddActivity')} 
-              style={styles.addIconContainer}
-              >
-              <Icon.addIconComponent
-                name={Icon.addIconName}
-                style={styles.addIcon}
-              />
-              <Icon.activityIconComponent
-                name={Icon.activityIconName}
-                style={styles.addIcon}
-              />
-            </TouchableOpacity>
-            ),
+          name="Map" 
+          component={MapScreenWrapper} 
+          options={() => ({ 
             headerTintColor: Colors.tertiary,
           })}  
         />
         <Tab.Screen 
-          name="Diet" 
-          component={DietScreenWrapper} 
+          name="Home" 
+          component={HomeScreenWrapper} 
           options={({ navigation }) => ({ 
-            headerRight: () => (
-              <TouchableOpacity 
-              onPress={() => 
-                navigation.navigate('AddDiet')} 
-              style={styles.addIconContainer}
-              >
-              <Icon.addIconComponent
-                name={Icon.addIconName}
-                style={styles.addIcon}
-              />
-              <Icon.dietIconComponent
-                name={Icon.dietIconName}
-                style={styles.addIcon}
-              />
-            </TouchableOpacity>
-            ),
             headerTintColor: Colors.tertiary,
           })}  
-          />
+        />
         <Tab.Screen 
           name="Settings" 
           component={SettingsScreenWrapper} 

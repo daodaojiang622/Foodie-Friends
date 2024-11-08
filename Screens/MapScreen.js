@@ -2,10 +2,10 @@ import React from 'react';
 import ItemsList from '../Components/ItemsList'; 
 
 
-const ActivitiesScreen = () => {
+const MapScreen = () => {
   return (
     <ItemsList data={activityEntries} />
   );
 };
 
-export default ActivitiesScreen;
+export default MapScreen;
