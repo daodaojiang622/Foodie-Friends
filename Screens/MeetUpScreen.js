@@ -84,7 +84,11 @@ export default function MeetUpScreen({ navigation }) {
             {/* Add your form or content for creating a meet-up here */}
 
             <View style={styles.buttonContainer}>
-              <PressableButton title="Cancel" onPress={confirmCancel} textStyle={styles.buttonTextStyle}/>
+              <PressableButton 
+                title="Cancel" 
+                onPress={confirmCancel} 
+                textStyle={[styles.buttonTextStyle, { color: 'red' }]}
+              />
               <PressableButton title="Save" textStyle={styles.buttonTextStyle}/>
             </View>
           </View>

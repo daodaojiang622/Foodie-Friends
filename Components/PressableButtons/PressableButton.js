@@ -15,7 +15,7 @@ const PressableButton = ({ onPress, title, buttonStyle, textStyle }) => {
       ]}
       onPress={onPress}
     >
-      <Text style={[styles.buttonText, textStyle, {color: theme.buttonColor}]}>{title}</Text>
+      <Text style={[styles.buttonText, {color: theme.buttonColor}, textStyle]}>{title}</Text>
     </Pressable>
   );
 };
