@@ -12,6 +12,7 @@ import MeetUpScreen from './Screens/MeetUpScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 import ChangeSettingsScreen from './Screens/ChangeSettingsScreen';
 import MapScreen from './Screens/MapScreen';
+import HomeScreen from './Screens/HomeScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
@@ -32,7 +33,7 @@ function MapScreenWrapper() {
 function HomeScreenWrapper() {
   return (
     <ScreenWrapper>
-      <ItemsList type='diet'/>
+      <HomeScreen/>
     </ScreenWrapper>
   );
 }
