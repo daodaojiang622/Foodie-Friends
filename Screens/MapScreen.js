@@ -1,14 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import axios from 'axios';
 
 const MapScreen = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [markers, setMarkers] = useState([]);
+
+  const handleSearch = async () => {
+    const apiKey = 'AIzaSyD1jrEUDZFEvyMzjUWvc-WKnFogdT6178M';
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&type=restaurant&key=${apiKey}`;
+
+    try {
+      const response = await axios.get(url);
+      const results = response.data.results;
+
+      const fetchedMarkers = results.map((place) => ({
+        latitude: place.geometry.location.lat,
+        longitude: place.geometry.location.lng,
+        name: place.name,
+      }));
+
+      setMarkers(fetchedMarkers);
+    } catch (error) {
+      console.error('Error fetching data from Google Places API', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Restaurants Near-By
-      </Text>
-      <TextInput style={styles.searchBar} placeholder="Search for restaurants..." />
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search for restaurants..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        onSubmitEditing={handleSearch}
+      />
       <MapView
         style={styles.map}
         initialRegion={{
@@ -18,6 +45,13 @@ const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
       >
+        {markers.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+            title={marker.name}
+          />
+        ))}
       </MapView>
     </View>
   );
@@ -35,8 +69,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   searchBar: {
-    marginHorizontal: 20,
-    marginBottom: 20,
+    margin: 20,
     padding: 10,
     borderColor: 'gray',
     borderWidth: 1,

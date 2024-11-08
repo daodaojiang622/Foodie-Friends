@@ -67,7 +67,7 @@ function BottomTabs() {
         })}
       >
         <Tab.Screen 
-          name="Map" 
+          name="Restaurants Near-By" 
           component={MapScreenWrapper} 
           options={() => ({ 
             headerTintColor: Colors.tertiary,
