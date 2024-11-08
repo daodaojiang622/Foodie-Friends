@@ -55,7 +55,7 @@ export default function TimeInput({ time, setTime }) {
         <DateTimePicker
           value={time ? moment(time, 'hh:mm A').toDate() : new Date()}
           mode="time"
-          display="compact"
+          display='spinner'
           onChange={onChangeTime}
         />
       )}

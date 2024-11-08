@@ -39,7 +39,7 @@ export default function DateInput({ date, setDate }) {
         <DateTimePicker
           value={date || new Date()}
           mode="date"
-          display='compact'
+          display='inline'
           onChange={onChangeDate}
         />
       )}
