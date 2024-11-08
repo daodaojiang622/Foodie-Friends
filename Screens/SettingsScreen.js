@@ -13,41 +13,25 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      {/* <Pressable
-        style={({ pressed }) => [
-          styles.themeButton,
-          { 
-            backgroundColor: theme.buttonColor,
-            opacity: pressed ? Opacity.partialOpaque : Opacity.opaque, 
-          }
-        ]}
-        onPress={toggleTheme}
-        android_ripple={{radius: BorderRadius.medium }}
-      >
-      <Text style={styles.themeButtonText}>
-        Toggle Theme
-      </Text>
-</Pressable> */}
-    <PressableButton
-      title="My Profile"
-      onPress={() => navigation.navigate('Profile')}
-    />
-    <PressableButton
-      title="My Meet-ups"
-      onPress={() => navigation.navigate('MeetUp')}
-      buttonStyle={{marginTop: Margin.medium}}
-    />
-        <PressableButton
-      title="Settings"
-      onPress={() => navigation.navigate('ChangeSettings')}
-      buttonStyle={{marginTop: Margin.xxxxlarge}}
-    />
-    <PressableButton
-      title="Support"
-      // onPress={() => navigation.navigate('MeetUp')}
-      buttonStyle={{marginTop: Margin.medium}}
-    />
-    
+      <PressableButton
+        title="My Profile"
+        onPress={() => navigation.navigate('Profile')}
+      />
+      <PressableButton
+        title="My Meet-ups"
+        onPress={() => navigation.navigate('MeetUp')}
+        buttonStyle={{marginTop: Margin.medium}}
+      />
+      <PressableButton
+        title="Settings"
+        onPress={() => navigation.navigate('ChangeSettings')}
+        buttonStyle={{marginTop: Margin.xxxxlarge}}
+      />
+      <PressableButton
+        title="Support"
+        // onPress={() => navigation.navigate('MeetUp')}
+        buttonStyle={{marginTop: Margin.medium}}
+      />
     </View>
   );
 }
