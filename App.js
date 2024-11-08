@@ -14,6 +14,7 @@ import SettingsScreen from './Screens/SettingsScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
+import MapScreen from './Screens/MapScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +23,7 @@ const Tab = createBottomTabNavigator();
 function MapScreenWrapper() {
   return (
     <ScreenWrapper>
-      <ItemsList type='activity'/>
+      <MapScreen/>
     </ScreenWrapper>
   );
 }
