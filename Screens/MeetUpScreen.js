@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, Text, View, ScrollView, Button } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
+import PressableButton from '../Components/PressableButtons/PressableButton';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -14,12 +15,16 @@ export default function MeetUpScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <Text style={styles.sectionTitle}>Upcoming Meet-Ups</Text>
       <ScrollView style={styles.section}>
-        <Text style={styles.sectionTitle}>Upcoming Meet-Ups</Text>
         {upcomingMeetUps.length === 0 ? (
           <View style={styles.noMeetUpsContainer}>
-            <Text>No upcoming meet-ups</Text>
-            <Button title="Create a Meet-Up" onPress={handleCreateMeetUp} />
+            <Text style={styles.noMeetUpText}>No upcoming meet-ups</Text>
+            <PressableButton 
+              title="Create a Meet-Up" 
+              onPress={handleCreateMeetUp} 
+              textStyle={{ color: theme.buttonColor, fontSize: 18 }}
+            />
           </View>
         ) : (
           upcomingMeetUps.map((meetUp, index) => (
@@ -30,11 +35,12 @@ export default function MeetUpScreen({ navigation }) {
           ))
         )}
       </ScrollView>
+
+      <Text style={styles.sectionTitle}>Past Meet-Ups</Text>
       <ScrollView style={styles.section}>
-        <Text style={styles.sectionTitle}>Past Meet-Ups</Text>
         {pastMeetUps.length === 0 ? (
           <View style={styles.noMeetUpsContainer}>
-            <Text>No past meet-ups</Text>
+            <Text style={styles.noMeetUpText}>No past meet-ups</Text>
           </View>
         ) : (
           pastMeetUps.map((meetUp, index) => (
@@ -57,14 +63,25 @@ const styles = StyleSheet.create({
   section: {
     flex: 1,
     marginBottom: 10,
+    borderColor: 'lightgray',
+    borderWidth: 2,
+    marginHorizontal: 30,
+    marginBottom: 30,
+    borderRadius: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 10,
+    marginLeft: 30,
     marginBottom: 10,
   },
   noMeetUpsContainer: {
     alignItems: 'center',
+  },
+  noMeetUpText: {
+    fontSize: 18,
+    marginTop: 30,
   },
   meetUpItem: {
     padding: 10,
