@@ -5,7 +5,7 @@ const Colors = {
     secondary: 'orange',
     tertiary: 'white',
 
-    background: '#f5f5f5',
+    background: '#edeef2',
 
     toggleThemeHeader: '#405c47',
     toggleThemeBackground: '#e9f5ec',
