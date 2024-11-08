@@ -89,10 +89,10 @@ export default function MeetUpScreen({ navigation }) {
             <Text style={styles.inputText}>Restaurant*</Text>
             <TextInput style={styles.inputContainer} />
 
-            {/* <TextInput style={styles.inputContainer} /> */}
             <TimeInput time={time} setTime={setTime} />
 
             <DateInput date={date} setDate={setDate} />
+            
             <Text style={styles.inputText}>Details: </Text>
             <TextInput 
               placeholder='Who is coming? What are we celebrating?'

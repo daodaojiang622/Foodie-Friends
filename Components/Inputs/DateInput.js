@@ -32,7 +32,6 @@ export default function DateInput({ date, setDate }) {
         value={date ? `${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleDateString('en-US', { month: 'short' })} ${date.toLocaleDateString('en-US', { day: '2-digit' })} ${date.getFullYear()}` : ''}
         editable={false}
         placeholder="Select date"
-        // onPressIn={toggleDatePicker}
         pointerEvents='none'
       />
       </TouchableOpacity>
