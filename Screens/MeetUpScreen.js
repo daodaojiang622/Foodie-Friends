@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Modal, TouchableOpacity, Alert, TextInput } from 'react-native';
+import moment from 'moment';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import FormInput from '../Components/Inputs/FormInput';
@@ -7,12 +8,14 @@ import DateInput from '../Components/Inputs/DateInput';
 import TimeInput from '../Components/Inputs/TimeInput';
 
 export default function MeetUpScreen({ navigation }) {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const [upcomingMeetUps, setUpcomingMeetUps] = useState([]);
   const [pastMeetUps, setPastMeetUps] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [restaurant, setRestaurant] = useState('');
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState('');
+  const [details, setDetails] = useState('');
 
   const handleCreateMeetUp = () => {
     setModalVisible(true);
@@ -36,6 +39,33 @@ export default function MeetUpScreen({ navigation }) {
       ],
       { cancelable: false }
     );
+  };
+
+  const handleSave = () => {
+    if (!restaurant) {
+      Alert.alert("Validation Error", "Restaurant cannot be empty.");
+      return;
+    }
+    if (!time) {
+      Alert.alert("Validation Error", "Time cannot be empty.");
+      return;
+    }
+    if (!date) {
+      Alert.alert("Validation Error", "Date cannot be empty.");
+      return;
+    }
+
+    const selectedDateTime = moment(`${moment(date).format('YYYY-MM-DD')} ${time}`, 'YYYY-MM-DD hh:mm A');
+    const currentDateTime = moment();
+
+    if (selectedDateTime.isBefore(currentDateTime)) {
+      Alert.alert("Validation Error", "The selected date and time cannot be in the past.");
+      return;
+    }
+
+    // Save the meet-up (you can add your save logic here)
+    Alert.alert("Success", "Meet-up saved successfully!");
+    closeModal();
   };
 
   return (
@@ -87,17 +117,23 @@ export default function MeetUpScreen({ navigation }) {
           <View style={[styles.modalContent, { backgroundColor: theme.backgroundColor }]}>
             <Text style={styles.modalTitle}>Create a Meet-Up</Text>
             <Text style={styles.inputText}>Restaurant*</Text>
-            <TextInput style={styles.inputContainer} />
+            <TextInput 
+              style={styles.inputContainer} 
+              value={restaurant}
+              onChangeText={setRestaurant}
+            />
 
             <TimeInput time={time} setTime={setTime} />
 
             <DateInput date={date} setDate={setDate} />
-            
+
             <Text style={styles.inputText}>Details: </Text>
             <TextInput 
               placeholder='Who is coming? What are we celebrating?'
               style={[styles.inputContainer, { height: 100 }]} 
               multiline={true}
+              value={details}
+              onChangeText={setDetails}
             />
 
             <View style={styles.buttonContainer}>
@@ -109,6 +145,7 @@ export default function MeetUpScreen({ navigation }) {
               />
               <PressableButton 
                 title="Save" 
+                onPress={handleSave}
                 textStyle={styles.buttonTextStyle}
                 buttonStyle={{ marginTop: 0 }}
               />
@@ -116,7 +153,6 @@ export default function MeetUpScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }
