@@ -4,6 +4,7 @@ import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import FormInput from '../Components/Inputs/FormInput';
 import DateInput from '../Components/Inputs/DateInput';
+import TimeInput from '../Components/Inputs/TimeInput';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -11,7 +12,7 @@ export default function MeetUpScreen({ navigation }) {
   const [pastMeetUps, setPastMeetUps] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
-  
+  const [time, setTime] = useState("");
 
   const handleCreateMeetUp = () => {
     setModalVisible(true);
@@ -87,11 +88,11 @@ export default function MeetUpScreen({ navigation }) {
             <Text style={styles.modalTitle}>Create a Meet-Up</Text>
             <Text style={styles.inputText}>Restaurant*</Text>
             <TextInput style={styles.inputContainer} />
-            <Text style={styles.inputText}>Time*</Text>
-            <TextInput style={styles.inputContainer} />
-            {/* <Text style={styles.inputText}>Date: </Text>
-            <TextInput style={styles.inputContainer} /> */}
-            <DateInput label="Date" date={date} setDate={setDate}/>
+
+            {/* <TextInput style={styles.inputContainer} /> */}
+            <TimeInput time={time} setTime={setTime} />
+
+            <DateInput date={date} setDate={setDate} />
             <Text style={styles.inputText}>Details: </Text>
             <TextInput 
               placeholder='Who is coming? What are we celebrating?'
