@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity, Alert } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 
@@ -15,6 +15,22 @@ export default function MeetUpScreen({ navigation }) {
 
   const closeModal = () => {
     setModalVisible(false);
+  };
+
+  const confirmCancel = () => {
+    Alert.alert(
+      "Confirm Cancel",
+      "Are you sure you want to cancel?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Yes", onPress: closeModal }
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -68,7 +84,7 @@ export default function MeetUpScreen({ navigation }) {
             {/* Add your form or content for creating a meet-up here */}
 
             <View style={styles.buttonContainer}>
-              <PressableButton title="Cancel" onPress={closeModal} textStyle={styles.buttonTextStyle}/>
+              <PressableButton title="Cancel" onPress={confirmCancel} textStyle={styles.buttonTextStyle}/>
               <PressableButton title="Save" textStyle={styles.buttonTextStyle}/>
             </View>
           </View>
