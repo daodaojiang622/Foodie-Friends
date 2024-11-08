@@ -5,15 +5,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBarIcon from './Components/TabBarIcon';
-import ItemsList from './Components/ItemsList';
 import ScreenWrapper from './Components/ScreenWrapper';
 
-import AddActivityScreen from './Screens/AddActivityScreen';
-import AddDietScreen from './Screens/AddDietScreen';
+import ProfileScreen from './Screens/ProfileScreen';
+import MeetUpScreen from './Screens/MeetUpScreen';
 import SettingsScreen from './Screens/SettingsScreen';
+import ChangeSettingsScreen from './Screens/ChangeSettingsScreen';
+import MapScreen from './Screens/MapScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +24,7 @@ const Tab = createBottomTabNavigator();
 function MapScreenWrapper() {
   return (
     <ScreenWrapper>
-      <ItemsList type='activity'/>
+      <MapScreen/>
     </ScreenWrapper>
   );
 }
@@ -58,9 +60,7 @@ function BottomTabs() {
           tabBarStyle: {
             backgroundColor: theme.headerColor,
           },
-          headerStyle: {
-            backgroundColor: theme.headerColor,
-          },
+          headerShown: false,
           tabBarActiveTintColor: Colors.secondary,
           tabBarInactiveTintColor: Colors.tertiary,
         })}
@@ -117,19 +117,27 @@ function AppContent() {
             }}
           />
           <Stack.Screen 
-            name="AddActivity" 
-            component={AddActivityScreen} 
+            name="Profile" 
+            component={ProfileScreen} 
             options={{ 
-              title: 'Add An Activity', 
+              title: 'My Profile', 
               headerTintColor: Colors.tertiary,
             }}
           />
           <Stack.Screen 
-            name="AddDiet" 
-            component={AddDietScreen} 
+            name="MeetUp" 
+            component={MeetUpScreen} 
             options={{ 
-              title: 'Add A Diet', 
               headerTintColor: Colors.tertiary,
+              title: 'My Meet-ups',
+            }}
+          />
+          <Stack.Screen 
+            name="ChangeSettings" 
+            component={ChangeSettingsScreen} 
+            options={{ 
+              headerTintColor: Colors.tertiary,
+              title: "",
             }}
           />
         </Stack.Navigator>
