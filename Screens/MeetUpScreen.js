@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
+import FormInput from '../Components/Inputs/FormInput';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -81,15 +82,31 @@ export default function MeetUpScreen({ navigation }) {
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { backgroundColor: theme.backgroundColor }]}>
             <Text style={styles.modalTitle}>Create a Meet-Up</Text>
-            {/* Add your form or content for creating a meet-up here */}
+            <Text style={styles.inputText}>Restaurant: </Text>
+            <TextInput style={styles.inputContainer} />
+            <Text style={styles.inputText}>Time: </Text>
+            <TextInput style={styles.inputContainer} />
+            <Text style={styles.inputText}>Date: </Text>
+            <TextInput style={styles.inputContainer} />
+            <Text style={styles.inputText}>Details: </Text>
+            <TextInput 
+              placeholder='Who is coming? What are we celebrating?'
+              style={[styles.inputContainer, { height: 100 }]} 
+              multiline={true}
+            />
 
             <View style={styles.buttonContainer}>
               <PressableButton 
                 title="Cancel" 
                 onPress={confirmCancel} 
                 textStyle={[styles.buttonTextStyle, { color: 'red' }]}
+                buttonStyle={{ marginTop: 0 }}
               />
-              <PressableButton title="Save" textStyle={styles.buttonTextStyle}/>
+              <PressableButton 
+                title="Save" 
+                textStyle={styles.buttonTextStyle}
+                buttonStyle={{ marginTop: 0 }}
+              />
             </View>
           </View>
         </View>
@@ -153,9 +170,21 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
   },
   buttonTextStyle: {
     fontSize: 16,
+  },
+  inputText: {
+    fontSize: 16,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    width: '100%',
+    padding: 5,
+    marginBottom: 20,
   },
 });
