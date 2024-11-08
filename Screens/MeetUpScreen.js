@@ -63,6 +63,17 @@ export default function MeetUpScreen({ navigation }) {
       return;
     }
 
+    const formattedDate = moment(date).format('YYYY-MM-DD'); // Format the date to YYYY-MM-DD
+
+    const meetUp = {
+      restaurant: restaurant,
+      date: formattedDate,
+      details: details,
+      time: time,
+    };
+
+    console.log(meetUp);
+
     // Save the meet-up (you can add your save logic here)
     Alert.alert("Success", "Meet-up saved successfully!");
     closeModal();
