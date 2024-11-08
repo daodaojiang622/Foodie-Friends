@@ -1,1 +1,3 @@
-# Multi-Elevator-Control-System
+# Foodie Friends
+
+## Team member: Chenyu Jiang, Yihe Xiong
