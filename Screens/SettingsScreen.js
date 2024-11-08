@@ -2,13 +2,16 @@ import React, {useContext} from 'react';
 import { View, StyleSheet, Pressable, Text } from 'react-native';
 import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opacity } from '../Utils/Style';
 import { ThemeContext } from '../Components/ThemeContext';
+import PressableButton from '../Components/PressableButtons/PressableButton';
+import { useNavigation } from '@react-navigation/native';
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const navigation = useNavigation();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Pressable
+      {/* <Pressable
         style={({ pressed }) => [
           styles.themeButton,
           { 
@@ -22,7 +25,12 @@ export default function SettingsScreen() {
       <Text style={styles.themeButtonText}>
         Toggle Theme
       </Text>
-</Pressable>
+</Pressable> */}
+    <PressableButton
+      title="My Profile"
+      onPress={() => navigation.navigate('Profile')}
+    />
+    
     </View>
   );
 }
