@@ -6,9 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 const TabBarIcon = ({ routeName, iconStyle }) => {
   let iconName;
 
-  if (routeName === 'Activities') {
+  if (routeName === 'Map') {
     iconName = "map";
-  } else if (routeName === 'Diet') {
+  } else if (routeName === 'Home') {
     iconName = "home";
   } else if (routeName === 'Settings') {
     iconName = Icon.settingsIconName;
