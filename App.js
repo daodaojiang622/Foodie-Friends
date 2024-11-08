@@ -59,15 +59,13 @@ function BottomTabs() {
           tabBarStyle: {
             backgroundColor: theme.headerColor,
           },
-          headerStyle: {
-            backgroundColor: theme.headerColor,
-          },
+          headerShown: false,
           tabBarActiveTintColor: Colors.secondary,
           tabBarInactiveTintColor: Colors.tertiary,
         })}
       >
         <Tab.Screen 
-          name="Restaurants Near-By" 
+          name="Map" 
           component={MapScreenWrapper} 
           options={() => ({ 
             headerTintColor: Colors.tertiary,
