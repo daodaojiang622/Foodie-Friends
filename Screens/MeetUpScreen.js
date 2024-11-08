@@ -12,75 +12,75 @@ export default function MeetUpScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const [upcomingMeetUps, setUpcomingMeetUps] = useState([]);
   const [pastMeetUps, setPastMeetUps] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [restaurant, setRestaurant] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState('');
-  const [details, setDetails] = useState('');
-  const collectionName = 'meetups';
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [restaurant, setRestaurant] = useState('');
+  // const [date, setDate] = useState(new Date());
+  // const [time, setTime] = useState('');
+  // const [details, setDetails] = useState('');
+  // const collectionName = 'meetups';
 
   const handleCreateMeetUp = () => {
-    setModalVisible(true);
+    navigation.navigate('EditMeetUp');
   };
 
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+  // const closeModal = () => {
+  //   setModalVisible(false);
+  // };
 
-  const confirmCancel = () => {
-    Alert.alert(
-      "Confirm Cancel",
-      "Are you sure you want to cancel?",
-      [
-        {
-          text: "No",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
-        },
-        { text: "Yes", onPress: closeModal }
-      ],
-      { cancelable: false }
-    );
-  };
+  // const confirmCancel = () => {
+  //   Alert.alert(
+  //     "Confirm Cancel",
+  //     "Are you sure you want to cancel?",
+  //     [
+  //       {
+  //         text: "No",
+  //         onPress: () => console.log("Cancel Pressed"),
+  //         style: "cancel"
+  //       },
+  //       { text: "Yes", onPress: closeModal }
+  //     ],
+  //     { cancelable: false }
+  //   );
+  // };
 
-  const handleSave = async () => {
-    if (!restaurant) {
-      Alert.alert("Validation Error", "Restaurant cannot be empty.");
-      return;
-    }
-    if (!time) {
-      Alert.alert("Validation Error", "Time cannot be empty.");
-      return;
-    }
-    if (!date) {
-      Alert.alert("Validation Error", "Date cannot be empty.");
-      return;
-    }
+  // const handleSave = async () => {
+  //   if (!restaurant) {
+  //     Alert.alert("Validation Error", "Restaurant cannot be empty.");
+  //     return;
+  //   }
+  //   if (!time) {
+  //     Alert.alert("Validation Error", "Time cannot be empty.");
+  //     return;
+  //   }
+  //   if (!date) {
+  //     Alert.alert("Validation Error", "Date cannot be empty.");
+  //     return;
+  //   }
 
-    const selectedDateTime = moment(`${moment(date).format('YYYY-MM-DD')} ${time}`, 'YYYY-MM-DD hh:mm A');
-    const currentDateTime = moment();
+  //   const selectedDateTime = moment(`${moment(date).format('YYYY-MM-DD')} ${time}`, 'YYYY-MM-DD hh:mm A');
+  //   const currentDateTime = moment();
 
-    if (selectedDateTime.isBefore(currentDateTime)) {
-      Alert.alert("Validation Error", "The selected date and time cannot be in the past.");
-      return;
-    }
+  //   if (selectedDateTime.isBefore(currentDateTime)) {
+  //     Alert.alert("Validation Error", "The selected date and time cannot be in the past.");
+  //     return;
+  //   }
 
-    const formattedDate = moment(date).format('YYYY-MM-DD'); // Format the date to YYYY-MM-DD
+  //   const formattedDate = moment(date).format('YYYY-MM-DD'); // Format the date to YYYY-MM-DD
 
-    const meetUp = {
-      restaurant: restaurant,
-      date: formattedDate,
-      details: details,
-      time: time,
-    };
+  //   const meetUp = {
+  //     restaurant: restaurant,
+  //     date: formattedDate,
+  //     details: details,
+  //     time: time,
+  //   };
 
-    console.log(meetUp);
-    await writeToDB(meetUp, collectionName);
+  //   console.log(meetUp);
+  //   await writeToDB(meetUp, collectionName);
 
-    // Save the meet-up (you can add your save logic here)
-    Alert.alert("Success", "Meet-up saved successfully!");
-    closeModal();
-  };
+  //   // Save the meet-up (you can add your save logic here)
+  //   Alert.alert("Success", "Meet-up saved successfully!");
+  //   closeModal();
+  // };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -121,7 +121,7 @@ export default function MeetUpScreen({ navigation }) {
         )}
       </ScrollView>
 
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -166,7 +166,7 @@ export default function MeetUpScreen({ navigation }) {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }
