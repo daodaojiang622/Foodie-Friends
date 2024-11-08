@@ -3,13 +3,14 @@ import { Text, StyleSheet, Pressable } from 'react-native';
 import { ThemeContext } from '../ThemeContext';
 import { Colors, Padding, Font, BorderRadius, Opacity } from '../../Utils/Style';
 
-const PressableButton = ({ onPress, title, textStyle }) => {
+const PressableButton = ({ onPress, title, buttonStyle }) => {
   const { theme } = useContext(ThemeContext);
 
   return (
     <Pressable
       style={({ pressed }) => [
-        styles.button,
+        styles.button, 
+        buttonStyle,
         pressed && styles.buttonPressed
       ]}
       onPress={onPress}

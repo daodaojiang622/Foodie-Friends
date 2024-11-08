@@ -4,6 +4,8 @@ import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opa
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation } from '@react-navigation/native';
+import profile from '../Screens/ProfileScreen';
+import MeetUp from '../Screens/MeetUpScreen';
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -29,6 +31,11 @@ export default function SettingsScreen() {
     <PressableButton
       title="My Profile"
       onPress={() => navigation.navigate('Profile')}
+    />
+    <PressableButton
+      title="My Meet-ups"
+      onPress={() => navigation.navigate('MeetUp')}
+      buttonStyle={{marginTop: Margin.medium}}
     />
     
     </View>

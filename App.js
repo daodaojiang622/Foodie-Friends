@@ -8,8 +8,8 @@ import TabBarIcon from './Components/TabBarIcon';
 import ItemsList from './Components/ItemsList';
 import ScreenWrapper from './Components/ScreenWrapper';
 
-import AddActivityScreen from './Screens/AddActivityScreen';
-import AddDietScreen from './Screens/AddDietScreen';
+import ProfileScreen from './Screens/ProfileScreen';
+import MeetUpScreen from './Screens/MeetUpScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
@@ -116,19 +116,19 @@ function AppContent() {
             }}
           />
           <Stack.Screen 
-            name="AddActivity" 
-            component={AddActivityScreen} 
+            name="Profile" 
+            component={ProfileScreen} 
             options={{ 
-              title: 'Add An Activity', 
+              title: 'My Profile', 
               headerTintColor: Colors.tertiary,
             }}
           />
           <Stack.Screen 
-            name="AddDiet" 
-            component={AddDietScreen} 
+            name="MeetUp" 
+            component={MeetUpScreen} 
             options={{ 
-              title: 'Add A Diet', 
               headerTintColor: Colors.tertiary,
+              headerShown: true,
             }}
           />
         </Stack.Navigator>
