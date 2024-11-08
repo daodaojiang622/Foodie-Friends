@@ -6,6 +6,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import FormInput from '../Components/Inputs/FormInput';
 import DateInput from '../Components/Inputs/DateInput';
 import TimeInput from '../Components/Inputs/TimeInput';
+import { writeToDB } from '../Firebase/firestoreHelper';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
@@ -16,6 +17,7 @@ export default function MeetUpScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState('');
   const [details, setDetails] = useState('');
+  const collectionName = 'meetups';
 
   const handleCreateMeetUp = () => {
     setModalVisible(true);
@@ -41,7 +43,7 @@ export default function MeetUpScreen({ navigation }) {
     );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!restaurant) {
       Alert.alert("Validation Error", "Restaurant cannot be empty.");
       return;
@@ -73,6 +75,7 @@ export default function MeetUpScreen({ navigation }) {
     };
 
     console.log(meetUp);
+    await writeToDB(meetUp, collectionName);
 
     // Save the meet-up (you can add your save logic here)
     Alert.alert("Success", "Meet-up saved successfully!");
