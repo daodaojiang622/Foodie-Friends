@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import TabBarIcon from './Components/TabBarIcon';
-import ItemsList from './Components/ItemsList';
 import ScreenWrapper from './Components/ScreenWrapper';
 
 import ProfileScreen from './Screens/ProfileScreen';
@@ -130,7 +129,7 @@ function AppContent() {
             component={MeetUpScreen} 
             options={{ 
               headerTintColor: Colors.tertiary,
-              headerShown: true,
+              title: 'My Meet-ups',
             }}
           />
           <Stack.Screen 
@@ -138,7 +137,7 @@ function AppContent() {
             component={ChangeSettingsScreen} 
             options={{ 
               headerTintColor: Colors.tertiary,
-              headerShown: true,
+              title: "",
             }}
           />
         </Stack.Navigator>
