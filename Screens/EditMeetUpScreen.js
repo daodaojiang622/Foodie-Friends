@@ -70,7 +70,6 @@ export default function EditMeetUpScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style={styles.modalTitle}>Create a Meet-Up</Text>
       <Text style={styles.inputText}>Restaurant*</Text>
       <TextInput 
         style={styles.inputContainer} 
@@ -116,11 +115,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
   inputText: {
     fontSize: 16,
     alignSelf: 'flex-start',
@@ -133,11 +127,12 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 5,
     marginBottom: 20,
+    width: 350,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
+    width: '50%',
   },
   buttonTextStyle: {
     fontSize: 16,

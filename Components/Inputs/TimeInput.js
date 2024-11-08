@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
     padding: Padding.medium,
     borderRadius: BorderRadius.small,
     marginBottom: Margin.large,
-    width: 260,
+    width: 350,
   },
 });
