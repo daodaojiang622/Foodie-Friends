@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Colors, Padding, Font, BorderWidth, BorderRadius, Margin, Width } from '../../Utils/Style';
 
-export default function DateInput({ label, date, setDate, theme }) {
+export default function DateInput({ label, date, setDate }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // const onChangeDate = (event, selectedDate) => {
@@ -29,7 +29,7 @@ export default function DateInput({ label, date, setDate, theme }) {
 
   return (
     <View>
-      <Text style={[styles.label, { color: theme.headerColor }]}>{label} *</Text>
+      <Text style={styles.label}>{label}*</Text>
       <TouchableOpacity onPress={toggleDatePicker} activeOpacity={0.8}>
       <TextInput
         style={styles.input}
@@ -53,17 +53,17 @@ export default function DateInput({ label, date, setDate, theme }) {
 }
 
 const styles = StyleSheet.create({
-    label: {
-        fontSize: Font.sizeMedium,
-        marginBottom: Margin.small,
-        color: Colors.primary,
-    },
+  label: {
+    fontSize: 16,
+    marginBottom: Margin.small,
+    color: "black",
+  },
   input: {
-        borderWidth: BorderWidth.thin,
-        borderColor: Colors.inputBorder,
-        padding: Padding.medium,
-        borderRadius: BorderRadius.small,
-        marginBottom: Margin.large,
-        width: Width.large,
+    borderWidth: 2,
+    borderColor: 'lightgray',
+    padding: Padding.medium,
+    borderRadius: BorderRadius.small,
+    marginBottom: Margin.large,
+    width: 260,
     },
 });

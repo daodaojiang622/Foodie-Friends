@@ -3,12 +3,15 @@ import { StyleSheet, Text, View, ScrollView, Button, Modal, TouchableOpacity, Al
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import FormInput from '../Components/Inputs/FormInput';
+import DateInput from '../Components/Inputs/DateInput';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [upcomingMeetUps, setUpcomingMeetUps] = useState([]);
   const [pastMeetUps, setPastMeetUps] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [date, setDate] = useState(new Date());
+  
 
   const handleCreateMeetUp = () => {
     setModalVisible(true);
@@ -82,12 +85,13 @@ export default function MeetUpScreen({ navigation }) {
         <View style={styles.modalContainer}>
           <View style={[styles.modalContent, { backgroundColor: theme.backgroundColor }]}>
             <Text style={styles.modalTitle}>Create a Meet-Up</Text>
-            <Text style={styles.inputText}>Restaurant: </Text>
+            <Text style={styles.inputText}>Restaurant*</Text>
             <TextInput style={styles.inputContainer} />
-            <Text style={styles.inputText}>Time: </Text>
+            <Text style={styles.inputText}>Time*</Text>
             <TextInput style={styles.inputContainer} />
-            <Text style={styles.inputText}>Date: </Text>
-            <TextInput style={styles.inputContainer} />
+            {/* <Text style={styles.inputText}>Date: </Text>
+            <TextInput style={styles.inputContainer} /> */}
+            <DateInput label="Date" date={date} setDate={setDate}/>
             <Text style={styles.inputText}>Details: </Text>
             <TextInput 
               placeholder='Who is coming? What are we celebrating?'
