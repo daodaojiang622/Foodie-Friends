@@ -67,3 +67,8 @@ Fields:
 - Read: Display meetup information for participants, including date, location, and any additional notes, on their profiles or the restaurant’s page.
 - Update: The organizer or participants can update the meetup details, such as changing the time, adding notes, or inviting more friends.
 - Delete: The organizer can cancel or delete the meetup if plans change, removing it from participants’ schedules.
+
+## Current State of the App - Iteration 1
+At the end of iteration 1, we have React Native components created to represent the functionality we will be building, and the overall structure of the app is in place.We also have navigation and the basis of CRUD operations to Firestore established and working.
+
+
