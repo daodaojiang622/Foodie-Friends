@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { ThemeContext } from '../Components/ThemeContext';
 
 export default function SupportScreen() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={styles.text}>
         🍔 Welcome to Foodie Friends 🍣
         {'\n'}{'\n'}
