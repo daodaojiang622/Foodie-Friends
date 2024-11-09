@@ -18,6 +18,7 @@ import EditMeetUpScreen from './Screens/EditMeetUpScreen';
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
 import SupportScreen from './Screens/SupportScreen';
+import EditPostScreen from './Screens/EditPostScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -166,6 +167,13 @@ function AppContent() {
           <Stack.Screen
             name="Support"
             component={SupportScreen}
+            options={{
+              headerTintColor: Colors.tertiary,
+            }}
+          />
+          <Stack.Screen
+            name="Edit Post"
+            component={EditPostScreen}
             options={{
               headerTintColor: Colors.tertiary,
             }}

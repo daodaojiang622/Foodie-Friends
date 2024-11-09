@@ -2,9 +2,13 @@ import { StyleSheet, TextInput, View, Image, Text, Pressable } from 'react-nativ
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
+import PressableButton from '../Components/PressableButtons/PressableButton';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = async () => {
@@ -29,6 +33,16 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={[styles.headerText, {color: theme.textColor}]}>Discover restaurants...</Text>
+        <Pressable 
+          style={styles.addPostButton}
+          onPress={() => navigation.navigate('EditPost')}
+        >
+          <Ionicons name="create-sharp" style={[styles.addPostIcon, {color: theme.textColor}]}/>
+        </Pressable>
+      </View>
+
       <TextInput
         style={styles.searchBar}
         placeholder="Search for restaurants..."
@@ -103,7 +117,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchBar: {
-    marginTop: 80,
     margin: 20,
     padding: 10,
     borderColor: 'gray',
@@ -117,7 +130,6 @@ const styles = StyleSheet.create({
   },
   imageRow: {
     flexDirection: 'row',
-    marginBottom: 10,
   },
   imageWrapper: {
     margin: 5,
@@ -157,5 +169,23 @@ const styles = StyleSheet.create({
   },
   likes: {
     fontSize: 12,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: 10,
+    marginTop: 80,
+  },
+  addPostButton: {
+    padding: 10,
+  },
+  addPostIcon: {
+    fontSize: 24,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
 });
