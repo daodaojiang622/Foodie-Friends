@@ -1,8 +1,10 @@
 import { StyleSheet, TextInput, View, Image, Text, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { ThemeContext } from '../Components/ThemeContext';
 
 export default function HomeScreen() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = async () => {
@@ -37,7 +39,7 @@ export default function HomeScreen() {
       <View style={styles.imageContainer}>
         <View style={styles.imageRow}>
           <Pressable>
-            <View style={styles.imageWrapper}>
+            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
               <View style={styles.infoContainer}>
@@ -50,7 +52,7 @@ export default function HomeScreen() {
             </View>
           </Pressable>
           <Pressable>
-            <View style={styles.imageWrapper}>
+          <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
               <View style={styles.infoContainer}>
@@ -65,7 +67,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.imageRow}>
           <Pressable>
-            <View style={styles.imageWrapper}>
+            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
               <View style={styles.infoContainer}>
@@ -78,7 +80,7 @@ export default function HomeScreen() {
             </View>
           </Pressable>
           <Pressable>
-            <View style={styles.imageWrapper}>
+            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
               <View style={styles.infoContainer}>
@@ -121,6 +123,7 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: 'center',
     width: 180,
+    backgroundColor: "#c2d1c6",
   },
   image: {
     width: 180,
@@ -129,31 +132,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 5,
-    width: 80,
+    margin: 10,
+    width: 180,
   },
   infoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    marginTop: 5,
+    margin: 5,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   profileImage: {
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     borderRadius: 15,
     marginRight: 5,
   },
   username: {
-    fontSize: 14,
+    fontSize: 12,
   },
   likes: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 12,
   },
 });
