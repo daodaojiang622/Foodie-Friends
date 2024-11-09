@@ -42,3 +42,28 @@ Fields:
 - Owner: ID of the user who created the meetup (links to Users collection).
 - dateTime: Date and time of the meetup.
 - notes: Additional notes or comments about the meetup (e.g., "Celebrate John's birthday" or "Try the new sushi menu").
+
+## Implementation of CRUD operations
+1. Users Collection
+- Create: When a new user signs up, a user profile is created with information like name, email, preferences, and profile photo.
+- Read: Retrieve user information for profile display, preferences, friends list, and personalized restaurant recommendations.
+- Update: Users can update their profile information (e.g., change preferences, update profile photo) and manage their friends list or favorite restaurants.
+- Delete: Account deletion allows the user to delete their profile and associated data from the app.
+
+2. Restaurants Collection
+- Create: Restaurants are fetched from an external API (like Yelp) and stored in the database for fast access. Users might also add a new restaurant if it’s not found in the API results.
+- Read: Display restaurant details (name, location, rating, photos, reviews) on the app, especially in searches, map views, or personalized recommendations.
+- Update: Occasionally update restaurant information (like rating or hours) to ensure data accuracy. The updates might come from periodic API calls.
+- Delete: Unused or outdated restaurant entries may be removed from the database if they’re no longer relevant or accessible.
+
+3. Reviews Collection
+- Create: Users can write and add new reviews, including rating, text, and photos, for a specific restaurant.
+- Read: Display reviews on the restaurant page or in user profiles, allowing other users to view shared experiences and recommendations.
+- Update: Users can edit their own reviews to update the rating or content as needed.
+- Delete: Users have the option to delete their own reviews if they no longer wish to share them.
+
+4. Meetups Collection
+- Create: Users can create a new meetup by selecting a restaurant, adding participants, and setting a date and time.
+- Read: Display meetup information for participants, including date, location, and any additional notes, on their profiles or the restaurant’s page.
+- Update: The organizer or participants can update the meetup details, such as changing the time, adding notes, or inviting more friends.
+- Delete: The organizer can cancel or delete the meetup if plans change, removing it from participants’ schedules.
