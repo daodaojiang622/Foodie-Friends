@@ -7,6 +7,7 @@ import TimeInput from '../Components/Inputs/TimeInput';
 import { writeToDB } from '../Firebase/firestoreHelper';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
+import { updateDB } from '../Firebase/firestoreHelper';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -89,7 +90,16 @@ export default function EditMeetUpScreen({ navigation, route }) {
     };
 
     console.log(meetUp);
-    await writeToDB(meetUp, collectionName);
+
+    if (route.params?.meetUp) {
+        // Update existing meet-up
+        await updateDB(route.params.meetUp.id, meetUp, collectionName);
+        Alert.alert("Success", "Meet-up updated successfully!");
+      } else {
+        // Create new meet-up
+        await writeToDB(meetUp, collectionName);
+        Alert.alert("Success", "Meet-up created successfully!");
+      }
 
     // Save the meet-up (you can add your save logic here)
     Alert.alert("Success", "Meet-up saved successfully!");
