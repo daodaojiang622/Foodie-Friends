@@ -17,6 +17,7 @@ import EditMeetUpScreen from './Screens/EditMeetUpScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
+import SupportScreen from './Screens/SupportScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -159,6 +160,13 @@ function AppContent() {
             options={{
               headerTintColor: Colors.tertiary,
               title: "Create a Meet-Up",
+            }}
+          />
+          <Stack.Screen
+            name="Support"
+            component={SupportScreen}
+            options={{
+              headerTintColor: Colors.tertiary,
             }}
           />
         </Stack.Navigator>
