@@ -34,7 +34,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.headerText, {color: theme.textColor}]}>Discover restaurants...</Text>
+        <Text style={[styles.headerText, {color: theme.textColor}]}>Checkout the lastest hotspots</Text>
         <Pressable 
           style={styles.addPostButton}
           onPress={() => navigation.navigate('EditPost')}
@@ -52,7 +52,7 @@ export default function HomeScreen() {
       />
       <View style={styles.imageContainer}>
         <View style={styles.imageRow}>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate('EditPost')}>
             <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
@@ -65,7 +65,8 @@ export default function HomeScreen() {
               </View>
             </View>
           </Pressable>
-          <Pressable>
+
+          <Pressable onPress={() => navigation.navigate('EditPost')}>
           <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
@@ -78,9 +79,10 @@ export default function HomeScreen() {
               </View>
             </View>
           </Pressable>
+
         </View>
         <View style={styles.imageRow}>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate('EditPost')}>
             <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
@@ -93,7 +95,7 @@ export default function HomeScreen() {
               </View>
             </View>
           </Pressable>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate('EditPost')}>
             <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
               <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
               <Text style={styles.title}>Title</Text>
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchBar: {
-    margin: 20,
+    marginHorizontal: 10,
     padding: 10,
     borderColor: 'gray',
     borderWidth: 1,
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 1,
-    justifyContent: 'center',
+    marginTop: 10,
     alignItems: 'center',
   },
   imageRow: {
@@ -186,6 +188,5 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 10,
   },
 });

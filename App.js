@@ -172,7 +172,7 @@ function AppContent() {
             }}
           />
           <Stack.Screen
-            name="Edit Post"
+            name="EditPost"
             component={EditPostScreen}
             options={{
               headerTintColor: Colors.tertiary,
