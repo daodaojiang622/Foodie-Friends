@@ -1,11 +1,9 @@
-import React, {useContext} from 'react';
-import { View, StyleSheet, Pressable, Text } from 'react-native';
+import React, { useContext } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opacity } from '../Utils/Style';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation } from '@react-navigation/native';
-import profile from '../Screens/ProfileScreen';
-import MeetUp from '../Screens/MeetUpScreen';
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);

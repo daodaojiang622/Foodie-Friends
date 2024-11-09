@@ -13,10 +13,10 @@ import SettingsScreen from './Screens/SettingsScreen';
 import ChangeSettingsScreen from './Screens/ChangeSettingsScreen';
 import MapScreen from './Screens/MapScreen';
 import HomeScreen from './Screens/HomeScreen';
+import EditMeetUpScreen from './Screens/EditMeetUpScreen';
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
-
 
 
 const Stack = createNativeStackNavigator();
@@ -128,10 +128,22 @@ function AppContent() {
           <Stack.Screen 
             name="MeetUp" 
             component={MeetUpScreen} 
-            options={{ 
+            options={({ navigation }) => ({ 
+              headerRight: () => (
+                <TouchableOpacity 
+                onPress={() => 
+                  navigation.navigate('EditMeetUp')} 
+                style={styles.addIconContainer}
+                >
+                <Icon.addIconComponent
+                  name={Icon.addIconName}
+                  style={styles.addIcon}
+                />
+              </TouchableOpacity>
+              ),
               headerTintColor: Colors.tertiary,
               title: 'My Meet-ups',
-            }}
+            })}
           />
           <Stack.Screen 
             name="ChangeSettings" 
@@ -139,6 +151,14 @@ function AppContent() {
             options={{ 
               headerTintColor: Colors.tertiary,
               title: "",
+            }}
+          />
+          <Stack.Screen
+            name="EditMeetUp"
+            component={EditMeetUpScreen}
+            options={{
+              headerTintColor: Colors.tertiary,
+              title: "Create a Meet-Up",
             }}
           />
         </Stack.Navigator>
@@ -149,7 +169,7 @@ function AppContent() {
 const styles = StyleSheet.create({
   addIcon: {
     color: Colors.tertiary,
-    fontSize: Font.sizeMedium,
+    fontSize: Font.SizeLarge,
   },
   addIconContainer: {
     flexDirection: ContainerStyle.flexDirection,

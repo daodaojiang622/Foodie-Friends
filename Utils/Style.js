@@ -5,7 +5,7 @@ const Colors = {
     secondary: 'orange',
     tertiary: 'white',
 
-    background: '#f5f5f5',
+    background: '#edeef2',
 
     toggleThemeHeader: '#405c47',
     toggleThemeBackground: '#e9f5ec',
@@ -92,8 +92,8 @@ const Icon = {
     dietIconName: 'fastfood',
     settingsIconComponent: Ionicons,
     settingsIconName: 'settings-sharp',
-    addIconComponent: FontAwesome6,
-    addIconName: 'add',
+    addIconComponent: Ionicons,
+    addIconName: 'add-circle-outline',
     deleteIconComponent: FontAwesome5,
     deleteIconName: 'trash-alt',
 };
