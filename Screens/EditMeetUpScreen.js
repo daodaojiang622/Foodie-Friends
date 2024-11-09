@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, Pressable } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import DateInput from '../Components/Inputs/DateInput';
@@ -37,7 +37,9 @@ export default function EditMeetUpScreen({ navigation, route }) {
         ),
     }); // Set title to "Edit Meet-Up"
     } else {
-      navigation.setOptions({ title: 'Create a Meet-Up' }); // Set title to "Create a Meet-Up"
+      navigation.setOptions({ 
+        title: 'Create a Meet-Up',
+      }); // Set title to "Create a Meet-Up"
     }
   }, [route.params?.meetUp]);
 
@@ -128,7 +130,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
         onChangeText={setDetails}
       />
     
-      {!route.params?.isPast && (
+      {!route.params?.isPast ? (
         <View style={styles.buttonContainer}>
             <PressableButton 
             title="Cancel" 
@@ -143,7 +145,10 @@ export default function EditMeetUpScreen({ navigation, route }) {
             buttonStyle={{ marginTop: 0 }}
             />
         </View>
-        )}
+      ) : (
+        <Text style={styles.nonEditableText}>You cannot edit this past meet-up</Text>
+        )
+    }   
     </View>
   );
 }
