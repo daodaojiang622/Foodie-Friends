@@ -68,7 +68,7 @@ export default function MeetUpScreen({ navigation }) {
   }, []);
 
   const handleEditMeetUp = (meetUp) => {
-    navigation.navigate('EditMeetUp', { meetUp });
+    navigation.navigate('EditMeetUp', { meetUp, confirmDelete: handleDeleteMeetUp });
   };
 
   return (

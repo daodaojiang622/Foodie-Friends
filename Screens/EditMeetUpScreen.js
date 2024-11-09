@@ -6,6 +6,7 @@ import DateInput from '../Components/Inputs/DateInput';
 import TimeInput from '../Components/Inputs/TimeInput';
 import { writeToDB } from '../Firebase/firestoreHelper';
 import moment from 'moment';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -15,7 +16,6 @@ export default function EditMeetUpScreen({ navigation, route }) {
   const [details, setDetails] = useState(route.params?.details || '');
   const collectionName = 'meetups';
 
-
   useEffect(() => {
     if (route.params?.meetUp) {
       const { restaurant, date, time, details } = route.params.meetUp;
@@ -23,13 +23,24 @@ export default function EditMeetUpScreen({ navigation, route }) {
       setDate(moment(date, 'YYYY-MM-DD').toDate());
       setTime(time);
       setDetails(details);
-      navigation.setOptions({ title: 'Edit Meet-Up' }); // Set title to "Edit Meet-Up"
+      navigation.setOptions({ 
+        title: 'Edit Meet-Up',
+        headerRight: () => (
+          <Ionicons 
+            name="trash" 
+            size={20} 
+            color="white"
+            onPress={() => route.params.confirmDelete(route.params.meetUp.id)}
+            style={{ marginRight: 15 }}
+          />
+        ),
+    }); // Set title to "Edit Meet-Up"
     } else {
       navigation.setOptions({ title: 'Create a Meet-Up' }); // Set title to "Create a Meet-Up"
     }
   }, [route.params?.meetUp]);
 
-  
+
   const confirmCancel = () => {
     Alert.alert(
       "Confirm Cancel",
