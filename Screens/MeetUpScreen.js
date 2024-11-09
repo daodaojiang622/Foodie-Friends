@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert, Pressable } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -67,6 +67,10 @@ export default function MeetUpScreen({ navigation }) {
     loadMeetUps();
   }, []);
 
+  const handleEditMeetUp = (meetUp) => {
+    navigation.navigate('EditMeetUp', { meetUp });
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={styles.sectionTitle}>Upcoming Meet-Ups</Text>
@@ -82,27 +86,31 @@ export default function MeetUpScreen({ navigation }) {
           </View>
         ) : (
           upcomingMeetUps.map((meetUp, index) => (
-            <View key={index} style={styles.meetUpItem}>
-              <View style={styles.meetUpContainer}>
-                <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp)}>
+              <View key={index} style={styles.meetUpItem}>
 
-                <View style={styles.meetUpInfoContainer}>
-                  <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
-                  <View style={styles.meetUpDateTimeContainer}>
-                    <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
-                    <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+                <View style={styles.meetUpContainer}>
+                  <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+
+                  <View style={styles.meetUpInfoContainer}>
+                    <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+                    <View style={styles.meetUpDateTimeContainer}>
+                      <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+                      <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+                    </View>
                   </View>
-                </View>
 
-                <View style={styles.deleteButtonContainer}>
-                  <Ionicons 
-                    name="trash" 
-                    style={styles.deleteButton}
-                    onPress={() => handleDeleteMeetUp(meetUp.id)}
-                  />
+                  <View style={styles.deleteButtonContainer}>
+                    <Ionicons 
+                      name="trash" 
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteMeetUp(meetUp.id)}
+                    />
+                  </View>
+
                 </View>
               </View>
-            </View>
+            </Pressable>
           ))
         )}
       </ScrollView>
@@ -115,13 +123,31 @@ export default function MeetUpScreen({ navigation }) {
           </View>
         ) : (
           pastMeetUps.map((meetUp, index) => (
-            <View key={index} style={styles.meetUpItem}>
-              <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
-              <View style={styles.meetUpDateTimeContainer}>
-              <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
-              <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp)}>
+              <View key={index} style={styles.meetUpItem}>
+
+                <View style={styles.meetUpContainer}>
+                  <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+
+                  <View style={styles.meetUpInfoContainer}>
+                    <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+                    <View style={styles.meetUpDateTimeContainer}>
+                      <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+                      <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.deleteButtonContainer}>
+                    <Ionicons 
+                      name="trash" 
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteMeetUp(meetUp.id)}
+                    />
+                  </View>
+                  
+                </View>
               </View>
-            </View>
+            </Pressable>
           ))
         )}
       </ScrollView>
