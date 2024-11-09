@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, Modal, Alert, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import DateInput from '../Components/Inputs/DateInput';

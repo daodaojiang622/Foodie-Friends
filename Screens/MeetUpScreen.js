@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -16,6 +16,28 @@ export default function MeetUpScreen({ navigation }) {
   
   const handleCreateMeetUp = () => {
     navigation.navigate('EditMeetUp');
+  };
+
+  const handleDeleteMeetUp = async (id) => {
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you want to delete this meet-up?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("MeetUp Delete Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Yes", 
+          onPress: 
+            async () => {
+              await deleteFromDB(id, collectionName);
+              navigation.navigate('MeetUp');
+            }
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   useEffect(() => {
@@ -76,7 +98,8 @@ export default function MeetUpScreen({ navigation }) {
                   <Ionicons 
                     name="trash" 
                     style={styles.deleteButton}
-                    onPress={() => deleteFromDB(meetUp.id, collectionName)} />
+                    onPress={() => handleDeleteMeetUp(meetUp.id)}
+                  />
                 </View>
               </View>
             </View>
