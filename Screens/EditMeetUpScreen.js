@@ -5,6 +5,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import DateInput from '../Components/Inputs/DateInput';
 import TimeInput from '../Components/Inputs/TimeInput';
 import { writeToDB } from '../Firebase/firestoreHelper';
+import moment from 'moment';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -12,6 +13,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
   const [date, setDate] = useState(route.params?.date || new Date());
   const [time, setTime] = useState(route.params?.time || '');
   const [details, setDetails] = useState(route.params?.details || '');
+  const collectionName = 'meetups';
 
   const confirmCancel = () => {
     Alert.alert(

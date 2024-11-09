@@ -1,86 +1,49 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, Modal, TouchableOpacity, Alert, TextInput } from 'react-native';
-import moment from 'moment';
+import React, { useState, useContext, useEffect } from 'react';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
-import FormInput from '../Components/Inputs/FormInput';
-import DateInput from '../Components/Inputs/DateInput';
-import TimeInput from '../Components/Inputs/TimeInput';
-import { writeToDB } from '../Firebase/firestoreHelper';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { writeToDB, updateDB, deleteFromDB, fetchDataFromDB } from '../Firebase/firestoreHelper'; 
+import moment from 'moment';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const [upcomingMeetUps, setUpcomingMeetUps] = useState([]);
   const [pastMeetUps, setPastMeetUps] = useState([]);
-  // const [modalVisible, setModalVisible] = useState(false);
-  // const [restaurant, setRestaurant] = useState('');
-  // const [date, setDate] = useState(new Date());
-  // const [time, setTime] = useState('');
-  // const [details, setDetails] = useState('');
-  // const collectionName = 'meetups';
-
+  const route = useRoute();
+  const collectionName = 'meetups';
+  
   const handleCreateMeetUp = () => {
     navigation.navigate('EditMeetUp');
   };
 
-  // const closeModal = () => {
-  //   setModalVisible(false);
-  // };
+  useEffect(() => {
+    const loadMeetUps = async () => {
+      try {
+        const meetUps = await fetchDataFromDB('meetups');
+        const currentDateTime = moment();
+        const upcoming = [];
+        const past = [];
 
-  // const confirmCancel = () => {
-  //   Alert.alert(
-  //     "Confirm Cancel",
-  //     "Are you sure you want to cancel?",
-  //     [
-  //       {
-  //         text: "No",
-  //         onPress: () => console.log("Cancel Pressed"),
-  //         style: "cancel"
-  //       },
-  //       { text: "Yes", onPress: closeModal }
-  //     ],
-  //     { cancelable: false }
-  //   );
-  // };
+        meetUps.forEach(meetUp => {
+          const meetUpDateTime = moment(`${meetUp.date} ${meetUp.time}`, 'YYYY-MM-DD hh:mm A');
+          if (meetUpDateTime.isAfter(currentDateTime)) {
+            upcoming.push(meetUp);
+          } else {
+            past.push(meetUp);
+          }
+        });
 
-  // const handleSave = async () => {
-  //   if (!restaurant) {
-  //     Alert.alert("Validation Error", "Restaurant cannot be empty.");
-  //     return;
-  //   }
-  //   if (!time) {
-  //     Alert.alert("Validation Error", "Time cannot be empty.");
-  //     return;
-  //   }
-  //   if (!date) {
-  //     Alert.alert("Validation Error", "Date cannot be empty.");
-  //     return;
-  //   }
+        setUpcomingMeetUps(upcoming);
+        setPastMeetUps(past);
+      } catch (error) {
+        console.error('Error loading meet-ups:', error);
+      }
+    };
 
-  //   const selectedDateTime = moment(`${moment(date).format('YYYY-MM-DD')} ${time}`, 'YYYY-MM-DD hh:mm A');
-  //   const currentDateTime = moment();
-
-  //   if (selectedDateTime.isBefore(currentDateTime)) {
-  //     Alert.alert("Validation Error", "The selected date and time cannot be in the past.");
-  //     return;
-  //   }
-
-  //   const formattedDate = moment(date).format('YYYY-MM-DD'); // Format the date to YYYY-MM-DD
-
-  //   const meetUp = {
-  //     restaurant: restaurant,
-  //     date: formattedDate,
-  //     details: details,
-  //     time: time,
-  //   };
-
-  //   console.log(meetUp);
-  //   await writeToDB(meetUp, collectionName);
-
-  //   // Save the meet-up (you can add your save logic here)
-  //   Alert.alert("Success", "Meet-up saved successfully!");
-  //   closeModal();
-  // };
+    loadMeetUps();
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -98,8 +61,11 @@ export default function MeetUpScreen({ navigation }) {
         ) : (
           upcomingMeetUps.map((meetUp, index) => (
             <View key={index} style={styles.meetUpItem}>
-              <Text>{meetUp.title}</Text>
-              <Text>{meetUp.date}</Text>
+              <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+              <View style={styles.meetUpDateTimeContainer}>
+              <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+              <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+              </View>
             </View>
           ))
         )}
@@ -114,59 +80,15 @@ export default function MeetUpScreen({ navigation }) {
         ) : (
           pastMeetUps.map((meetUp, index) => (
             <View key={index} style={styles.meetUpItem}>
-              <Text>{meetUp.title}</Text>
-              <Text>{meetUp.date}</Text>
+              <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+              <View style={styles.meetUpDateTimeContainer}>
+              <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+              <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+              </View>
             </View>
           ))
         )}
       </ScrollView>
-
-      {/* <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent, { backgroundColor: theme.backgroundColor }]}>
-            <Text style={styles.modalTitle}>Create a Meet-Up</Text>
-            <Text style={styles.inputText}>Restaurant*</Text>
-            <TextInput 
-              style={styles.inputContainer} 
-              value={restaurant}
-              onChangeText={setRestaurant}
-            />
-
-            <TimeInput time={time} setTime={setTime} />
-
-            <DateInput date={date} setDate={setDate} />
-
-            <Text style={styles.inputText}>Details: </Text>
-            <TextInput 
-              placeholder='Who is coming? What are we celebrating?'
-              style={[styles.inputContainer, { height: 100 }]} 
-              multiline={true}
-              value={details}
-              onChangeText={setDetails}
-            />
-
-            <View style={styles.buttonContainer}>
-              <PressableButton 
-                title="Cancel" 
-                onPress={confirmCancel} 
-                textStyle={[styles.buttonTextStyle, { color: 'red' }]}
-                buttonStyle={{ marginTop: 0 }}
-              />
-              <PressableButton 
-                title="Save" 
-                onPress={handleSave}
-                textStyle={styles.buttonTextStyle}
-                buttonStyle={{ marginTop: 0 }}
-              />
-            </View>
-          </View>
-        </View>
-      </Modal> */}
     </View>
   );
 }
@@ -241,5 +163,17 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 5,
     marginBottom: 20,
+  },
+  meetUpTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  meetUpDateTimeContainer: {
+    flexDirection: 'row',
+  },
+  meetUpDateTimeIcon: {
+    marginRight: 5,
+    color: 'black',
+    fontSize: 16, 
   },
 });
