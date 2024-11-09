@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, Alert, TextInput } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
@@ -15,6 +15,21 @@ export default function EditMeetUpScreen({ navigation, route }) {
   const [details, setDetails] = useState(route.params?.details || '');
   const collectionName = 'meetups';
 
+
+  useEffect(() => {
+    if (route.params?.meetUp) {
+      const { restaurant, date, time, details } = route.params.meetUp;
+      setRestaurant(restaurant);
+      setDate(moment(date, 'YYYY-MM-DD').toDate());
+      setTime(time);
+      setDetails(details);
+      navigation.setOptions({ title: 'Edit Meet-Up' }); // Set title to "Edit Meet-Up"
+    } else {
+      navigation.setOptions({ title: 'Create a Meet-Up' }); // Set title to "Create a Meet-Up"
+    }
+  }, [route.params?.meetUp]);
+
+  
   const confirmCancel = () => {
     Alert.alert(
       "Confirm Cancel",
