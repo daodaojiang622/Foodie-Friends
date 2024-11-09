@@ -61,10 +61,23 @@ export default function MeetUpScreen({ navigation }) {
         ) : (
           upcomingMeetUps.map((meetUp, index) => (
             <View key={index} style={styles.meetUpItem}>
-              <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
-              <View style={styles.meetUpDateTimeContainer}>
-              <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
-              <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+              <View style={styles.meetUpContainer}>
+                <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+
+                <View style={styles.meetUpInfoContainer}>
+                  <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+                  <View style={styles.meetUpDateTimeContainer}>
+                    <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+                    <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.deleteButtonContainer}>
+                  <Ionicons 
+                    name="trash" 
+                    style={styles.deleteButton}
+                    onPress={() => deleteFromDB(meetUp.id, collectionName)} />
+                </View>
               </View>
             </View>
           ))
@@ -175,5 +188,17 @@ const styles = StyleSheet.create({
     marginRight: 5,
     color: 'black',
     fontSize: 16, 
+  },
+  meetUpContainer: {
+    flexDirection: 'row',
+  },
+  deleteButton: {
+    fontSize: 20,
+    color: 'black',
+  }, 
+  deleteButtonContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    alignSelf: 'center',
   },
 });
