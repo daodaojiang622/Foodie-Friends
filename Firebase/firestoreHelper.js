@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc } from "firebase/firestore"; 
+import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore"; 
 import { database } from "./firebaseSetup";
 
 export async function writeToDB(data, collectionName) {
@@ -39,4 +39,12 @@ export const deleteFromDB = async (id, collectionName) => {
   } catch (e) {
     console.error('Error deleting document: ', e);
   }
+};
+
+export const subscribeToMeetUps = (collectionName, callback) => {
+  const unsubscribe = onSnapshot(collection(database, collectionName), (snapshot) => {
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(data);
+  });
+  return unsubscribe;
 };

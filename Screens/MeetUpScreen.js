@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Alert, Pressable } from 'react-nati
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { writeToDB, updateDB, deleteFromDB, fetchDataFromDB } from '../Firebase/firestoreHelper'; 
+import { writeToDB, updateDB, deleteFromDB, subscribeToMeetUps } from '../Firebase/firestoreHelper'; 
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -41,30 +41,25 @@ export default function MeetUpScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const loadMeetUps = async () => {
-      try {
-        const meetUps = await fetchDataFromDB('meetups');
-        const currentDateTime = moment();
-        const upcoming = [];
-        const past = [];
+    const unsubscribe = subscribeToMeetUps(collectionName, (meetUps) => {
+      const currentDateTime = moment();
+      const upcoming = [];
+      const past = [];
 
-        meetUps.forEach(meetUp => {
-          const meetUpDateTime = moment(`${meetUp.date} ${meetUp.time}`, 'YYYY-MM-DD hh:mm A');
-          if (meetUpDateTime.isAfter(currentDateTime)) {
-            upcoming.push(meetUp);
-          } else {
-            past.push(meetUp);
-          }
-        });
+      meetUps.forEach(meetUp => {
+        const meetUpDateTime = moment(`${meetUp.date} ${meetUp.time}`, 'YYYY-MM-DD hh:mm A');
+        if (meetUpDateTime.isAfter(currentDateTime)) {
+          upcoming.push(meetUp);
+        } else {
+          past.push(meetUp);
+        }
+      });
 
-        setUpcomingMeetUps(upcoming);
-        setPastMeetUps(past);
-      } catch (error) {
-        console.error('Error loading meet-ups:', error);
-      }
-    };
+      setUpcomingMeetUps(upcoming);
+      setPastMeetUps(past);
+    });
 
-    loadMeetUps();
+    return () => unsubscribe();
   }, []);
 
   const handleEditMeetUp = (meetUp, isPast) => {
