@@ -25,7 +25,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
       setTime(time);
       setDetails(details);
       navigation.setOptions({ 
-        title: 'Edit Meet-Up',
+        title: route.params.isPast ? 'View Past Meet-Up' : 'Edit Meet-Up',
         headerRight: () => (
           <Ionicons 
             name="trash" 
@@ -127,21 +127,23 @@ export default function EditMeetUpScreen({ navigation, route }) {
         value={details}
         onChangeText={setDetails}
       />
-
-      <View style={styles.buttonContainer}>
-        <PressableButton 
-          title="Cancel" 
-          onPress={confirmCancel} 
-          textStyle={[styles.buttonTextStyle, { color: 'red' }]}
-          buttonStyle={{ marginTop: 0 }}
-        />
-        <PressableButton 
-          title="Save" 
-          onPress={handleSave}
-          textStyle={styles.buttonTextStyle}
-          buttonStyle={{ marginTop: 0 }}
-        />
-      </View>
+    
+      {!route.params?.isPast && (
+        <View style={styles.buttonContainer}>
+            <PressableButton 
+            title="Cancel" 
+            onPress={confirmCancel} 
+            textStyle={[styles.buttonTextStyle, { color: 'red' }]}
+            buttonStyle={{ marginTop: 0 }}
+            />
+            <PressableButton 
+            title="Save" 
+            onPress={handleSave}
+            textStyle={styles.buttonTextStyle}
+            buttonStyle={{ marginTop: 0 }}
+            />
+        </View>
+        )}
     </View>
   );
 }

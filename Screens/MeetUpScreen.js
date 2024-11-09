@@ -67,8 +67,8 @@ export default function MeetUpScreen({ navigation }) {
     loadMeetUps();
   }, []);
 
-  const handleEditMeetUp = (meetUp) => {
-    navigation.navigate('EditMeetUp', { meetUp, confirmDelete: handleDeleteMeetUp });
+  const handleEditMeetUp = (meetUp, isPast) => {
+    navigation.navigate('EditMeetUp', { meetUp, confirmDelete: handleDeleteMeetUp, isPast });
   };
 
   return (
@@ -86,7 +86,7 @@ export default function MeetUpScreen({ navigation }) {
           </View>
         ) : (
           upcomingMeetUps.map((meetUp, index) => (
-            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp)}>
+            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp, false)}>
               <View key={index} style={styles.meetUpItem}>
 
                 <View style={styles.meetUpContainer}>
@@ -123,7 +123,7 @@ export default function MeetUpScreen({ navigation }) {
           </View>
         ) : (
           pastMeetUps.map((meetUp, index) => (
-            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp)}>
+            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp, true)}>
               <View key={index} style={styles.meetUpItem}>
 
                 <View style={styles.meetUpContainer}>
