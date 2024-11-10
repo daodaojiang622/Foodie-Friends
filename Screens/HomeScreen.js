@@ -1,15 +1,26 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable } from 'react-native';
-import React, { useState, useContext } from 'react';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '../Components/ScreenWrapper';
+import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 
 export default function HomeScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      const data = await fetchDataFromDB('posts'); // Fetch posts from Firebase
+      setPosts(data);
+    };
+    loadPosts();
+  }, []);
 
   const handleSearch = async () => {
     const apiKey = 'YOUR_GOOGLE_API_KEY';
@@ -31,16 +42,37 @@ export default function HomeScreen() {
     }
   };
 
+  const handleEditPost = (post) => {
+    navigation.navigate('EditPost', {
+      postId: post.id,
+      initialTitle: post.title,
+      initialDescription: post.description,
+      initialImageUri: post.imageUri
+    });
+  };
+
+  const renderPost = ({ item }) => (
+    <Pressable onPress={() => navigation.navigate('PostDetails', { postId: item.id })} style={styles.imageWrapper}>
+      <Image source={{ uri: item.imageUri }} style={styles.image} />
+      <Text style={styles.title}>{item.title}</Text>
+      <View style={styles.infoContainer}>
+        <View style={styles.userInfo}>
+          <Image source={{ uri: item.userProfileImage }} style={styles.profileImage} />
+          <Text style={styles.username}>{item.username}</Text>
+        </View>
+        <Text style={styles.likes}>{item.likes} Likes</Text>
+      </View>
+    </Pressable>
+  );
+
   return (
-    <View style={styles.container}>
+    <ScreenWrapper>
       <View style={styles.header}>
-        <Text style={[styles.headerText, {color: theme.textColor}]}>Checkout the lastest hotspots</Text>
-        <Pressable 
-          style={styles.addPostButton}
+        <Text style={[styles.headerText, { color: theme.textColor }]}>Checkout the latest hotspots</Text>
+        <PressableButton
+          title={<Ionicons name="create-sharp" style={styles.addPostIcon} />}
           onPress={() => navigation.navigate('EditPost')}
-        >
-          <Ionicons name="create-sharp" style={[styles.addPostIcon, {color: theme.textColor}]}/>
-        </Pressable>
+        />
       </View>
 
       <TextInput
@@ -50,67 +82,15 @@ export default function HomeScreen() {
         onChangeText={setSearchQuery}
         onSubmitEditing={handleSearch}
       />
-      <View style={styles.imageContainer}>
-        <View style={styles.imageRow}>
-          <Pressable onPress={() => navigation.navigate('EditPost')}>
-            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
-              <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-              <Text style={styles.title}>Title</Text>
-              <View style={styles.infoContainer}>
-                <View style={styles.userInfo}>
-                  <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profileImage} />
-                  <Text style={styles.username}>Username</Text>
-                </View>
-                <Text style={styles.likes}>100 Likes</Text>
-              </View>
-            </View>
-          </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('EditPost')}>
-          <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
-              <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-              <Text style={styles.title}>Title</Text>
-              <View style={styles.infoContainer}>
-                <View style={styles.userInfo}>
-                  <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profileImage} />
-                  <Text style={styles.username}>Username</Text>
-                </View>
-                <Text style={styles.likes}>100 Likes</Text>
-              </View>
-            </View>
-          </Pressable>
-
-        </View>
-        <View style={styles.imageRow}>
-          <Pressable onPress={() => navigation.navigate('EditPost')}>
-            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
-              <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-              <Text style={styles.title}>Title</Text>
-              <View style={styles.infoContainer}>
-                <View style={styles.userInfo}>
-                  <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profileImage} />
-                  <Text style={styles.username}>Username</Text>
-                </View>
-                <Text style={styles.likes}>100 Likes</Text>
-              </View>
-            </View>
-          </Pressable>
-          <Pressable onPress={() => navigation.navigate('EditPost')}>
-            <View style={[styles.imageWrapper, { backgroundColor: theme.postColor}]}>
-              <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-              <Text style={styles.title}>Title</Text>
-              <View style={styles.infoContainer}>
-                <View style={styles.userInfo}>
-                  <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.profileImage} />
-                  <Text style={styles.username}>Username</Text>
-                </View>
-                <Text style={styles.likes}>100 Likes</Text>
-              </View>
-            </View>
-          </Pressable>
-        </View>
-      </View>
-    </View>
+      <FlatList
+        data={posts}
+        renderItem={renderPost}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.imageContainer}
+      />
+    </ScreenWrapper>
   );
 }
 
@@ -178,9 +158,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     marginTop: 80,
-  },
-  addPostButton: {
-    padding: 10,
   },
   addPostIcon: {
     fontSize: 24,

@@ -1,21 +1,25 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, TextInput, Image, Button, StyleSheet, Text } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, TextInput, Image, Button, StyleSheet, Text, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { updateDB } from '../Firebase/firestoreHelper';
+import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const { postId, initialTitle, initialDescription, initialImageUri } = route.params;
-  
+
+  const postId = route.params?.postId || null; // null for a new post
+  const initialTitle = route.params?.initialTitle || '';
+  const initialDescription = route.params?.initialDescription || '';
+  const initialImageUri = route.params?.initialImageUri || '';
+
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [imageUri, setImageUri] = useState(initialImageUri);
 
-  // Function to pick a new image from the library
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -23,44 +27,55 @@ export default function EditPostScreen() {
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.cancelled) {
-      setImageUri(result.uri);
+    if (!result.canceled) {
+      // Check for different structures of the response
+      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
+      if (selectedImageUri) {
+        setImageUri(selectedImageUri);
+      }
     }
   };
 
-  // Save changes to the database
   const handleSave = async () => {
-    const updatedData = {
-      title,
-      description,
-      imageUri,
-    };
-    await updateDB(postId, updatedData, 'posts');
-    navigation.goBack(); // Navigate back to the previous screen after saving
+    const newData = { title, description, imageUri };
+
+    if (postId) {
+      // Edit existing post
+      await updateDB(postId, newData, 'posts');
+    } else {
+      // Create a new post
+      await writeToDB(newData, 'posts');
+    }
+    navigation.goBack();
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style={[styles.label, { color: theme.textColor }]}>Edit Title</Text>
+      <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
         value={title}
         onChangeText={setTitle}
       />
       
-      <Text style={[styles.label, { color: theme.textColor }]}>Edit Description</Text>
+      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
-        style={[styles.input, { borderColor: theme.textColor }]}
+        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
         value={description}
         onChangeText={setDescription}
         multiline
       />
       
-      <Text style={[styles.label, { color: theme.textColor }]}>Change Image</Text>
-      {imageUri ? <Image source={{ uri: imageUri }} style={styles.image} /> : null}
-      <Button title="Pick an image from gallery" onPress={pickImage} />
-
-      <Button title="Save Changes" onPress={handleSave} color={theme.buttonColor} />
+      <Text style={[styles.label, { color: theme.textColor }]}>Image</Text>
+      {imageUri ? (
+        <Image source={{ uri: imageUri }} style={styles.image} />
+      ) : (
+        <Pressable onPress={pickImage} style={styles.addImageContainer}>
+          <Ionicons name="add" size={40} color="#aaa" />
+          <Text style={styles.addImageText}>Add Image</Text>
+        </Pressable>
+      )}
+      <Button title="Save" onPress={handleSave} color={theme.buttonColor} />
     </View>
   );
 }
@@ -81,10 +96,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 10,
   },
+  descriptionInput: {
+    height: 100, // Increased height for the Review Details input
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    textAlignVertical: 'top', // Keeps text at the top for multiline inputs
+  },
   image: {
     width: '100%',
     height: 200,
     borderRadius: 8,
     marginTop: 15,
+  },
+  addImageContainer: {
+    width: '100%',
+    height: 200,
+    borderWidth: 1,
+    borderColor: '#aaa',
+    borderRadius: 8,
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  addImageText: {
+    color: '#aaa',
+    marginTop: 5,
+    fontSize: 16,
   },
 });
