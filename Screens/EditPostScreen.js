@@ -75,6 +75,7 @@ export default function EditPostScreen() {
           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       )}
+       <View style={{ height: 60 }} />  
       <Button title="Save" onPress={handleSave} color={theme.buttonColor} />
     </View>
   );
