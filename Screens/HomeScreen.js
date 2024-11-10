@@ -1,26 +1,36 @@
 import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 
 export default function HomeScreen() {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState([]);
 
+  // Function to load posts from Firebase
+  const loadPosts = async () => {
+    const data = await fetchDataFromDB('posts');
+    setPosts(data);
+  };
+
+  // Load posts once on component mount
   useEffect(() => {
-    const loadPosts = async () => {
-      const data = await fetchDataFromDB('posts'); // Fetch posts from Firebase
-      setPosts(data);
-    };
     loadPosts();
   }, []);
+
+  // Reload posts each time HomeScreen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPosts();
+    }, [])
+  );
 
   const handleSearch = async () => {
     const apiKey = 'YOUR_GOOGLE_API_KEY';
@@ -36,7 +46,8 @@ export default function HomeScreen() {
         name: place.name,
       }));
 
-      setMarkers(fetchedMarkers);
+      // Optional: If you plan to display these markers, set them in a state variable
+      console.log(fetchedMarkers);
     } catch (error) {
       console.error('Error fetching data from Google Places API', error);
     }
@@ -47,7 +58,7 @@ export default function HomeScreen() {
       postId: post.id,
       initialTitle: post.title,
       initialDescription: post.description,
-      initialImageUri: post.imageUri
+      initialImageUri: post.imageUri,
     });
   };
 
@@ -69,10 +80,9 @@ export default function HomeScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <Text style={[styles.headerText, { color: theme.textColor }]}>Checkout the latest hotspots</Text>
-        <PressableButton
-          title={<Ionicons name="create-sharp" style={styles.addPostIcon} />}
-          onPress={() => navigation.navigate('EditPost')}
-        />
+        <Pressable onPress={() => navigation.navigate('EditPost')} style={styles.addPostButton}>
+          <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
+        </Pressable>
       </View>
 
       <TextInput
@@ -109,9 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     alignItems: 'center',
-  },
-  imageRow: {
-    flexDirection: 'row',
   },
   imageWrapper: {
     margin: 5,
