@@ -15,6 +15,9 @@ const Colors = {
     dropDownColor: '#fafafa',
 
     inputBorder: 'black',
+
+    greenPostColor: '#c2d1c6',
+    postColor: '#d5d6db',
 };
 
 const Padding = {
