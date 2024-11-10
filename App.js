@@ -19,6 +19,8 @@ import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
 import SupportScreen from './Screens/SupportScreen';
 import EditPostScreen from './Screens/EditPostScreen';
+import FoodGalleryScreen from './Screens/FoodGalleryScreen';   // New screen
+import ReviewDetailScreen from './Screens/ReviewDetailScreen'; // New screen
 
 
 const Stack = createNativeStackNavigator();
@@ -125,6 +127,22 @@ function AppContent() {
             component={ProfileScreen} 
             options={{ 
               title: 'My Profile', 
+              headerTintColor: Colors.tertiary,
+            }}
+          />
+          <Stack.Screen
+            name="FoodGallery"
+            component={FoodGalleryScreen}
+            options={{
+              title: 'My Food Gallery',
+              headerTintColor: Colors.tertiary,
+            }}
+          />
+          <Stack.Screen
+            name="ReviewDetail"
+            component={ReviewDetailScreen}
+            options={{
+              title: 'Review Detail',
               headerTintColor: Colors.tertiary,
             }}
           />
