@@ -9,7 +9,7 @@ export default function ReviewDetailScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const { postId } = route.params;
+  const { postId, images = [] } = route.params; // Default to an empty array if images is not provided
 
   // State to hold review data
   const [reviewData, setReviewData] = useState({
@@ -55,7 +55,7 @@ export default function ReviewDetailScreen() {
   // Function to render stars based on the rating
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={30} color="gold" />
+      <Ionicons key={index} name="star" size={40} color="gold" />
     ));
   };
 
@@ -125,5 +125,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    fontSize: 50,
   },
 });

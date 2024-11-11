@@ -46,7 +46,6 @@ export default function HomeScreen() {
         name: place.name,
       }));
 
-      // Optional: If you plan to display these markers, set them in a state variable
       console.log(fetchedMarkers);
     } catch (error) {
       console.error('Error fetching data from Google Places API', error);
@@ -58,13 +57,14 @@ export default function HomeScreen() {
       postId: post.id,
       initialTitle: post.title,
       initialDescription: post.description,
-      initialImageUri: post.imageUri,
+      initialImages: post.images, // Pass the images array for editing
     });
   };
 
   const renderPost = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })} style={styles.imageWrapper}>
-      <Image source={{ uri: item.imageUri }} style={styles.image} />
+    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })} style={styles.imageWrapper}>
+      {/* Display first image as thumbnail */}
+      <Image source={{ uri: item.images[0] }} style={styles.image} /> 
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.infoContainer}>
         <View style={styles.userInfo}>
