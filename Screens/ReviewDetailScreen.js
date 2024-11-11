@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Image, Text, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,7 +16,7 @@ export default function ReviewDetailScreen() {
     title: route.params?.title || '',
     description: route.params?.description || '',
     imageUri: route.params?.imageUri || '',
-    rating: route.params?.rating || '',
+    rating: route.params?.rating || 0,
   });
 
   // Fetch data from Firebase if data was not passed as navigation parameters
@@ -52,17 +52,29 @@ export default function ReviewDetailScreen() {
     ]);
   };
 
+  // Function to render stars based on the rating
+  const renderStars = (rating) => {
+    return Array.from({ length: rating }, (_, index) => (
+      <Ionicons key={index} name="star" size={30} color="gold" />
+    ));
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Ionicons
+          name="trash"
+          size={24}
+          color="white"
+          onPress={handleDelete}
+          style={{ marginRight: 15 }}
+        />
+      ),
+    });
+  }, [navigation]);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <View style={styles.header}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.textColor} />
-        </Pressable>
-        <Pressable onPress={handleDelete}>
-          <Ionicons name="trash" size={24} color="red" />
-        </Pressable>
-      </View>
-      
       {reviewData.imageUri ? (
         <Image source={{ uri: reviewData.imageUri }} style={styles.image} />
       ) : (
@@ -72,7 +84,9 @@ export default function ReviewDetailScreen() {
       )}
       <Text style={[styles.title, { color: theme.textColor }]}>{reviewData.title}</Text>
       <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
-      <Text style={[styles.rating, { color: theme.textColor }]}>Rating: {reviewData.rating} ⭐</Text>
+      <View style={styles.ratingContainer}>
+        {renderStars(reviewData.rating)}
+      </View>
     </View>
   );
 }
@@ -82,23 +96,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
   image: {
     width: '100%',
-    height: 200,
+    height: 300,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   imagePlaceholder: {
     width: '100%',
-    height: 200,
+    height: 300,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -107,14 +115,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   description: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 20,
+    marginBottom: 20,
   },
-  rating: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
 });
