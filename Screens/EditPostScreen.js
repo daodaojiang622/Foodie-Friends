@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Button, StyleSheet, Text, Pressable } from 'react-native';
+import { View, TextInput, Image, Button, StyleSheet, Text, Pressable, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -11,15 +11,15 @@ export default function EditPostScreen() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const postId = route.params?.postId || null; // null for a new post
+  const postId = route.params?.postId || null;
   const initialTitle = route.params?.initialTitle || '';
   const initialDescription = route.params?.initialDescription || '';
-  const initialImageUri = route.params?.initialImageUri || '';
+  const initialImages = route.params?.images || [];
   const initialRating = route.params?.rating || 0;
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-  const [imageUri, setImageUri] = useState(initialImageUri);
+  const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
 
   const pickImage = async () => {
@@ -32,19 +32,17 @@ export default function EditPostScreen() {
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
-        setImageUri(selectedImageUri);
+        setImages([...images, selectedImageUri]);
       }
     }
   };
 
   const handleSave = async () => {
-    const newData = { title, description, imageUri, rating };
+    const newData = { title, description, images, rating };
 
     if (postId) {
-      // Edit existing post
       await updateDB(postId, newData, 'posts');
     } else {
-      // Create a new post
       await writeToDB(newData, 'posts');
     }
     navigation.goBack();
@@ -67,15 +65,16 @@ export default function EditPostScreen() {
         multiline
       />
       
-      <Text style={[styles.label, { color: theme.textColor }]}>Image</Text>
-      {imageUri ? (
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      ) : (
+      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+      <ScrollView horizontal style={styles.imageScroll}>
+        {images.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={styles.image} />
+        ))}
         <Pressable onPress={pickImage} style={styles.addImageContainer}>
           <Ionicons name="add" size={40} color="#aaa" />
           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
-      )}
+      </ScrollView>
       
       <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
       <View style={styles.ratingContainer}>
@@ -83,15 +82,16 @@ export default function EditPostScreen() {
           <Pressable key={star} onPress={() => setRating(star)}>
             <Ionicons
               name={star <= rating ? "star" : "star-outline"}
-              size={30}
+              size={28}
               color={star <= rating ? "#FFD700" : "#aaa"}
             />
           </Pressable>
         ))}
       </View>
       
-      <View style={{ height: 60 }} />  
-      <Button title="Save" onPress={handleSave} color={theme.buttonColor} />
+      <Pressable onPress={handleSave} style={[styles.saveButton, { backgroundColor: theme.buttonColor }]}>
+        <Text style={styles.saveButtonText}>Save</Text>
+      </Pressable>
     </View>
   );
 }
@@ -119,22 +119,25 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlignVertical: 'top', 
   },
+  imageScroll: {
+    flexDirection: 'row',
+    marginVertical: 10,
+  },
   image: {
-    width: '100%',
-    height: 200,
+    width: 100,
+    height: 100,
     borderRadius: 8,
-    marginTop: 15,
+    marginRight: 10,
   },
   addImageContainer: {
-    width: '100%',
-    height: 200,
+    width: 100,
+    height: 100,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
   },
   addImageText: {
     color: '#aaa',
@@ -143,7 +146,18 @@ const styles = StyleSheet.create({
   },
   ratingContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginVertical: 15,
+    alignItems: 'center',
+    marginBottom: 100, // reduced spacing between rating and "Save" button
+  },
+  saveButton: {
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderRadius: 8,
+    marginVertical: 20, // reduces bottom padding from 60 to a smaller value
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
