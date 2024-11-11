@@ -15,10 +15,12 @@ export default function EditPostScreen() {
   const initialTitle = route.params?.initialTitle || '';
   const initialDescription = route.params?.initialDescription || '';
   const initialImageUri = route.params?.initialImageUri || '';
+  const initialRating = route.params?.rating || 0;
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [imageUri, setImageUri] = useState(initialImageUri);
+  const [rating, setRating] = useState(initialRating);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -28,7 +30,6 @@ export default function EditPostScreen() {
       quality: 1,
     });
     if (!result.canceled) {
-      // Check for different structures of the response
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
         setImageUri(selectedImageUri);
@@ -37,7 +38,7 @@ export default function EditPostScreen() {
   };
 
   const handleSave = async () => {
-    const newData = { title, description, imageUri };
+    const newData = { title, description, imageUri, rating };
 
     if (postId) {
       // Edit existing post
@@ -75,7 +76,21 @@ export default function EditPostScreen() {
           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       )}
-       <View style={{ height: 60 }} />  
+      
+      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
+      <View style={styles.ratingContainer}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Pressable key={star} onPress={() => setRating(star)}>
+            <Ionicons
+              name={star <= rating ? "star" : "star-outline"}
+              size={30}
+              color={star <= rating ? "#FFD700" : "#aaa"}
+            />
+          </Pressable>
+        ))}
+      </View>
+      
+      <View style={{ height: 60 }} />  
       <Button title="Save" onPress={handleSave} color={theme.buttonColor} />
     </View>
   );
@@ -98,11 +113,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   descriptionInput: {
-    height: 100, // Increased height for the Review Details input
+    height: 100, 
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
-    textAlignVertical: 'top', // Keeps text at the top for multiline inputs
+    textAlignVertical: 'top', 
   },
   image: {
     width: '100%',
@@ -125,5 +140,10 @@ const styles = StyleSheet.create({
     color: '#aaa',
     marginTop: 5,
     fontSize: 16,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginVertical: 15,
   },
 });
