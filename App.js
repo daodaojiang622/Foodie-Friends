@@ -139,7 +139,7 @@ function AppContent() {
             }}
           />
           <Stack.Screen
-            name="ReviewDetail"
+            name="ReviewDetailScreen"
             component={ReviewDetailScreen}
             options={{
               title: 'Review Detail',

@@ -63,7 +63,7 @@ export default function HomeScreen() {
   };
 
   const renderPost = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('PostDetails', { postId: item.id })} style={styles.imageWrapper}>
+    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })} style={styles.imageWrapper}>
       <Image source={{ uri: item.imageUri }} style={styles.image} />
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.infoContainer}>
