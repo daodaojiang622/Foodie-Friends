@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Button, StyleSheet, Text, Pressable, ScrollView } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
+import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function EditPostScreen() {
@@ -48,6 +49,10 @@ export default function EditPostScreen() {
     navigation.goBack();
   };
 
+  const handleCancel = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
@@ -77,7 +82,7 @@ export default function EditPostScreen() {
       </ScrollView>
       
       <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-      <View style={styles.ratingContainer}>
+      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
         {[1, 2, 3, 4, 5].map((star) => (
           <Pressable key={star} onPress={() => setRating(star)}>
             <Ionicons
@@ -88,10 +93,19 @@ export default function EditPostScreen() {
           </Pressable>
         ))}
       </View>
-      
-      <Pressable onPress={handleSave} style={[styles.saveButton, { backgroundColor: theme.buttonColor }]}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </Pressable>
+
+      <View style={styles.buttonContainer}>
+        <PressableButton
+          title="Cancel"
+          onPress={handleCancel}
+          buttonStyle={styles.cancelButton}
+        />
+        <PressableButton
+          title="Save"
+          onPress={handleSave}
+          buttonStyle={styles.saveButton}
+        />
+      </View>
     </View>
   );
 }
@@ -147,17 +161,24 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 100, // reduced spacing between rating and "Save" button
+    marginBottom: 20,
   },
-  saveButton: {
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  cancelButton: {
+    flex: 1,
     alignItems: 'center',
     paddingVertical: 15,
     borderRadius: 8,
-    marginVertical: 20, // reduces bottom padding from 60 to a smaller value
+    marginRight: 10,
   },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+  saveButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderRadius: 8,
   },
 });
