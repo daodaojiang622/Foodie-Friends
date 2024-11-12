@@ -4,6 +4,7 @@ import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opa
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
