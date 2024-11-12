@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList } from 'react-native';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth instance
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -57,13 +58,21 @@ export default function HomeScreen() {
       postId: post.id,
       initialTitle: post.title,
       initialDescription: post.description,
-      initialImages: post.images, // Pass the images array for editing
+      initialImages: post.images,
     });
+  };
+
+  const handleAddPost = () => {
+    if (auth.currentUser) {
+      navigation.navigate('EditPost');
+    } else {
+      Alert.alert('Authentication Required', 'Please log in to add a new post');
+      navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen if not logged in
+    }
   };
 
   const renderPost = ({ item }) => (
     <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })} style={styles.imageWrapper}>
-      {/* Display first image as thumbnail */}
       <Image source={{ uri: item.images[0] }} style={styles.image} /> 
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.infoContainer}>
@@ -80,7 +89,7 @@ export default function HomeScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <Text style={[styles.headerText, { color: theme.textColor }]}>Checkout the latest hotspots</Text>
-        <Pressable onPress={() => navigation.navigate('EditPost')} style={styles.addPostButton}>
+        <Pressable onPress={handleAddPost} style={styles.addPostButton}>
           <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
         </Pressable>
       </View>
