@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList } from 'react-native';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth instance
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -46,7 +47,6 @@ export default function HomeScreen() {
         name: place.name,
       }));
 
-      // Optional: If you plan to display these markers, set them in a state variable
       console.log(fetchedMarkers);
     } catch (error) {
       console.error('Error fetching data from Google Places API', error);
@@ -58,13 +58,22 @@ export default function HomeScreen() {
       postId: post.id,
       initialTitle: post.title,
       initialDescription: post.description,
-      initialImageUri: post.imageUri,
+      initialImages: post.images,
     });
   };
 
+  const handleAddPost = () => {
+    if (auth.currentUser) {
+      navigation.navigate('EditPost');
+    } else {
+      Alert.alert('Authentication Required', 'Please log in to add a new post');
+      navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen if not logged in
+    }
+  };
+
   const renderPost = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('PostDetails', { postId: item.id })} style={styles.imageWrapper}>
-      <Image source={{ uri: item.imageUri }} style={styles.image} />
+    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })} style={styles.imageWrapper}>
+      <Image source={{ uri: item.images[0] }} style={styles.image} /> 
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.infoContainer}>
         <View style={styles.userInfo}>
@@ -80,7 +89,7 @@ export default function HomeScreen() {
     <ScreenWrapper>
       <View style={styles.header}>
         <Text style={[styles.headerText, { color: theme.textColor }]}>Checkout the latest hotspots</Text>
-        <Pressable onPress={() => navigation.navigate('EditPost')} style={styles.addPostButton}>
+        <Pressable onPress={handleAddPost} style={styles.addPostButton}>
           <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
         </Pressable>
       </View>

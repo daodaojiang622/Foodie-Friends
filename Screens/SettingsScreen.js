@@ -4,20 +4,29 @@ import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opa
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigation = useNavigation();
 
+  const handleNavigation = (screen) => {
+    if (!auth.currentUser) {
+      navigation.navigate('SignUpScreen');
+    } else {
+      navigation.navigate(screen);
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <PressableButton
         title="My Profile"
-        onPress={() => navigation.navigate('Profile')}
+        onPress={() =>  handleNavigation('Profile')}
       />
       <PressableButton
         title="My Meet-ups"
-        onPress={() => navigation.navigate('MeetUp')}
+        onPress={() => handleNavigation('MeetUp')}
         buttonStyle={{marginTop: Margin.medium}}
       />
       <PressableButton

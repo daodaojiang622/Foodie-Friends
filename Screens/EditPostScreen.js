@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Button, StyleSheet, Text, Pressable } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
+import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function EditPostScreen() {
@@ -11,14 +12,16 @@ export default function EditPostScreen() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const postId = route.params?.postId || null; // null for a new post
+  const postId = route.params?.postId || null;
   const initialTitle = route.params?.initialTitle || '';
   const initialDescription = route.params?.initialDescription || '';
-  const initialImageUri = route.params?.initialImageUri || '';
+  const initialImages = route.params?.images || [];
+  const initialRating = route.params?.rating || 0;
 
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-  const [imageUri, setImageUri] = useState(initialImageUri);
+  const [images, setImages] = useState(initialImages);
+  const [rating, setRating] = useState(initialRating);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -28,24 +31,25 @@ export default function EditPostScreen() {
       quality: 1,
     });
     if (!result.canceled) {
-      // Check for different structures of the response
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
-        setImageUri(selectedImageUri);
+        setImages([...images, selectedImageUri]);
       }
     }
   };
 
   const handleSave = async () => {
-    const newData = { title, description, imageUri };
+    const newData = { title, description, images, rating };
 
     if (postId) {
-      // Edit existing post
       await updateDB(postId, newData, 'posts');
     } else {
-      // Create a new post
       await writeToDB(newData, 'posts');
     }
+    navigation.goBack();
+  };
+
+  const handleCancel = () => {
     navigation.goBack();
   };
 
@@ -66,17 +70,42 @@ export default function EditPostScreen() {
         multiline
       />
       
-      <Text style={[styles.label, { color: theme.textColor }]}>Image</Text>
-      {imageUri ? (
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      ) : (
+      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+      <ScrollView horizontal style={styles.imageScroll}>
+        {images.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={styles.image} />
+        ))}
         <Pressable onPress={pickImage} style={styles.addImageContainer}>
           <Ionicons name="add" size={40} color="#aaa" />
           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
-      )}
-       <View style={{ height: 60 }} />  
-      <Button title="Save" onPress={handleSave} color={theme.buttonColor} />
+      </ScrollView>
+      
+      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
+      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Pressable key={star} onPress={() => setRating(star)}>
+            <Ionicons
+              name={star <= rating ? "star" : "star-outline"}
+              size={28}
+              color={star <= rating ? "#FFD700" : "#aaa"}
+            />
+          </Pressable>
+        ))}
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <PressableButton
+          title="Cancel"
+          onPress={handleCancel}
+          buttonStyle={styles.cancelButton}
+        />
+        <PressableButton
+          title="Save"
+          onPress={handleSave}
+          buttonStyle={styles.saveButton}
+        />
+      </View>
     </View>
   );
 }
@@ -98,32 +127,58 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   descriptionInput: {
-    height: 100, // Increased height for the Review Details input
+    height: 100, 
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
-    textAlignVertical: 'top', // Keeps text at the top for multiline inputs
+    textAlignVertical: 'top', 
+  },
+  imageScroll: {
+    flexDirection: 'row',
+    marginVertical: 10,
   },
   image: {
-    width: '100%',
-    height: 200,
+    width: 100,
+    height: 100,
     borderRadius: 8,
-    marginTop: 15,
+    marginRight: 10,
   },
   addImageContainer: {
-    width: '100%',
-    height: 200,
+    width: 100,
+    height: 100,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 15,
   },
   addImageText: {
     color: '#aaa',
     marginTop: 5,
     fontSize: 16,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  cancelButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  saveButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderRadius: 8,
   },
 });
