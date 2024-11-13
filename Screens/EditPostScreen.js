@@ -6,6 +6,7 @@ import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -50,7 +51,8 @@ export default function EditPostScreen() {
       return;
     }
   
-    const newData = { title, description, images, rating };
+    const userId = auth.currentUser?.uid; // Get the current user ID
+    const newData = { title, description, images, rating, userId };
     
     try {
       if (postId) {

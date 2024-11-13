@@ -6,6 +6,7 @@ import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB, writeToDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);
@@ -29,8 +30,8 @@ export default function ProfileScreen() {
   }, []);
 
   const loadUserPosts = async (user) => {
-    const posts = await fetchDataFromDB('posts', { username: user }); 
-    setUserPosts(userPosts);
+    const posts = await fetchDataFromDB('posts', { userId: auth.currentUser.uid }); 
+    setUserPosts(posts);
   };
 
   const handleSaveUsername = async () => {
