@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -39,6 +39,11 @@ export default function EditPostScreen() {
   };
 
   const handleSave = async () => {
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Error", "Title and description are required.");
+      return;
+    }
+
     const newData = { title, description, images, rating };
 
     if (postId) {
@@ -58,6 +63,8 @@ export default function EditPostScreen() {
       <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
+        placeholder="Enter a title"
+        placeholderTextColor="#888"
         value={title}
         onChangeText={setTitle}
       />
@@ -65,6 +72,8 @@ export default function EditPostScreen() {
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
         style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+        placeholder="Enter a detailed review"
+        placeholderTextColor="#888"
         value={description}
         onChangeText={setDescription}
         multiline
