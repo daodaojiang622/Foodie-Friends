@@ -49,20 +49,18 @@ Fields:
 - restaurantId: ID of the restaurant where the meetup is taking place (links to Restaurants collection).
 - Owner: ID of the user who created the meetup (links to Users collection).
 - dateTime: Date and time of the meetup.
-- notes: Additional notes or comments about the meetup (e.g., "Celebrate John's birthday" or "Try the new sushi menu").
+- details: Additional details or comments about the meetup (e.g., "Celebrate John's birthday" or "Try the new sushi menu").
 
 ## Implementation of CRUD operations
 1. Users Collection
 - Create: When a new user signs up, a user profile is created with information like email.
-- Read: Retrieve user information for profile display, preferences, friends list, and personalized restaurant recommendations.
-- Update: Users can update their profile information (e.g.update profile photo) and manage their friends list or favorite restaurants.
-- Delete: Account deletion allows the user to delete their profile and associated data from the app.
+- Read: Retrieve user information for profile display.
+- Update: Users can update their profile information (e.g.update profile photo).
 
 2. Restaurants Collection
-- Create: Restaurants are fetched from an external API (like Yelp) and stored in the database for fast access. Users might also add a new restaurant if it’s not found in the API results.
-- Read: Display restaurant details (name, location, rating, photos, reviews) on the app, especially in searches, map views, or personalized recommendations.
+- Create: Restaurants are fetched from an external API (like Yelp) and stored in the database for fast access.
+- Read: Display restaurant details (name, location, rating, photos, reviews) on the app, especially in searches and map views.
 - Update: Occasionally update restaurant information (like rating or hours) to ensure data accuracy. The updates might come from periodic API calls.
-- Delete: Unused or outdated restaurant entries may be removed from the database if they’re no longer relevant or accessible.
 
 3. Reviews Collection
 - Create: Users can write and add new reviews, including rating, text, and photos, for a specific restaurant.
@@ -71,10 +69,10 @@ Fields:
 - Delete: Users have the option to delete their own reviews if they no longer wish to share them.
 
 4. Meetups Collection
-- Create: Users can create a new meetup by selecting a restaurant, adding participants, and setting a date and time.
-- Read: Display meetup information for participants, including date, location, and any additional notes, on their profiles or the restaurant’s page.
-- Update: The organizer or participants can update the meetup details, such as changing the time, adding notes, or inviting more friends.
-- Delete: The organizer can cancel or delete the meetup if plans change, removing it from participants’ schedules.
+- Create: Users can create a new meetup by selecting a restaurant, adding notes, and setting a date and time.
+- Read: Display meetup information for participants, including date, location, and any additional notes, on their profile page.
+- Update: The organizer or participants can update the upcoming meetup details, such as changing the time and restaurant, and adding notes..
+- Delete: The organizer can cancel or delete the meetup if plans change.
 
 ## Current State of the App - Iteration 1
 At the end of iteration 1, we have React Native components created to represent the functionality we will be building, and the overall structure of the app is in place.We also have navigation and the basis of CRUD operations to Firestore established and working.
@@ -106,8 +104,8 @@ At the end of iteration 1, we have React Native components created to represent 
 
 ## Contributions
 Chenyu has worked on below aspects:
-- Front-end: Built Map, Home, Settings, Meet-up, and Support screens.
-- Back-end: Set up the Firestore database online and in the project. 
+- Front-end: Built Map, Home, Settings, Meet-up, Edit Meetup, and Support screens.
+- Back-end: Set up the Firestore database online and in the project. Set up Google API credentials. 
 - Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EZ3T6eKgmppMvFlWFtGMy2sBNzifhwFPBL1OlKohwX1SXw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=VvdXqt
 
 Yihe has worked on below aspects:
