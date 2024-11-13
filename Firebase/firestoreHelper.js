@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore"; 
+import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where } from "firebase/firestore"; 
 import { database } from "./firebaseSetup";
 
 export async function writeToDB(data, collectionName) {
@@ -12,16 +12,23 @@ export async function writeToDB(data, collectionName) {
   }
 }
 
-export async function fetchDataFromDB(collectionName) {
-    try {
-      const querySnapshot = await getDocs(collection(database, collectionName));
-      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      return data;
-    } catch (err) {
-      console.log("Fetch from DB", err);
-      return [];
+export async function fetchDataFromDB(collectionName, filter = {}) {
+  try {
+    let q = collection(database, collectionName);
+
+    // Apply filters if provided
+    if (filter.username) {
+      q = query(q, where("username", "==", filter.username));
     }
+
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return data;
+  } catch (err) {
+    console.error("Fetch from DB error", err);
+    return [];
   }
+}
 
   export const updateDB = async (id, updatedData, collectionName) => {
     try {
