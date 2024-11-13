@@ -55,7 +55,7 @@ Fields:
 1. Users Collection
 - Create: When a new user signs up, a user profile is created with information like email.
 - Read: Retrieve user information for profile display.
-- Update: Users can update their profile information (e.g.update profile photo).
+- Update: Users can update their profile information (e.g.update profile photo). 
 
 2. Restaurants Collection
 - Create: Restaurants are fetched from an external API (like Yelp) and stored in the database for fast access.
