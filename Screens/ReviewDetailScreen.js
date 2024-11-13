@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 const { width } = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ export default function ReviewDetailScreen() {
     description: route.params?.description || '',
     images: route.params?.images || [],
     rating: route.params?.rating || 0,
+    userId: '', // Add userId to store the post creator's ID
   });
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function ReviewDetailScreen() {
             description: post.description || '',
             images: post.images || [],
             rating: post.rating || 0,
+            userId: post.userId || '', // Store the userId of the post creator
           });
         }
       }
@@ -39,18 +42,24 @@ export default function ReviewDetailScreen() {
   }, [postId]);
 
   const handleDelete = async () => {
-    Alert.alert("Confirm Delete", "Are you sure you want to delete this review?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        onPress: async () => {
-          await deleteFromDB(postId, 'posts');
-          navigation.goBack();
+    const currentUserId = auth.currentUser?.uid;
+    if (reviewData.userId === currentUserId) {
+      Alert.alert("Confirm Delete", "Are you sure you want to delete this review?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: async () => {
+            await deleteFromDB(postId, 'posts');
+            navigation.goBack();
+          },
+          style: "destructive",
         },
-        style: "destructive",
-      },
-    ]);
+      ]);
+    } else {
+      Alert.alert("Permission Denied", "You can only delete your own posts.");
+    }
   };
+
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
