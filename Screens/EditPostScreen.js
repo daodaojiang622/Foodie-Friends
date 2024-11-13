@@ -25,12 +25,21 @@ export default function EditPostScreen() {
   const [rating, setRating] = useState(initialRating);
 
   const pickImage = async () => {
+    // Request permission to access the gallery
+    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (galleryStatus !== 'granted') {
+      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
+      return;
+    }
+  
+    // Launch image picker for gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+  
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
@@ -38,6 +47,30 @@ export default function EditPostScreen() {
       }
     }
   };
+  
+  const captureImage = async () => {
+    // Request permission to access the camera
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    if (cameraStatus !== 'granted') {
+      Alert.alert('Permission Required', 'Permission to access the camera is required.');
+      return;
+    }
+  
+    // Launch camera
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    if (!result.canceled) {
+      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
+      if (selectedImageUri) {
+        setImages([...images, selectedImageUri]);
+      }
+    }
+  };
+  
 
   const handleSave = async () => {
     
@@ -99,9 +132,19 @@ export default function EditPostScreen() {
         {images.map((uri, index) => (
           <Image key={index} source={{ uri }} style={styles.image} />
         ))}
-        <Pressable onPress={pickImage} style={styles.addImageContainer}>
-          <Ionicons name="add" size={40} color="#aaa" />
-          <Text style={styles.addImageText}>Add Image</Text>
+        <Pressable onPress={() => {
+          Alert.alert(
+             "Add Image",
+              "Choose an image source",
+            [
+             { text: "Camera", onPress: captureImage },
+             { text: "Gallery", onPress: pickImage },
+             { text: "Cancel", style: "cancel" }
+           ]
+          );
+        }} style={styles.addImageContainer}>
+           <Ionicons name="add" size={40} color="#aaa" />
+           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       </ScrollView>
       
