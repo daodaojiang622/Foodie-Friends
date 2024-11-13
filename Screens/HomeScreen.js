@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
-import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';

@@ -8,7 +8,7 @@ import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { isGreenTheme, setIsGreenTheme } = useContext(ThemeContext);
+  const { isGreenTheme } = useContext(ThemeContext);
   const navigation = useNavigation();
 
   const handleNavigation = (screen) => {
