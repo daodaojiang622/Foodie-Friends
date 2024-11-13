@@ -10,12 +10,13 @@ import ScreenWrapper from './Components/ScreenWrapper';
 import ProfileScreen from './Screens/ProfileScreen';
 import MeetUpScreen from './Screens/MeetUpScreen';
 import SettingsScreen from './Screens/SettingsScreen';
-import ChangeSettingsScreen from './Screens/ChangeSettingsScreen';
 import MapScreen from './Screens/MapScreen';
 import HomeScreen from './Screens/HomeScreen';
 import EditMeetUpScreen from './Screens/EditMeetUpScreen';
+
 import SignUpScreen from './Screens/SignUpScreen';  // Import SignUpScreen
 import LoginScreen from './Screens/LoginScreen';  // Import LoginScreen
+
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
@@ -168,14 +169,6 @@ function AppContent() {
           })}
         />
         <Stack.Screen
-          name="ChangeSettings"
-          component={ChangeSettingsScreen}
-          options={{
-            headerTintColor: Colors.tertiary,
-            title: "",
-          }}
-        />
-        <Stack.Screen
           name="EditMeetUp"
           component={EditMeetUpScreen}
           options={{
@@ -198,7 +191,7 @@ function AppContent() {
           }}
         />
         <Stack.Screen
-          name="SignUpScreen" // Add SignUpScreen to Stack Navigator
+          name="SignUpScreen"
           component={SignUpScreen}
           options={{
             title: 'Sign Up',

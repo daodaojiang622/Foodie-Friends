@@ -9,6 +9,7 @@ import { signOut } from 'firebase/auth'; // Import signOut function
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { isGreenTheme } = useContext(ThemeContext);
   const navigation = useNavigation();
 
   // Handle navigation based on user's login status
@@ -55,9 +56,11 @@ export default function SettingsScreen() {
         buttonStyle={{ marginTop: Margin.medium }}
       />
       <PressableButton
+
         title="Settings"
         onPress={() => navigation.navigate('ChangeSettings')}
         buttonStyle={{ marginTop: Margin.xxxxlarge }}
+
       />
       <PressableButton
         title="Support"

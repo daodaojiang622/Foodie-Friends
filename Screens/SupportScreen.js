@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 
 export default function SupportScreen() {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
