@@ -83,15 +83,25 @@ At the end of iteration 1, we have React Native components created to represent 
 ![Map Screen](https://github.com/user-attachments/assets/546e7fea-f25c-4a82-afad-bff31622399b)
 
 ### Home Screen
-![Simulator Screenshot - iPhone 15 Pro - 2024-11-12 at 21 05 44](https://github.com/user-attachments/assets/6b0f42b2-855b-4b0b-a53c-dab49a81a5ee)
+![Home Screen](https://github.com/user-attachments/assets/6b0f42b2-855b-4b0b-a53c-dab49a81a5ee)
 
 ### Settings Screen
-![Simulator Screenshot - iPhone 15 Pro - 2024-11-12 at 21 04 31](https://github.com/user-attachments/assets/25ee8e21-83c5-45de-94ac-3dfa40e504f3)
+![Settings Screen](https://github.com/user-attachments/assets/25ee8e21-83c5-45de-94ac-3dfa40e504f3)
+
+### Map Screen 
+<img src="https://github.com/user-attachments/assets/546e7fea-f25c-4a82-afad-bff31622399b" alt="Map Screen" width="400">
+
+### Home Screen
+<img src="https://github.com/user-attachments/assets/6b0f42b2-855b-4b0b-a53c-dab49a81a5ee" alt="Home Screen" width="400">
+
+### Settings Screen
+<img src="https://github.com/user-attachments/assets/25ee8e21-83c5-45de-94ac-3dfa40e504f3" alt="Settings Screen" width="400">
+
 
 ## Contributions
 Chenyu has worked on below aspects:
 - Front-end: Built Map, Home, Settings, Meet-up, and Support screens.
 - Back-end: Set up the Firestore database online and in the project. 
-
+- Code walk video:
 
 
