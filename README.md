@@ -93,6 +93,6 @@ At the end of iteration 1, we have React Native components created to represent 
 Chenyu has worked on below aspects:
 - Front-end: Built Map, Home, Settings, Meet-up, and Support screens.
 - Back-end: Set up the Firestore database online and in the project. 
-- Code walk video:
+- Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EZ3T6eKgmppMvFlWFtGMy2sBNzifhwFPBL1OlKohwX1SXw 
 
 
