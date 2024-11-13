@@ -1,7 +1,9 @@
+// SignUpScreen.js
+
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { auth } from '../Firebase/firebaseSetup';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -34,19 +36,6 @@ export default function SignUpScreen() {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log('User logged in:', user);
-      Alert.alert('Success', 'User logged in successfully');
-      navigation.navigate('Home');
-    } catch (error) {
-      console.error('Error logging in:', error);
-      Alert.alert('Login Error', error.message);
-    }
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={[styles.label, { color: theme.textColor }]}>Email Address</Text>
@@ -75,7 +64,7 @@ export default function SignUpScreen() {
         onChangeText={setConfirmPassword}
       />
       <Button title="Register" onPress={handleRegister} color={theme.buttonColor} />
-      <TouchableOpacity onPress={() => handleLogin()} style={styles.loginButton}>
+      <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.loginButton}>
         <Text style={styles.link}>Already Registered? Login</Text>
       </TouchableOpacity>
     </View>
