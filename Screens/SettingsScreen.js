@@ -8,6 +8,7 @@ import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const { isGreenTheme, setIsGreenTheme } = useContext(ThemeContext);
   const navigation = useNavigation();
 
   const handleNavigation = (screen) => {
@@ -30,9 +31,8 @@ export default function SettingsScreen() {
         buttonStyle={{marginTop: Margin.medium}}
       />
       <PressableButton
-        title="Settings"
-        onPress={() => navigation.navigate('ChangeSettings')}
-        buttonStyle={{marginTop: Margin.xxxxlarge}}
+          title={isGreenTheme ? "Change to Green Theme" : "Change to Purple Theme"}
+          onPress={toggleTheme}
       />
       <PressableButton
         title="Support"
