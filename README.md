@@ -80,15 +80,6 @@ Fields:
 At the end of iteration 1, we have React Native components created to represent the functionality we will be building, and the overall structure of the app is in place.We also have navigation and the basis of CRUD operations to Firestore established and working.
 
 ### Map Screen 
-![Map Screen](https://github.com/user-attachments/assets/546e7fea-f25c-4a82-afad-bff31622399b)
-
-### Home Screen
-![Home Screen](https://github.com/user-attachments/assets/6b0f42b2-855b-4b0b-a53c-dab49a81a5ee)
-
-### Settings Screen
-![Settings Screen](https://github.com/user-attachments/assets/25ee8e21-83c5-45de-94ac-3dfa40e504f3)
-
-### Map Screen 
 <img src="https://github.com/user-attachments/assets/546e7fea-f25c-4a82-afad-bff31622399b" alt="Map Screen" width="400">
 
 ### Home Screen
