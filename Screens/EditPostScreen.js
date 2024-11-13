@@ -39,20 +39,33 @@ export default function EditPostScreen() {
   };
 
   const handleSave = async () => {
+    
     if (!title.trim() || !description.trim()) {
       Alert.alert("Error", "Title and description are required.");
       return;
     }
-
-    const newData = { title, description, images, rating };
-
-    if (postId) {
-      await updateDB(postId, newData, 'posts');
-    } else {
-      await writeToDB(newData, 'posts');
+    
+    if (rating === 0) {
+      Alert.alert("Error", "Please select a rating.");
+      return;
     }
-    navigation.goBack();
+  
+    const newData = { title, description, images, rating };
+    
+    try {
+      if (postId) {
+        await updateDB(postId, newData, 'posts');
+      } else {
+        await writeToDB(newData, 'posts');    
+      }
+      console.log("Save successful, navigating back to Home");
+      navigation.goBack(); // Navigate back
+    } catch (error) {
+      console.error("Error saving post:", error);
+      Alert.alert("Save Error", "There was a problem saving your post.");
+    }
   };
+  
 
   const handleCancel = () => {
     navigation.goBack();
