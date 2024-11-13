@@ -13,7 +13,10 @@ import SettingsScreen from './Screens/SettingsScreen';
 import MapScreen from './Screens/MapScreen';
 import HomeScreen from './Screens/HomeScreen';
 import EditMeetUpScreen from './Screens/EditMeetUpScreen';
-import SignUpScreen from './Screens/SignUpScreen'; 
+
+import SignUpScreen from './Screens/SignUpScreen';  // Import SignUpScreen
+import LoginScreen from './Screens/LoginScreen';  // Import LoginScreen
+
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
 import { ThemeProvider, ThemeContext } from './Components/ThemeContext';
@@ -195,6 +198,7 @@ function AppContent() {
             headerTintColor: Colors.tertiary,
           }}
         />
+         <Stack.Screen name="LoginScreen" component={LoginScreen} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );

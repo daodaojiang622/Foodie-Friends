@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -24,12 +25,21 @@ export default function EditPostScreen() {
   const [rating, setRating] = useState(initialRating);
 
   const pickImage = async () => {
+    // Request permission to access the gallery
+    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (galleryStatus !== 'granted') {
+      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
+      return;
+    }
+  
+    // Launch image picker for gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+  
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
@@ -37,17 +47,60 @@ export default function EditPostScreen() {
       }
     }
   };
+  
+  const captureImage = async () => {
+    // Request permission to access the camera
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    if (cameraStatus !== 'granted') {
+      Alert.alert('Permission Required', 'Permission to access the camera is required.');
+      return;
+    }
+  
+    // Launch camera
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    if (!result.canceled) {
+      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
+      if (selectedImageUri) {
+        setImages([...images, selectedImageUri]);
+      }
+    }
+  };
+  
 
   const handleSave = async () => {
-    const newData = { title, description, images, rating };
-
-    if (postId) {
-      await updateDB(postId, newData, 'posts');
-    } else {
-      await writeToDB(newData, 'posts');
+    
+    if (!title.trim() || !description.trim()) {
+      Alert.alert("Error", "Title and description are required.");
+      return;
     }
-    navigation.goBack();
+    
+    if (rating === 0) {
+      Alert.alert("Error", "Please select a rating.");
+      return;
+    }
+  
+    const userId = auth.currentUser?.uid; // Get the current user ID
+    const newData = { title, description, images, rating, userId };
+    
+    try {
+      if (postId) {
+        await updateDB(postId, newData, 'posts');
+      } else {
+        await writeToDB(newData, 'posts');    
+      }
+      console.log("Save successful, navigating back to Home");
+      navigation.goBack(); // Navigate back
+    } catch (error) {
+      console.error("Error saving post:", error);
+      Alert.alert("Save Error", "There was a problem saving your post.");
+    }
   };
+  
 
   const handleCancel = () => {
     navigation.goBack();
@@ -58,6 +111,8 @@ export default function EditPostScreen() {
       <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
+        placeholder="Enter a title"
+        placeholderTextColor="#888"
         value={title}
         onChangeText={setTitle}
       />
@@ -65,6 +120,8 @@ export default function EditPostScreen() {
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
         style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+        placeholder="Enter a detailed review"
+        placeholderTextColor="#888"
         value={description}
         onChangeText={setDescription}
         multiline
@@ -75,9 +132,19 @@ export default function EditPostScreen() {
         {images.map((uri, index) => (
           <Image key={index} source={{ uri }} style={styles.image} />
         ))}
-        <Pressable onPress={pickImage} style={styles.addImageContainer}>
-          <Ionicons name="add" size={40} color="#aaa" />
-          <Text style={styles.addImageText}>Add Image</Text>
+        <Pressable onPress={() => {
+          Alert.alert(
+             "Add Image",
+              "Choose an image source",
+            [
+             { text: "Camera", onPress: captureImage },
+             { text: "Gallery", onPress: pickImage },
+             { text: "Cancel", style: "cancel" }
+           ]
+          );
+        }} style={styles.addImageContainer}>
+           <Ionicons name="add" size={40} color="#aaa" />
+           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       </ScrollView>
       
