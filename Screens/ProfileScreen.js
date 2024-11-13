@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, Pressable, TextInput, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB, writeToDB } from '../Firebase/firestoreHelper';
@@ -14,15 +15,20 @@ export default function ProfileScreen() {
   const [username, setUsername] = useState('');
   const [usernameModalVisible, setUsernameModalVisible] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
+  const [profileImage, setProfileImage] = useState(null); // Set initial value to null
 
   useEffect(() => {
     const checkUsername = async () => {
       const storedUsername = await AsyncStorage.getItem('username');
+      const storedProfileImage = await AsyncStorage.getItem('profileImage');
       if (storedUsername) {
         setUsername(storedUsername);
         loadUserPosts(storedUsername);
       } else {
         setUsernameModalVisible(true);
+      }
+      if (storedProfileImage) {
+        setProfileImage(storedProfileImage);
       }
     };
 
@@ -44,8 +50,65 @@ export default function ProfileScreen() {
     loadUserPosts(username);
   };
 
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (cameraStatus !== 'granted' || mediaStatus !== 'granted') {
+        Alert.alert("Permission Required", "Camera and media permissions are needed to upload profile pictures.");
+      }
+    };
+    requestPermissions();
+  }, []);
+
+  const pickProfileImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      console.log("Image Picker Result:", result); // Log the entire result to see the structure
+
+      if (!result.canceled && result.uri) {
+        setProfileImage(result.uri);
+        await AsyncStorage.setItem('profileImage', result.uri);
+      } else {
+        console.log("No image selected or action was canceled.");
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert("Error", "Failed to select image.");
+    }
+  };
+
+  const captureProfileImage = async () => {
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      console.log("Camera Result:", result); // Log the entire result to see the structure
+
+      if (!result.canceled && result.uri) {
+        setProfileImage(result.uri);
+        await AsyncStorage.setItem('profileImage', result.uri);
+      } else {
+        console.log("No image captured or action was canceled.");
+      }
+    } catch (error) {
+      console.error("Error capturing image:", error);
+      Alert.alert("Error", "Failed to capture image.");
+    }
+  };
+  
+
   const renderPostItem = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('ReviewDetail', { postId: item.id })} style={styles.postItem}>
+    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })} style={styles.postItem}>
       <Image source={{ uri: item.images[0] }} style={styles.postImage} />
       <Text style={[styles.postTitle, { color: theme.textColor }]}>{item.title}</Text>
       <Text style={[styles.postDescription, { color: theme.textColor }]} numberOfLines={2}>{item.description}</Text>
@@ -73,7 +136,12 @@ export default function ProfileScreen() {
       </Modal>
 
       <View style={styles.profileHeader}>
-        <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.profileImage} />
+        <Pressable onPress={pickProfileImage} onLongPress={captureProfileImage}>
+          <Image 
+            source={{ uri: profileImage || 'https://via.placeholder.com/100' }} 
+            style={styles.profileImage} 
+          />
+        </Pressable>
         <Text style={[styles.username, { color: theme.textColor }]}>{username || "User"}</Text>
         
         {/* Action Button */}
@@ -96,6 +164,7 @@ export default function ProfileScreen() {
     </ScreenWrapper>
   );
 }
+
 
 const styles = StyleSheet.create({
   profileHeader: {
