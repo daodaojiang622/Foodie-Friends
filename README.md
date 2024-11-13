@@ -53,9 +53,9 @@ Fields:
 
 ## Implementation of CRUD operations
 1. Users Collection
-- Create: When a new user signs up, a user profile is created with information like name, email, preferences, and profile photo.
+- Create: When a new user signs up, a user profile is created with information like email.
 - Read: Retrieve user information for profile display, preferences, friends list, and personalized restaurant recommendations.
-- Update: Users can update their profile information (e.g., change preferences, update profile photo) and manage their friends list or favorite restaurants.
+- Update: Users can update their profile information (e.g.update profile photo) and manage their friends list or favorite restaurants.
 - Delete: Account deletion allows the user to delete their profile and associated data from the app.
 
 2. Restaurants Collection
@@ -85,8 +85,23 @@ At the end of iteration 1, we have React Native components created to represent 
 ### Home Screen
 <img src="./Demo/HomeScreen.png" alt="Home Screen" width="400">
 
+### Edit Post Screen
+<img src="./Demo/EditPostScreen.png" alt="Edit Post Screen" width="400">
+
+### Profile Screen
+<img src="./Demo/ProfileScreen.png" alt="Profile Screen" width="400">
+
 ### Settings Screen
 <img src="https://github.com/user-attachments/assets/25ee8e21-83c5-45de-94ac-3dfa40e504f3" alt="Settings Screen" width="400">
+
+### Sign Up Screen
+<img src="./Demo/SignUpScreen.png" alt=" Sign Up Screen" width="400">
+
+### Log In Screen
+<img src="./Demo/LogInScreen.png" alt=" Log In Screen" width="400">
+
+### Food Gallery Screen
+<img src="./Demo/FoodGalleryScreen.png" alt=" Food Gallery Screen" width="400">
 
 
 ## Contributions
@@ -95,3 +110,7 @@ Chenyu has worked on below aspects:
 - Back-end: Set up the Firestore database online and in the project. 
 - Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EZ3T6eKgmppMvFlWFtGMy2sBNzifhwFPBL1OlKohwX1SXw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=VvdXqt
 
+Yihe has worked on below aspects:
+- Front-end: Built Edit Post, Home, Profile, Sign Up, Log In, and Food Gallery screens.
+- Back-end: Set up the Firestore authentication online and in the project, modified Firestore database online and in the project. 
+- Code walk video: https://drive.google.com/file/d/1al7BHpT1PxIm4SWF27_FDa5Vr35Ldics/view?usp=drive_link
