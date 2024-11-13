@@ -81,7 +81,7 @@ At the end of iteration 1, we have React Native components created to represent 
 <img src="https://github.com/user-attachments/assets/546e7fea-f25c-4a82-afad-bff31622399b" alt="Map Screen" width="400">
 
 ### Home Screen
-<img src="./Demo/HomeScreen.png" alt="Home Screen" width="400">
+<img src="" alt="Home Screen" width="400">
 
 ### Edit Post Screen
 <img src="./Demo/EditPostScreen.png" alt="Edit Post Screen" width="400">
