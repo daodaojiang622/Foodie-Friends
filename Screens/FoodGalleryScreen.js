@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Image, StyleSheet } from 'react-native';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function FoodGalleryScreen() {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
+    // Load images for the current user's posts
     const loadGallery = async () => {
-      const reviews = await fetchDataFromDB('reviews');
-      const photos = reviews.map((review) => review.imageUri).filter(Boolean);
-      setImages(photos);
+      const userId = auth.currentUser?.uid;
+      if (userId) {
+        const posts = await fetchDataFromDB('posts', { userId });
+        const photos = posts.flatMap((post) => post.images || []);
+        setImages(photos);
+      }
     };
     loadGallery();
   }, []);
@@ -29,11 +34,13 @@ export default function FoodGalleryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 5, // Padding on both sides for even spacing
+    paddingTop: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    margin: 5,
+    width: '30%', // Ensure consistent size for each image in 3-column layout
+    aspectRatio: 1, // Maintain square shape
+    margin: 5, // Uniform margin for spacing
+    borderRadius: 8, // Optional for rounded corners
   },
 });
