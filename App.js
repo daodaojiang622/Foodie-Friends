@@ -204,7 +204,7 @@ function AppContent() {
           name="RestaurantDetailScreen"
           component={RestaurantDetailScreen}
           options={{
-            title: 'Restaurant Detail',
+            title: 'Restaurant',
             headerTintColor: Colors.tertiary,
           }}
         />
