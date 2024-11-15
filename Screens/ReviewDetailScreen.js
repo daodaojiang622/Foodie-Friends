@@ -95,20 +95,25 @@ export default function ReviewDetailScreen() {
         ))}
       </ScrollView>
       </View>
-      <View style={styles.textContainer}></View>
+
       <View style={styles.textContainer}>
         <Text style={[styles.title, { color: theme.textColor }]}>{reviewData.title}</Text>
+      </View>
+
+      <View style={styles.restaurantContainer}>
+        <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
         <Button 
           title='Restaurant'
           onPress={() => navigation.navigate('RestaurantDetailScreen')}
           color={theme.textColor}
         />
+        </View>
+
         <View style={styles.ratingContainer}>
           {renderStars(reviewData.rating)}
         </View>
         <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
       </View>
-    </View>
   );
 }
 
@@ -142,5 +147,13 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  restaurantContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  locationIcon: {
+    fontSize: 24,
   },
 });
