@@ -31,22 +31,34 @@ export default function RestaurantDetailScreen() {
       <Text style={[styles.title, { color: theme.textColor }]}>Title</Text>
     </View>
 
-    <View style={styles.ratingContainer}>
+    <View style={styles.infoContainer}>
         {/* {renderStars(reviewData.rating)} */}
-        <Text style={{ color: theme.textColor }}>Rating</Text>
+        <Text style={[styles.infoText, { color: theme.textColor }]}>Rating</Text>
     </View>
 
-    <View style={styles.restaurantContainer}>
+    <View style={styles.infoContainer}>
       <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-      <Button 
-        title='Restaurant'
-        onPress={() => navigation.navigate('RestaurantDetailScreen')}
-        color={theme.textColor}
-      />
-      </View>
+      <Text style={[styles.infoText, { color: theme.textColor }]}>
+      Restaurant address
+      </Text>
+    </View>
 
-      {/* <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text> */}
-      <Text style={[styles.description, { color: theme.textColor }]}>Description</Text>
+    <View style={styles.infoContainer}>
+      <Ionicons name="call-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+      <Text style={[styles.infoText, { color: theme.textColor }]}>
+        (123) 456-7890
+      </Text>
+    </View>
+
+    <View style={styles.infoContainer}>
+      <Ionicons name="time-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+      <Text style={[styles.infoText, { color: theme.textColor }]}>
+          11 AM - 1 PM; 5PM - 9PM; Closed on Mondays and Tuesdays
+      </Text>
+    </View>
+
+    {/* <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text> */}
+    <Text style={[styles.description, { color: theme.textColor }]}>Description</Text>
     </View>
 );
 }
@@ -85,7 +97,7 @@ ratingContainer: {
   alignItems: 'center',
   marginLeft: 20,
 },
-restaurantContainer: {
+infoContainer: {
   flexDirection: 'row',
   alignItems: 'center',
   marginLeft: 20,
@@ -93,5 +105,9 @@ restaurantContainer: {
 },
 locationIcon: {
   fontSize: 24,
+},
+infoText: {
+  fontSize: 14,
+  marginLeft: 10,
 },
 });
