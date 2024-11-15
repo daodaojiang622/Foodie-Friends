@@ -24,6 +24,7 @@ import SupportScreen from './Screens/SupportScreen';
 import EditPostScreen from './Screens/EditPostScreen';
 import FoodGalleryScreen from './Screens/FoodGalleryScreen';
 import ReviewDetailScreen from './Screens/ReviewDetailScreen';
+import RestaurantDetailScreen from './Screens/RestaurantDetailScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -198,7 +199,14 @@ function AppContent() {
             headerTintColor: Colors.tertiary,
           }}
         />
-         <Stack.Screen name="LoginScreen" component={LoginScreen} /> 
+        <Stack.Screen name="LoginScreen" component={LoginScreen} /> 
+        <Stack.Screen
+          name="RestaurantDetailScreen"
+          component={RestaurantDetailScreen}
+          options={{
+            headerTintColor: Colors.tertiary,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -11,35 +11,35 @@ const { width } = Dimensions.get('window');
 export default function ReviewDetailScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
-  const route = useRoute();
-  const { postId } = route.params;
+  // const route = useRoute();
+  // const { postId } = route.params;
 
-  const [reviewData, setReviewData] = useState({
-    title: route.params?.title || '',
-    description: route.params?.description || '',
-    images: route.params?.images || [],
-    rating: route.params?.rating || 0,
-    userId: '', // Add userId to store the post creator's ID
-  });
+  // const [reviewData, setReviewData] = useState({
+  //   title: route.params?.title || '',
+  //   description: route.params?.description || '',
+  //   images: route.params?.images || [],
+  //   rating: route.params?.rating || 0,
+  //   userId: '', // Add userId to store the post creator's ID
+  // });
 
-  useEffect(() => {
-    const fetchReview = async () => {
-      if (!reviewData.title || !reviewData.description) {
-        const allPosts = await fetchDataFromDB('posts');
-        const post = allPosts.find((p) => p.id === postId);
-        if (post) {
-          setReviewData({
-            title: post.title || '',
-            description: post.description || '',
-            images: post.images || [],
-            rating: post.rating || 0,
-            userId: post.userId || '', // Store the userId of the post creator
-          });
-        }
-      }
-    };
-    fetchReview();
-  }, [postId]);
+  // useEffect(() => {
+  //   const fetchReview = async () => {
+  //     if (!reviewData.title || !reviewData.description) {
+  //       const allPosts = await fetchDataFromDB('posts');
+  //       const post = allPosts.find((p) => p.id === postId);
+  //       if (post) {
+  //         setReviewData({
+  //           title: post.title || '',
+  //           description: post.description || '',
+  //           images: post.images || [],
+  //           rating: post.rating || 0,
+  //           userId: post.userId || '', // Store the userId of the post creator
+  //         });
+  //       }
+  //     }
+  //   };
+  //   fetchReview();
+  // }, [postId]);
 
   const handleDelete = async () => {
     const currentUserId = auth.currentUser?.uid;
@@ -94,7 +94,7 @@ export default function ReviewDetailScreen() {
           <Image key={index} source={{ uri }} style={styles.image} />
         ))}
       </ScrollView>
-      </View>
+      {/* </View>
       <View style={styles.textContainer}></View>
       <View style={styles.textContainer}>
         <Text style={[styles.title, { color: theme.textColor }]}>{reviewData.title}</Text>
@@ -106,7 +106,7 @@ export default function ReviewDetailScreen() {
         <View style={styles.ratingContainer}>
           {renderStars(reviewData.rating)}
         </View>
-        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
+        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text> */}
       </View>
     </View>
   );
