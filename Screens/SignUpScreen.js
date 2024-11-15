@@ -1,9 +1,7 @@
-// SignUpScreen.js
-
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { auth } from '../Firebase/firebaseSetup';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,7 +15,7 @@ export default function SignUpScreen() {
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert('Mismatch', 'Passwords do not match. Please try again.');
       return;
     }
     if (email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
@@ -52,6 +50,20 @@ export default function SignUpScreen() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      Alert.alert('Email Required', 'Please enter your email to reset your password.');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert('Password Reset', 'A password reset link has been sent to your email.');
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      Alert.alert('Password Reset Error', error.message);
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={[styles.label, { color: theme.textColor }]}>Email Address</Text>
@@ -63,6 +75,7 @@ export default function SignUpScreen() {
         autoCapitalize="none"
         keyboardType="email-address"
       />
+
       <Text style={[styles.label, { color: theme.textColor }]}>Password</Text>
       <TextInput
         style={styles.input}
@@ -71,6 +84,10 @@ export default function SignUpScreen() {
         value={password}
         onChangeText={handlePasswordChange}
       />
+      <Text style={[styles.passwordStrength, { color: theme.textColor }]}>
+        Password Strength: {passwordStrength}
+      </Text>
+
       <Text style={[styles.label, { color: theme.textColor }]}>Confirm Password</Text>
       <TextInput
         style={styles.input}
@@ -79,9 +96,15 @@ export default function SignUpScreen() {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
+
       <Button title="Register" onPress={handleRegister} color={theme.buttonColor} />
+
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.loginButton}>
         <Text style={styles.link}>Already Registered? Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotPasswordButton}>
+        <Text style={styles.link}>Forgot Password?</Text>
       </TouchableOpacity>
     </View>
   );
@@ -105,7 +128,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 5,
   },
+  passwordStrength: {
+    marginBottom: 16,
+    fontSize: 14,
+  },
   loginButton: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  forgotPasswordButton: {
     marginTop: 16,
     alignItems: 'center',
   },
