@@ -1,12 +1,12 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, FlatList, Alert } from 'react-native';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
-import { auth } from '../Firebase/firebaseSetup'; // Import auth instance
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -16,21 +16,18 @@ export default function HomeScreen() {
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
-    const data = await fetchDataFromDB('posts');
-    setPosts(data);
+    try {
+      const data = await fetchDataFromDB('posts');
+      setPosts(data);
+    } catch (error) {
+      console.error("Error loading posts:", error);
+    }
   };
 
   // Load posts once on component mount
   useEffect(() => {
     loadPosts();
   }, []);
-
-  // Reload posts each time HomeScreen is focused
-  useFocusEffect(
-    React.useCallback(() => {
-      loadPosts();
-    }, [])
-  );
 
   const handleSearch = async () => {
     const apiKey = 'YOUR_GOOGLE_API_KEY';
@@ -52,37 +49,37 @@ export default function HomeScreen() {
     }
   };
 
-  const handleEditPost = (post) => {
-    navigation.navigate('EditPost', {
-      postId: post.id,
-      initialTitle: post.title,
-      initialDescription: post.description,
-      initialImages: post.images,
-    });
-  };
-
   const handleAddPost = () => {
     if (auth.currentUser) {
       navigation.navigate('EditPost');
     } else {
       Alert.alert('Authentication Required', 'Please log in to add a new post');
-      navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen if not logged in
+      navigation.navigate('SignUpScreen');
     }
   };
 
-  const renderPost = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })} style={styles.imageWrapper}>
-      <Image source={{ uri: item.images[0] }} style={styles.image} /> 
-      <Text style={styles.title}>{item.title}</Text>
-      <View style={styles.infoContainer}>
-        <View style={styles.userInfo}>
-          <Image source={{ uri: item.userProfileImage }} style={styles.profileImage} />
-          <Text style={styles.username}>{item.username}</Text>
-        </View>
-        <Text style={styles.likes}>{item.likes} Likes</Text>
-      </View>
-    </Pressable>
+  const renderRow = (rowItems, rowIndex) => (
+    <View style={styles.row} key={`row-${rowIndex}`}>
+      {rowItems.map((item) => (
+        <Pressable
+          key={item.id} // Unique key for each item in the row
+          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
+          style={styles.imageWrapper}
+        >
+          <Image source={{ uri: item.images[0] }} style={styles.image} />
+          <Text style={styles.title}>{item.title}</Text>
+          <View style={styles.infoContainer}>
+            <View style={styles.userInfo}>
+              <Image source={{ uri: item.userProfileImage }} style={styles.profileImage} />
+              <Text style={styles.username}>{item.username}</Text>
+            </View>
+            <Text style={styles.likes}>{item.likes} Likes</Text>
+          </View>
+        </Pressable>
+      ))}
+    </View>
   );
+  
 
   return (
     <ScreenWrapper>
@@ -101,13 +98,12 @@ export default function HomeScreen() {
         onSubmitEditing={handleSearch}
       />
 
-      <FlatList
-        data={posts}
-        renderItem={renderPost}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.imageContainer}
-      />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {Array.from({ length: Math.ceil(posts.length / 2) }, (_, index) => 
+         renderRow(posts.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
+       )}
+      </ScrollView>
+
     </ScreenWrapper>
   );
 }
@@ -123,10 +119,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
   },
-  imageContainer: {
-    flex: 1,
-    marginTop: 10,
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 10,
     alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
   imageWrapper: {
     margin: 5,
