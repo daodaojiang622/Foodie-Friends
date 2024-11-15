@@ -9,6 +9,13 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 
 const { width } = Dimensions.get('window');
 
+const localImages = [
+  require('../SamplePhotos/TheLunchLady0.png'),
+  require('../SamplePhotos/TheLunchLady1.png'),
+  require('../SamplePhotos/TheLunchLady2.png'),
+  require('../SamplePhotos/TheLunchLady3.png'),
+];
+
 export default function RestaurantDetailScreen() {
   const { theme } = useContext(ThemeContext);
   const [reviewData, setReviewData] = useState(null)
@@ -22,7 +29,7 @@ export default function RestaurantDetailScreen() {
     <ScrollView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       
-      <Ionicons name="images" size={350} style={{marginLeft: 20}}/>
+      {/* <Ionicons name="images" size={350} style={{marginLeft: 20}}/> */}
 
       <View style={styles.textContainer}>
       <ScrollView
@@ -34,6 +41,9 @@ export default function RestaurantDetailScreen() {
         {/* {reviewData.images.map((uri, index) => (
           <Image key={index} source={{ uri }} style={styles.image} />
         ))} */}
+        {localImages.map((image, index) => (
+            <Image key={index} source={image} style={styles.image} />
+          ))}
       </ScrollView>
       </View>
 
