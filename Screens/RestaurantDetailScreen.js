@@ -64,10 +64,54 @@ export default function RestaurantDetailScreen() {
       </Text>
     </View>
 
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Reviews</Text>
+      <ScrollView style={styles.section}>
+        {/* {reviewData.length === 0 ? (
+          <View style={styles.noMeetUpsContainer}>
+            <Text style={styles.noMeetUpText}>No review</Text>
+            <PressableButton 
+              title="Create a review" 
+              onPress={handleCreateMeetUp} 
+              textStyle={{ color: theme.buttonColor, fontSize: 18 }}
+            />
+          </View>
+        ) : (
+          reviewData.map((meetUp, index) => (
+            <Pressable key={index} onPress={() => handleEditMeetUp(meetUp, false)}>
+              <View key={index} style={styles.meetUpItem}>
+
+                <View style={styles.meetUpContainer}>
+                  <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+
+                  <View style={styles.meetUpInfoContainer}>
+                    <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
+                    <View style={styles.meetUpDateTimeContainer}>
+                      <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
+                      <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.deleteButtonContainer}>
+                    <Ionicons 
+                      name="trash" 
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteMeetUp(meetUp.id)}
+                    />
+                  </View>
+
+                </View>
+              </View>
+            </Pressable>
+          ))
+        )} */}
+      </ScrollView>
 
     </View>
-);
+  </View>
+  );
 }
+
 
 const styles = StyleSheet.create({
 container: {
@@ -120,5 +164,21 @@ cusineType: {
   fontSize: 14,
   marginLeft: 20,
   marginVertical: 10,
+},
+sectionTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginTop: 20,
+  marginLeft: 20,
+  marginBottom: 10,
+},
+section: {
+  flex: 1,
+  marginBottom: 10,
+  borderColor: 'lightgray',
+  borderWidth: 2,
+  marginHorizontal: 20,
+  marginBottom: 30,
+  borderRadius: 10,
 },
 });
