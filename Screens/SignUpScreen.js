@@ -21,7 +21,11 @@ export default function SignUpScreen() {
       return;
     }
     if (email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
-      Alert.alert('Error', 'No field should be empty');
+      Alert.alert('Empty Fields', 'All fields are required. Please complete the form.');
+      return;
+    }
+    if (password.length < 8) {
+      Alert.alert('Weak Password', 'Your password should be at least 8 characters long.');
       return;
     }
 
@@ -29,7 +33,7 @@ export default function SignUpScreen() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log('User registered:', user);
-      Alert.alert('Success', 'User registered successfully');
+      Alert.alert('Registration Successful', 'Your account has been created successfully!');
       navigation.navigate('Home');
     } catch (error) {
       console.error('Error registering user:', error);
@@ -65,7 +69,7 @@ export default function SignUpScreen() {
         placeholder="Password"
         secureTextEntry
         value={password}
-        onChangeText={setPassword}
+        onChangeText={handlePasswordChange}
       />
       <Text style={[styles.label, { color: theme.textColor }]}>Confirm Password</Text>
       <TextInput
