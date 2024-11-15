@@ -1,12 +1,97 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Button } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { ThemeContext } from '../Components/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; 
+
+const { width } = Dimensions.get('window');
 
 export default function RestaurantDetailScreen() {
+  const { theme } = useContext(ThemeContext);
+  const [reviewData, setReviewData] = useState(null)
+
   return (
-    <View>
-      <Text>RestaurantDetailScreen</Text>
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+    <View style={styles.textContainer}>
+    <ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.imageScrollView}
+    >
+      {/* {reviewData.images.map((uri, index) => (
+        <Image key={index} source={{ uri }} style={styles.image} />
+      ))} */}
+    </ScrollView>
     </View>
-  )
+
+    <View style={styles.textContainer}>
+      <Text style={[styles.title, { color: theme.textColor }]}>Title</Text>
+    </View>
+
+    <View style={styles.ratingContainer}>
+        {/* {renderStars(reviewData.rating)} */}
+        <Text style={{ color: theme.textColor }}>Rating</Text>
+    </View>
+
+    <View style={styles.restaurantContainer}>
+      <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+      <Button 
+        title='Restaurant'
+        onPress={() => navigation.navigate('RestaurantDetailScreen')}
+        color={theme.textColor}
+      />
+      </View>
+
+      {/* <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text> */}
+      <Text style={[styles.description, { color: theme.textColor }]}>Description</Text>
+    </View>
+);
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+container: {
+  flex: 1,
+},
+imageScrollView: {
+  alignItems: 'center',
+},
+image: {
+  width: width, // Full screen width
+  height: 300,
+  resizeMode: 'cover',
+},
+textContainer: {
+  paddingHorizontal: 20,
+  marginTop: 10,
+  paddingBottom: 10,
+},
+title: {
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  marginTop: 10,
+},
+description: {
+  fontSize: 20,
+  marginTop: 10,
+  marginBottom: 20,
+  marginLeft: 20,
+},
+ratingContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginLeft: 20,
+},
+restaurantContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginLeft: 20,
+  paddingBottom: 10,
+},
+locationIcon: {
+  fontSize: 24,
+},
+});
