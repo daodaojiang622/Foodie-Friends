@@ -13,6 +13,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState('');
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -33,6 +34,17 @@ export default function SignUpScreen() {
     } catch (error) {
       console.error('Error registering user:', error);
       Alert.alert('Registration Error', error.message);
+    }
+  };
+
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+    if (value.length < 8) {
+      setPasswordStrength('Weak');
+    } else if (value.length >= 8 && value.length < 12) {
+      setPasswordStrength('Moderate');
+    } else {
+      setPasswordStrength('Strong');
     }
   };
 
