@@ -28,12 +28,19 @@ export default function RestaurantDetailScreen() {
     </View>
 
     <View style={styles.textContainer}>
-      <Text style={[styles.title, { color: theme.textColor }]}>Title</Text>
+      <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
     </View>
+    
+    <Text style={[styles.cusineType, { color: theme.textColor }]}>Vietnamese restaurant</Text>
 
     <View style={styles.infoContainer}>
         {/* {renderStars(reviewData.rating)} */}
-        <Text style={[styles.infoText, { color: theme.textColor }]}>Rating</Text>
+        <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+
     </View>
 
     <View style={styles.infoContainer}>
@@ -57,8 +64,7 @@ export default function RestaurantDetailScreen() {
       </Text>
     </View>
 
-    {/* <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text> */}
-    <Text style={[styles.description, { color: theme.textColor }]}>Description</Text>
+
     </View>
 );
 }
@@ -109,5 +115,10 @@ locationIcon: {
 infoText: {
   fontSize: 14,
   marginLeft: 10,
+},
+cusineType: {
+  fontSize: 14,
+  marginLeft: 20,
+  marginVertical: 10,
 },
 });
