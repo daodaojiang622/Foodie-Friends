@@ -14,8 +14,8 @@ import MapScreen from './Screens/MapScreen';
 import HomeScreen from './Screens/HomeScreen';
 import EditMeetUpScreen from './Screens/EditMeetUpScreen';
 
-import SignUpScreen from './Screens/SignUpScreen';  // Import SignUpScreen
-import LoginScreen from './Screens/LoginScreen';  // Import LoginScreen
+import SignUpScreen from './Screens/SignUpScreen';  
+import LoginScreen from './Screens/LoginScreen';  
 
 
 import { Colors, Padding, Font, Icon, ContainerStyle } from './Utils/Style';
@@ -204,6 +204,7 @@ function AppContent() {
           name="RestaurantDetailScreen"
           component={RestaurantDetailScreen}
           options={{
+            title: 'Restaurant Detail',
             headerTintColor: Colors.tertiary,
           }}
         />

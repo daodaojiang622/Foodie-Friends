@@ -100,9 +100,9 @@ export default function ReviewDetailScreen() {
         <Text style={[styles.title, { color: theme.textColor }]}>{reviewData.title}</Text>
         <Button 
           title='Restaurant'
-          style={[styles.description, { color: theme.textColor }]}>
           onPress={() => navigation.navigate('RestaurantDetailScreen')}
-        </Button>
+          color={theme.textColor}
+        />
         <View style={styles.ratingContainer}>
           {renderStars(reviewData.rating)}
         </View>
