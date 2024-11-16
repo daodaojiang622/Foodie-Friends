@@ -1,15 +1,47 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [markers, setMarkers] = useState([]);
 
-  const handleSearch = async () => {
-    const apiKey = 'AIzaSyD1jrEUDZFEvyMzjUWvc-WKnFogdT6178M';
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&type=restaurant&key=${apiKey}`;
+  const fetchSuggestions = async (query) => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&key=${apiKey}`;
+
+    try {
+      const response = await axios.get(url);
+      const results = response.data.predictions;
+
+      const fetchedSuggestions = results.map((place) => ({
+        id: place.place_id,
+        description: place.description,
+      }));
+
+      setSuggestions(fetchedSuggestions);
+    } catch (error) {
+      console.error('Error fetching autocomplete suggestions', error);
+    }
+  };
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionSelect = async (suggestion) => {
+    setSearchQuery(suggestion.description);
+    setSuggestions([]);
+
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${suggestion.description}&type=restaurant&key=${apiKey}`;
 
     try {
       const response = await axios.get(url);
@@ -33,9 +65,23 @@ const MapScreen = () => {
         style={styles.searchBar}
         placeholder="Search for restaurants..."
         value={searchQuery}
-        onChangeText={setSearchQuery}
-        onSubmitEditing={handleSearch}
+        onChangeText={handleSearchChange}
       />
+      {suggestions.length > 0 && (
+        <FlatList
+          data={suggestions}
+          keyExtractor={(item) => item.id}
+          style={styles.suggestionsList}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleSuggestionSelect(item)}
+              style={styles.suggestionItem}
+            >
+              <Text>{item.description}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
       <MapView
         style={styles.map}
         initialRegion={{
@@ -68,6 +114,20 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
+  },
+  suggestionsList: {
+    maxHeight: 150,
+    backgroundColor: 'transparent',
+    marginHorizontal: 20,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: -20,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   map: {
     flex: 1,
