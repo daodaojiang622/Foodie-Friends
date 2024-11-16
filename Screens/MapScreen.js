@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView, Image, Dimensions } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from 'axios';
+import { Ionicons } from '@expo/vector-icons';
+import { ThemeContext } from '../Components/ThemeContext';
+
+const { width } = Dimensions.get('window');
+
+const localImages = [
+  require('../SamplePhotos/TheLunchLady0.png'),
+  require('../SamplePhotos/TheLunchLady1.png'),
+  require('../SamplePhotos/TheLunchLady2.png'),
+  require('../SamplePhotos/TheLunchLady3.png'),
+];
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,6 +21,7 @@ const MapScreen = () => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null); // State for initial region
   const mapRef = useRef(null); // Reference to the MapView
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
     (async () => {
@@ -140,6 +152,40 @@ const MapScreen = () => {
           )}
         </MapView>
       )}
+
+      {selectedMarker && (
+        <View style={styles.restaurantCompactContainer}>
+
+          <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollView}
+        >
+          {/* {reviewData.images.map((uri, index) => (
+            <Image key={index} source={{ uri }} style={styles.image} />
+          ))} */}
+          {localImages.map((image, index) => (
+              <Image key={index} source={image} style={styles.image} />
+            ))}
+        </ScrollView>
+        
+        <View style={styles.restaurantInfoCompactContainer}>
+          <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
+
+          <View style={styles.infoContainer}>
+            {/* {renderStars(reviewData.rating)} */}
+            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+          </View>
+
+        </View>
+
+      </View>
+      )}
     </View>
   );
 };
@@ -174,6 +220,41 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 20,
     marginBottom: 20,
+  },
+  restaurantCompactContainer: {
+    marginBottom: 20,
+    marginHorizontal: 20,
+    backgroundColor: 'transparent',
+    borderColor: 'gray',
+    borderWidth: 1,
+    maxHeight: 200,
+  },
+  image: {
+    width: width,
+    height: 150,
+    resizeMode: 'cover',
+  },
+  imageScrollView: {
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 10,
+  },
+  restaurantInfoCompactContainer: {
+    flexDirection: 'row',
+  },
+  locationIcon: {
+    fontSize: 20,
+    marginBottom: -10,
+    marginLeft: 10,
   },
 });
 
