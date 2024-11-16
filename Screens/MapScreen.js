@@ -24,6 +24,30 @@ const MapScreen = () => {
   const mapRef = useRef(null); 
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
+  const [selectedPlaceDetails, setSelectedPlaceDetails] = useState(null);
+
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating); // Number of full stars
+    const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
+  
+    // Create an array of star components
+    return (
+      <>
+        {Array(fullStars)
+          .fill()
+          .map((_, index) => (
+            <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
+          ))}
+        {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
+        {Array(emptyStars)
+          .fill()
+          .map((_, index) => (
+            <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
+          ))}
+      </>
+    );
+  };
 
   useEffect(() => {
     (async () => {
@@ -47,7 +71,7 @@ const MapScreen = () => {
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&key=${apiKey}`;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
 
     try {
       const response = await axios.get(url);
@@ -57,7 +81,7 @@ const MapScreen = () => {
         id: place.place_id,
         description: place.description,
       }));
-
+    
       setSuggestions(fetchedSuggestions);
     } catch (error) {
       console.error('Error fetching autocomplete suggestions', error);
@@ -83,22 +107,35 @@ const MapScreen = () => {
   const handleSuggestionSelect = async (suggestion) => {
     setSearchQuery(suggestion.description);
     setSuggestions([]);
-
+  
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${suggestion.id}&key=${apiKey}`;
-
+  
     try {
       const response = await axios.get(url);
       const place = response.data.result;
-
+  
       const selectedLocation = {
         latitude: place.geometry.location.lat,
         longitude: place.geometry.location.lng,
         name: place.name,
       };
-
+  
       setSelectedMarker(selectedLocation);
-
+  
+      // Construct place details with cuisine type
+      const placeDetails = {
+        name: place.name,
+        rating: place.rating || 'N/A',
+        photos: place.photos
+          ? place.photos.slice(0, 10).map((photo) =>
+              `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
+            )
+          : [], // Default to empty if no photos
+      };
+  
+      setSelectedPlaceDetails(placeDetails);
+  
       // Animate the map to the selected marker's location
       mapRef.current.animateToRegion(
         {
@@ -113,6 +150,8 @@ const MapScreen = () => {
       console.error('Error fetching place details', error);
     }
   };
+  
+  
 
   return (
     <View style={styles.container}>
@@ -155,43 +194,41 @@ const MapScreen = () => {
         </MapView>
       )}
 
-      {selectedMarker && (
-        <Pressable
-          onPress={() => navigation.navigate('RestaurantDetailScreen')}
-        >
-        <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor}]}>
+      {selectedPlaceDetails && (
 
-          <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.imageScrollView}
-        >
-          {/* {reviewData.images.map((uri, index) => (
-            <Image key={index} source={{ uri }} style={styles.image} />
-          ))} */}
-          {localImages.map((image, index) => (
-              <Image key={index} source={image} style={styles.image} />
-            ))}
-          </ScrollView>
-          
-          <View style={styles.restaurantInfoCompactContainer}>
-            <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
+          <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.imageScrollView}
+            >
+              {selectedPlaceDetails.photos.length > 0 ? (
+                selectedPlaceDetails.photos.map((photo, index) => (
+                  <Image key={index} source={{ uri: photo }} style={styles.image} />
+                ))
+              ) : (
+                <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
+              )}
+            </ScrollView>
+            
+            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen')}>
+            <View style={styles.restaurantInfoCompactContainer}>
+              <Text style={[styles.title, { color: theme.textColor }]}>
+                {selectedPlaceDetails.name}
+              </Text>
 
-            <View style={styles.infoContainer}>
-              {/* {renderStars(reviewData.rating)} */}
-              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+              <View style={styles.infoContainer}>
+                <Text style={[styles.rating, { color: theme.textColor }]}>
+                  {renderStars(selectedPlaceDetails.rating)} 
+                </Text>
+              </View>
             </View>
-
+            </Pressable>
           </View>
 
-        </View>
-      </Pressable>
       )}
+
     </View>
   );
 };
@@ -231,8 +268,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginHorizontal: 20,
     backgroundColor: 'transparent',
-    borderWidth: 1.5,
+    borderWidth: 2,
     maxHeight: 200,
+    borderRadius: 5,
   },
   image: {
     width: width,
@@ -243,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 10,
@@ -257,9 +295,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   locationIcon: {
-    fontSize: 20,
+    fontSize: 16,
     marginBottom: -10,
     marginLeft: 10,
+  },
+  rating: {
+    fontSize: 16,
+    marginLeft: 10,
+    marginBottom: -10,
   },
 });
 
