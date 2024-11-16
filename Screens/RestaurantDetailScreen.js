@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Button } from 'react-native';
+import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Button, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +24,15 @@ export default function RestaurantDetailScreen() {
   const handleCreateReview = () => {
     navigation.navigate('EditReview');
   }
+
+  const handleAddPost = () => {
+    if (auth.currentUser) {
+      navigation.navigate('EditPost');
+    } else {
+      Alert.alert('Authentication Required', 'Please log in to add a new post');
+      navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen if not logged in
+    }
+  };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -85,7 +94,14 @@ export default function RestaurantDetailScreen() {
       </View>
 
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-        <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Reviews</Text>
+
+        <View style={styles.ratingContainer}>
+          <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Reviews</Text>
+          <Pressable onPress={handleAddPost} style={styles.addPostButton}>
+            <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
+          </Pressable>
+        </View>
+
         <ScrollView style={styles.section}>
           <View style={styles.noReviewContainer}>
             <Text style={styles.noReviewText}>No review</Text>
@@ -198,7 +214,6 @@ sectionTitle: {
   fontSize: 18,
   fontWeight: 'bold',
   marginTop: 20,
-  marginLeft: 20,
   marginBottom: 10,
 },
 section: {
@@ -216,5 +231,10 @@ noReviewText: {
 },
 noReviewContainer: {
   alignItems: 'center',
+},
+addPostIcon: {
+  fontSize: 24,
+  marginLeft: 10,
+  marginBottom: -10,
 },
 });
