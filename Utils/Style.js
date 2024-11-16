@@ -106,10 +106,10 @@ const Opacity = {
     partialOpaque: 0.7,
 };
 
-const Button = {
+const ButtonStyle = {
     size: 20,
     buttonMarginTop: 300,
     buttonMarginHorizontal: 80,
 }
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, Button};
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle};

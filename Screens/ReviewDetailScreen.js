@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
+import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Button } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
-import { auth } from '../Firebase/firebaseSetup'; // Import auth
+import { auth } from '../Firebase/firebaseSetup'; 
 
 const { width } = Dimensions.get('window');
 
@@ -63,7 +63,7 @@ export default function ReviewDetailScreen() {
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={40} color="gold" />
+      <Ionicons key={index} name="star" size={20} color="gold" paddingBottom={20} />
     ));
   };
 
@@ -95,15 +95,26 @@ export default function ReviewDetailScreen() {
         ))}
       </ScrollView>
       </View>
-      <View style={styles.textContainer}></View>
+
       <View style={styles.textContainer}>
         <Text style={[styles.title, { color: theme.textColor }]}>{reviewData.title}</Text>
-        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
-        <View style={styles.ratingContainer}>
-          {renderStars(reviewData.rating)}
-        </View>
       </View>
-    </View>
+
+      <View style={styles.ratingContainer}>
+          {renderStars(reviewData.rating)}
+      </View>
+
+      <View style={styles.restaurantContainer}>
+        <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <Button 
+          title='Restaurant'
+          onPress={() => navigation.navigate('RestaurantDetailScreen')}
+          color={theme.textColor}
+        />
+        </View>
+
+        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
+      </View>
   );
 }
 
@@ -122,6 +133,7 @@ const styles = StyleSheet.create({
   textContainer: {
     paddingHorizontal: 20,
     marginTop: 10,
+    paddingBottom: 10,
   },
   title: {
     fontSize: 24,
@@ -133,9 +145,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
     marginBottom: 20,
+    marginLeft: 20,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 20,
+  },
+  restaurantContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+    paddingBottom: 10,
+  },
+  locationIcon: {
+    fontSize: 24,
   },
 });
