@@ -83,6 +83,7 @@ const MapScreen = () => {
       }));
     
       setSuggestions(fetchedSuggestions);
+      console.log('Fetched suggestions:', suggestions.id);
     } catch (error) {
       console.error('Error fetching autocomplete suggestions', error);
     }
@@ -119,11 +120,12 @@ const MapScreen = () => {
         latitude: place.geometry.location.lat,
         longitude: place.geometry.location.lng,
         name: place.name,
+        id: place.place_id,
       };
   
       setSelectedMarker(selectedLocation);
   
-      // Construct place details
+      // Construct place details with cuisine type
       const placeDetails = {
         name: place.name,
         rating: place.rating || 'N/A',
@@ -132,8 +134,6 @@ const MapScreen = () => {
               `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
             )
           : [], // Default to empty if no photos
-        address: place.formatted_address || 'Address not available',
-        phone: place.formatted_phone_number || 'Phone number not available',
       };
   
       setSelectedPlaceDetails(placeDetails);
@@ -149,10 +149,9 @@ const MapScreen = () => {
         1000
       );
     } catch (error) {
-      console.error('Error fetching place details:', error);
+      console.error('Error fetching place details', error);
     }
   };
-  
   
   
 
@@ -215,7 +214,7 @@ const MapScreen = () => {
               )}
             </ScrollView>
             
-            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { restaurant: selectedPlaceDetails })}>
+            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { placeId: selectedMarker?.id})}>
             <View style={styles.restaurantInfoCompactContainer}>
               <Text style={[styles.title, { color: theme.textColor }]}>
                 {selectedPlaceDetails.name}

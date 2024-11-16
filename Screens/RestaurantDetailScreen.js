@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup'; 
 import PressableButton from '../Components/PressableButtons/PressableButton';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
@@ -43,9 +44,65 @@ export default function RestaurantDetailScreen() {
   const { theme } = useContext(ThemeContext);
   const route = useRoute(); // Get route to access passed parameters
   const navigation = useNavigation();
+  const { placeId } = route.params;
 
-  // Extract restaurant details from route parameters
-  const { restaurant } = route.params;
+  const [restaurant, setRestaurant] = useState(null); // Store fetched restaurant details
+  const [loading, setLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    const fetchRestaurantDetails = async () => {
+      const apiKey = process.env.EXPO_PUBLIC_apiKey;
+      const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
+
+      try {
+        const response = await axios.get(url);
+        console.log(response.data); // Log the API response
+        const place = response.data.result;
+      
+        if (!place) {
+          throw new Error('No place details found in the API response.');
+        }
+      
+        const restaurantDetails = {
+          name: place.name,
+          rating: place.rating || 'N/A',
+          photos: place.photos
+            ? place.photos.map((photo) =>
+                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
+              )
+            : [], // Default to empty if no photos
+          address: place.formatted_address || 'Address not available',
+          phone: place.formatted_phone_number || 'Phone number not available',
+        };
+      
+        setRestaurant(restaurantDetails);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching restaurant details:', error);
+        Alert.alert('Error', 'Unable to fetch restaurant details.');
+        setLoading(false);
+      }
+      
+    };
+
+    fetchRestaurantDetails();
+  }, [placeId]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.loadingText, { color: theme.textColor }]}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.errorText, { color: theme.textColor }]}>No restaurant details found.</Text>
+      </View>
+    );
+  }
 
   const handleCreateReview = () => {
     navigation.navigate('EditReview');
