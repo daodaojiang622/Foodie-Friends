@@ -111,7 +111,15 @@ export default function ProfileScreen() {
       {rowItems.map((item) => (
         <Pressable
           key={item.id}
-          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
+          onPress={() =>
+            navigation.navigate('EditPost', {
+              postId: item.id,
+              initialTitle: item.title,
+              initialDescription: item.description,
+              initialImages: item.images,
+              initialRating: item.rating,
+            })
+          }
           style={styles.postItem}
         >
           <Image source={{ uri: item.images[0] }} style={styles.postImage} />
