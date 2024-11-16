@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView, Image, Dimensions, Pressable } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from '../Components/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -19,9 +20,10 @@ const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [initialRegion, setInitialRegion] = useState(null); // State for initial region
-  const mapRef = useRef(null); // Reference to the MapView
+  const [initialRegion, setInitialRegion] = useState(null); 
+  const mapRef = useRef(null); 
   const { theme } = useContext(ThemeContext);
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -154,7 +156,10 @@ const MapScreen = () => {
       )}
 
       {selectedMarker && (
-        <View style={styles.restaurantCompactContainer}>
+        <Pressable
+          onPress={() => navigation.navigate('RestaurantDetailScreen')}
+        >
+        <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor}]}>
 
           <ScrollView
           horizontal
@@ -168,23 +173,24 @@ const MapScreen = () => {
           {localImages.map((image, index) => (
               <Image key={index} source={image} style={styles.image} />
             ))}
-        </ScrollView>
-        
-        <View style={styles.restaurantInfoCompactContainer}>
-          <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
+          </ScrollView>
+          
+          <View style={styles.restaurantInfoCompactContainer}>
+            <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
 
-          <View style={styles.infoContainer}>
-            {/* {renderStars(reviewData.rating)} */}
-            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-            <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            <View style={styles.infoContainer}>
+              {/* {renderStars(reviewData.rating)} */}
+              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+              <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+            </View>
+
           </View>
 
         </View>
-
-      </View>
+      </Pressable>
       )}
     </View>
   );
@@ -225,8 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginHorizontal: 20,
     backgroundColor: 'transparent',
-    borderColor: 'gray',
-    borderWidth: 1,
+    borderWidth: 1.5,
     maxHeight: 200,
   },
   image: {
