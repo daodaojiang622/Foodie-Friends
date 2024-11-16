@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
@@ -7,6 +7,8 @@ const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const mapRef = useRef(null); // Reference to the MapView
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -41,21 +43,33 @@ const MapScreen = () => {
     setSuggestions([]);
 
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${suggestion.description}&type=restaurant&key=${apiKey}`;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${suggestion.id}&key=${apiKey}`;
 
     try {
       const response = await axios.get(url);
-      const results = response.data.results;
+      const place = response.data.result;
 
-      const fetchedMarkers = results.map((place) => ({
+      const selectedLocation = {
         latitude: place.geometry.location.lat,
         longitude: place.geometry.location.lng,
         name: place.name,
-      }));
+      };
 
-      setMarkers(fetchedMarkers);
+      setSelectedMarker(selectedLocation);
+
+      // Animate the map to the selected marker's location
+      mapRef.current.animateToRegion(
+        {
+          latitude: selectedLocation.latitude,
+          longitude: selectedLocation.longitude,
+          latitudeDelta: 0.01, // Smaller delta for zoomed-in view
+          longitudeDelta: 0.01,
+        },
+        1000 // Animation duration in milliseconds
+      );
+
     } catch (error) {
-      console.error('Error fetching data from Google Places API', error);
+      console.error('Error fetching place details', error);
     }
   };
 
@@ -83,6 +97,7 @@ const MapScreen = () => {
         />
       )}
       <MapView
+        ref={mapRef} // Attach the ref to the MapView
         style={styles.map}
         initialRegion={{
           latitude: 37.78825,
@@ -91,13 +106,16 @@ const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
       >
-        {markers.map((marker, index) => (
+        {selectedMarker && (
           <Marker
-            key={index}
-            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-            title={marker.name}
+            coordinate={{
+              latitude: selectedMarker.latitude,
+              longitude: selectedMarker.longitude,
+            }}
+            title={selectedMarker.name}
+            style={{ width: 40, height: 40, borderColor: 'red' }}
           />
-        ))}
+        )}
       </MapView>
     </View>
   );
