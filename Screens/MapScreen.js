@@ -1,20 +1,35 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 import axios from 'axios';
 
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [initialRegion, setInitialRegion] = useState(null); // State for initial region
   const mapRef = useRef(null); // Reference to the MapView
 
-  const initialRegion = {
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  };
+  useEffect(() => {
+    (async () => {
+      // Request permission to access location
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location access is required to use this feature.');
+        return;
+      }
+
+      // Fetch the user's current location
+      const location = await Location.getCurrentPositionAsync({});
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    })();
+  }, []);
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -44,7 +59,7 @@ const MapScreen = () => {
       setSuggestions([]);
 
       // If search bar is cleared, reset the map to the initial region
-      if (query === '') {
+      if (query === '' && initialRegion) {
         setSelectedMarker(null);
         mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
       }
@@ -108,21 +123,23 @@ const MapScreen = () => {
           )}
         />
       )}
-      <MapView
-        ref={mapRef} // Attach the ref to the MapView
-        style={styles.map}
-        initialRegion={initialRegion}
-      >
-        {selectedMarker && (
-          <Marker
-            coordinate={{
-              latitude: selectedMarker.latitude,
-              longitude: selectedMarker.longitude,
-            }}
-            title={selectedMarker.name}
-          />
-        )}
-      </MapView>
+      {initialRegion && (
+        <MapView
+          ref={mapRef} // Attach the ref to the MapView
+          style={styles.map}
+          initialRegion={initialRegion}
+        >
+          {selectedMarker && (
+            <Marker
+              coordinate={{
+                latitude: selectedMarker.latitude,
+                longitude: selectedMarker.longitude,
+              }}
+              title={selectedMarker.name}
+            />
+          )}
+        </MapView>
+      )}
     </View>
   );
 };
