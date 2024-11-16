@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Pressable, TextInput, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, TextInput, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
@@ -106,13 +106,30 @@ export default function ProfileScreen() {
     }
   };
   
-
-  const renderPostItem = ({ item }) => (
-    <Pressable onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })} style={styles.postItem}>
-      <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-      <Text style={[styles.postTitle, { color: theme.textColor }]}>{item.title}</Text>
-      <Text style={[styles.postDescription, { color: theme.textColor }]} numberOfLines={2}>{item.description}</Text>
-    </Pressable>
+  const renderRow = (rowItems, rowIndex) => (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} key={`row-${rowIndex}`}>
+      {rowItems.map((item) => (
+        <Pressable
+          key={item.id}
+          onPress={() =>
+            navigation.navigate('EditPost', {
+              postId: item.id,
+              initialTitle: item.title,
+              initialDescription: item.description,
+              initialImages: item.images,
+              initialRating: item.rating,
+            })
+          }
+          style={styles.postItem}
+        >
+          <Image source={{ uri: item.images[0] }} style={styles.postImage} />
+          <Text style={[styles.postTitle, { color: theme.textColor }]}>{item.title}</Text>
+          <Text style={[styles.postDescription, { color: theme.textColor }]} numberOfLines={2}>
+            {item.description}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
   );
 
   return (
@@ -151,16 +168,14 @@ export default function ProfileScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.postsSection}>
-        <Text style={[styles.sectionTitle, { color: theme.textColor }]}>My Posts</Text>
-        <FlatList
-          data={userPosts}
-          renderItem={renderPostItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.postsList}
-          numColumns={2}
-        />
-      </View>
+      
+      <Text style={[styles.sectionTitle, { color: theme.textColor }]}>My Posts</Text>
+      <ScrollView contentContainerStyle={styles.postsList}>
+        {Array.from({ length: Math.ceil(userPosts.length / 2) }, (_, rowIndex) =>
+          renderRow(userPosts.slice(rowIndex * 2, rowIndex * 2 + 2), rowIndex)
+        )}
+      </ScrollView>
+    
     </ScreenWrapper>
   );
 }
@@ -197,17 +212,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
   },
-  postsSection: {
-    paddingHorizontal: 15,
-    marginTop: 20,
-  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
+    paddingHorizontal: 15,
   },
   postsList: {
-    paddingBottom: 20,
+    flexGrow: 1,
+    padding: 10,
+    alignItems: 'center',
   },
   postItem: {
     flex: 1,
