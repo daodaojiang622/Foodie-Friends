@@ -123,7 +123,7 @@ const MapScreen = () => {
   
       setSelectedMarker(selectedLocation);
   
-      // Construct place details with cuisine type
+      // Construct place details
       const placeDetails = {
         name: place.name,
         rating: place.rating || 'N/A',
@@ -132,6 +132,8 @@ const MapScreen = () => {
               `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
             )
           : [], // Default to empty if no photos
+        address: place.formatted_address || 'Address not available',
+        phone: place.formatted_phone_number || 'Phone number not available',
       };
   
       setSelectedPlaceDetails(placeDetails);
@@ -147,9 +149,10 @@ const MapScreen = () => {
         1000
       );
     } catch (error) {
-      console.error('Error fetching place details', error);
+      console.error('Error fetching place details:', error);
     }
   };
+  
   
   
 
@@ -212,7 +215,7 @@ const MapScreen = () => {
               )}
             </ScrollView>
             
-            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen')}>
+            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { restaurant: selectedPlaceDetails })}>
             <View style={styles.restaurantInfoCompactContainer}>
               <Text style={[styles.title, { color: theme.textColor }]}>
                 {selectedPlaceDetails.name}

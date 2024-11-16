@@ -16,146 +16,118 @@ const localImages = [
   require('../SamplePhotos/TheLunchLady3.png'),
 ];
 
+const renderStars = (rating) => {
+  const fullStars = Math.floor(rating); // Number of full stars
+  const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
+
+  // Create an array of star components
+  return (
+    <>
+      {Array(fullStars)
+        .fill()
+        .map((_, index) => (
+          <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
+        ))}
+      {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
+      {Array(emptyStars)
+        .fill()
+        .map((_, index) => (
+          <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
+        ))}
+    </>
+  );
+};
+
 export default function RestaurantDetailScreen() {
   const { theme } = useContext(ThemeContext);
-  const [reviewData, setReviewData] = useState(null)
+  const route = useRoute(); // Get route to access passed parameters
   const navigation = useNavigation();
+
+  // Extract restaurant details from route parameters
+  const { restaurant } = route.params;
 
   const handleCreateReview = () => {
     navigation.navigate('EditReview');
-  }
+  };
 
   const handleAddPost = () => {
-    if (auth.currentUser) {
-      navigation.navigate('EditPost');
-    } else {
-      Alert.alert('Authentication Required', 'Please log in to add a new post');
-      navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen if not logged in
-    }
+    Alert.alert('Authentication Required', 'Please log in to add a new post');
+    navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen
   };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      
-      {/* <Ionicons name="images" size={350} style={{marginLeft: 20}}/> */}
+        {/* Restaurant Photos */}
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollView}
+        >
+          {restaurant.photos.length > 0 ? (
+            restaurant.photos.map((photo, index) => (
+              <Image key={index} source={{ uri: photo }} style={styles.image} />
+            ))
+          ) : (
+            <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
+          )}
+        </ScrollView>
 
-      <View style={styles.textContainer}>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.imageScrollView}
-      >
-        {/* {reviewData.images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))} */}
-        {localImages.map((image, index) => (
-            <Image key={index} source={image} style={styles.image} />
-          ))}
-      </ScrollView>
-      </View>
-
-      <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: theme.textColor }]}>The Lunch Lady</Text>
-      </View>
-      
-      <Text style={[styles.cusineType, { color: theme.textColor }]}>Vietnamese restaurant</Text>
-
-      <View style={styles.infoContainer}>
-          {/* {renderStars(reviewData.rating)} */}
-          <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <Ionicons name="star-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-        <Text style={[styles.infoText, { color: theme.textColor }]}>
-        1046 Commercial Dr, Vancouver, BC V5L 3W9
-        </Text>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Ionicons name="call-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-        <Text style={[styles.infoText, { color: theme.textColor }]}>
-        +16045595938
-        </Text>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Ionicons name="time-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-        <Text style={[styles.infoText, { color: theme.textColor }]}>
-            11 AM - 1 PM; 5PM - 9PM; Closed on Mondays and Tuesdays
-        </Text>
-      </View>
-
-      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-
-        <View style={styles.ratingContainer}>
-          <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Reviews</Text>
-          <Pressable onPress={handleAddPost} style={styles.addPostButton}>
-            <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
-          </Pressable>
+        {/* Restaurant Name */}
+        <View style={styles.textContainer}>
+          <Text style={[styles.title, { color: theme.textColor }]}>{restaurant.name}</Text>
         </View>
 
-        <ScrollView style={styles.section}>
-          <View style={styles.noReviewContainer}>
-            <Text style={styles.noReviewText}>No review</Text>
-            <PressableButton 
-              title="Create a review" 
-              onPress={handleCreateReview} 
-              textStyle={{ color: theme.buttonColor, fontSize: 18 }}
-            />
+        {/* Rating */}
+        <View style={styles.infoContainer}>
+          {renderStars(restaurant.rating)}
+          <Text style={[styles.ratingText, { color: theme.textColor }]}>
+            ({restaurant.rating})
+          </Text>
+        </View>
+
+        {/* Additional Info */}
+        <View style={styles.infoContainer}>
+          <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+          <Text style={[styles.infoText, { color: theme.textColor }]}>
+            {restaurant.address || 'Address not available'}
+          </Text>
+        </View>
+
+        <View style={styles.infoContainer}>
+          <Ionicons name="call-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+          <Text style={[styles.infoText, { color: theme.textColor }]}>
+            {restaurant.phone || 'Phone number not available'}
+          </Text>
+        </View>
+
+        {/* Reviews */}
+        <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+          <View style={styles.ratingContainer}>
+            <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Reviews</Text>
+            <Pressable onPress={handleAddPost} style={styles.addPostButton}>
+              <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
+            </Pressable>
           </View>
-          {/* {reviewData.length === 0 ? (
-            <View style={styles.noMeetUpsContainer}>
-              <Text style={styles.noMeetUpText}>No review</Text>
+
+          <ScrollView style={styles.section}>
+            <View style={styles.noReviewContainer}>
+              <Text style={styles.noReviewText}>No review</Text>
               <PressableButton 
                 title="Create a review" 
-                onPress={handleCreateMeetUp} 
+                onPress={handleCreateReview} 
                 textStyle={{ color: theme.buttonColor, fontSize: 18 }}
               />
             </View>
-          ) : (
-            reviewData.map((meetUp, index) => (
-              <Pressable key={index} onPress={() => handleEditMeetUp(meetUp, false)}>
-                <View key={index} style={styles.meetUpItem}>
-
-                  <View style={styles.meetUpContainer}>
-                    <Ionicons name="images" size={40} style={{marginRight: 10}}/>
-
-                    <View style={styles.meetUpInfoContainer}>
-                      <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
-                      <View style={styles.meetUpDateTimeContainer}>
-                        <Ionicons name="time-outline" style={styles.meetUpDateTimeIcon} />
-                        <Text style={styles.meetUpText}>{meetUp.time}, {meetUp.date}</Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.deleteButtonContainer}>
-                      <Ionicons 
-                        name="trash" 
-                        style={styles.deleteButton}
-                        onPress={() => handleDeleteMeetUp(meetUp.id)}
-                      />
-                    </View>
-
-                  </View>
-                </View>
-              </Pressable>
-            ))
-          )} */}
-        </ScrollView>
-
-      </View>
+          </ScrollView>
+        </View>
       </View>
     </ScrollView>
   );
 }
+
 
 
 const styles = StyleSheet.create({
