@@ -56,11 +56,8 @@ export default function SettingsScreen() {
         buttonStyle={{ marginTop: Margin.medium }}
       />
       <PressableButton
-
-        title="Settings"
-        onPress={() => navigation.navigate('ChangeSettings')}
-        buttonStyle={{ marginTop: Margin.xxxxlarge }}
-
+        title={isGreenTheme ? "Change to Green Theme" : "Change to Purple Theme"}
+        onPress={toggleTheme}
       />
       <PressableButton
         title="Support"
