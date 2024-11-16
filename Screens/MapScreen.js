@@ -6,9 +6,15 @@ import axios from 'axios';
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const mapRef = useRef(null); // Reference to the MapView
+
+  const initialRegion = {
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -31,10 +37,17 @@ const MapScreen = () => {
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
+
     if (query.length > 2) {
       fetchSuggestions(query);
     } else {
       setSuggestions([]);
+
+      // If search bar is cleared, reset the map to the initial region
+      if (query === '') {
+        setSelectedMarker(null);
+        mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+      }
     }
   };
 
@@ -62,12 +75,11 @@ const MapScreen = () => {
         {
           latitude: selectedLocation.latitude,
           longitude: selectedLocation.longitude,
-          latitudeDelta: 0.01, // Smaller delta for zoomed-in view
+          latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         },
-        1000 // Animation duration in milliseconds
+        1000
       );
-
     } catch (error) {
       console.error('Error fetching place details', error);
     }
@@ -99,12 +111,7 @@ const MapScreen = () => {
       <MapView
         ref={mapRef} // Attach the ref to the MapView
         style={styles.map}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
+        initialRegion={initialRegion}
       >
         {selectedMarker && (
           <Marker
@@ -113,7 +120,6 @@ const MapScreen = () => {
               longitude: selectedMarker.longitude,
             }}
             title={selectedMarker.name}
-            style={{ width: 40, height: 40, borderColor: 'red' }}
           />
         )}
       </MapView>
