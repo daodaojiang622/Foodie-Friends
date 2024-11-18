@@ -68,7 +68,7 @@ export default function RestaurantDetailScreen() {
           phone: place.formatted_phone_number || 'Phone number not available',
           reviews: place.reviews || [], // Include reviews if available
         };
-      
+
         setRestaurant(restaurantDetails);
         setLoading(false);
       } catch (error) {
@@ -163,7 +163,9 @@ export default function RestaurantDetailScreen() {
             </Pressable>
           </View>
 
-          <ScrollView style={styles.section}>
+
+            <ScrollView style={styles.section}>
+            {restaurant.reviews.length === 0 ? (
             <View style={styles.noReviewContainer}>
               <Text style={styles.noReviewText}>No review</Text>
               <PressableButton 
@@ -172,7 +174,23 @@ export default function RestaurantDetailScreen() {
                 textStyle={{ color: theme.buttonColor, fontSize: 18 }}
               />
             </View>
-          </ScrollView>
+            ) : (
+            restaurant.reviews.map((review, index) => (
+              <View key={index} style={styles.reviewContainer}>
+                <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.text}</Text>
+                <View style={styles.ratingContainer}>
+                  {renderStars(review.rating, theme.textColor)}
+                  <Text style={[styles.ratingText, { color: theme.textColor }]}>
+                    {' '}({review.rating})
+                  </Text>
+                </View>
+                <Text style={[styles.authorText, { color: theme.textColor }]}>
+                  - {review.author_name}
+                </Text>
+              </View>
+            ))
+          )}
+          </ScrollView> 
         </View>
       </View>
     </ScrollView>
