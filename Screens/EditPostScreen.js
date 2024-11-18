@@ -108,25 +108,6 @@ export default function EditPostScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
-      <TextInput
-        style={[styles.input, { borderColor: theme.textColor }]}
-        placeholder="Enter a title"
-        placeholderTextColor="#888"
-        value={title}
-        onChangeText={setTitle}
-      />
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-      <TextInput
-        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-        placeholder="Enter a detailed review"
-        placeholderTextColor="#888"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
-      
       <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
       <ScrollView horizontal style={styles.imageScroll}>
         {images.map((uri, index) => (
@@ -147,19 +128,38 @@ export default function EditPostScreen() {
            <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       </ScrollView>
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
+
+      <View style={[styles.ratingContainer]}>
+      <Text style={[styles.label, { color: theme.textColor }]}>Rating: </Text>
         {[1, 2, 3, 4, 5].map((star) => (
           <Pressable key={star} onPress={() => setRating(star)}>
             <Ionicons
               name={star <= rating ? "star" : "star-outline"}
-              size={28}
-              color={star <= rating ? "#FFD700" : "#aaa"}
+              size={20}
+              color={star <= rating ? theme.textColor : "#aaa"}
             />
           </Pressable>
         ))}
       </View>
+      
+      <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
+      <TextInput
+        style={[styles.input, { borderColor: theme.textColor }]}
+        placeholder="Enter a title"
+        placeholderTextColor="#888"
+        value={title}
+        onChangeText={setTitle}
+      />
+      
+      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
+      <TextInput
+        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+        placeholder="Enter a detailed review"
+        placeholderTextColor="#888"
+        value={description}
+        onChangeText={setDescription}
+        multiline
+      />
 
       <View style={styles.buttonContainer}>
         <PressableButton
@@ -185,7 +185,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 15,
   },
   input: {
     height: 40,
