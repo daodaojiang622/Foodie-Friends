@@ -132,21 +132,8 @@ export default function EditPostScreen() {
           </Pressable>
         </ScrollView>
         </View>
-
-      <View style={[styles.ratingContainer]}>
-      <Text style={[styles.label, { color: theme.textColor }]}>Rating: </Text>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Pressable key={star} onPress={() => setRating(star)}>
-            <Ionicons
-              name={star <= rating ? "star" : "star-outline"}
-              size={20}
-              color={star <= rating ? theme.textColor : "#aaa"}
-            />
-          </Pressable>
-        ))}
-      </View>
-
-      <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
+      
+      <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
         placeholder="Enter a title"
@@ -154,6 +141,19 @@ export default function EditPostScreen() {
         value={title}
         onChangeText={setTitle}
       />
+
+      <View style={[styles.ratingContainer]}>
+      <Text style={[styles.label, { color: theme.textColor }]}></Text>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Pressable key={star} onPress={() => setRating(star)}>
+            <Ionicons
+              name={star <= rating ? "star" : "star-outline"}
+              size={16}
+              color={star <= rating ? theme.textColor : "#aaa"}
+            />
+          </Pressable>
+        ))}
+      </View>
       
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
@@ -253,5 +253,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginBottom: 20,
+  },
+  locationIcon: {
+    fontSize: 20,
   },
 });
