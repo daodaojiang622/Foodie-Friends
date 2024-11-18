@@ -90,19 +90,24 @@ const MapScreen = () => {
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
-
+  
     if (query.length > 2) {
       fetchSuggestions(query);
     } else {
       setSuggestions([]);
-
-      // If search bar is cleared, reset the map to the initial region
-      if (query === '' && initialRegion) {
+  
+      // Clear selected place details and reset map if search bar is cleared
+      if (query === '') {
+        setSelectedPlaceDetails(null);
         setSelectedMarker(null);
-        mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+  
+        if (initialRegion) {
+          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+        }
       }
     }
   };
+  
 
   const handleSuggestionSelect = async (suggestion) => {
     setSearchQuery(suggestion.description);
