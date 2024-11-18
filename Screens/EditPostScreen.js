@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, Dimensions, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -8,21 +8,24 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 
+const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const route = useRoute();
 
   const postId = route.params?.postId || null;
-  const initialTitle = route.params?.initialTitle || '';
+  const initialrestaurantName = route.params?.initialRestaurant || '';
   const initialDescription = route.params?.initialDescription || '';
   const initialImages = route.params?.images || [];
   const initialRating = route.params?.rating || 0;
 
-  const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
+  const [searchQuery, setSearchQuery] = useState(initialrestaurantName); 
 
   const pickImage = async () => {
     // Request permission to access the gallery
@@ -106,74 +109,103 @@ export default function EditPostScreen() {
     navigation.goBack();
   };
 
-  return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
-      <TextInput
-        style={[styles.input, { borderColor: theme.textColor }]}
-        placeholder="Enter a title"
-        placeholderTextColor="#888"
-        value={title}
-        onChangeText={setTitle}
-      />
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-      <TextInput
-        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-        placeholder="Enter a detailed review"
-        placeholderTextColor="#888"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
-      <ScrollView horizontal style={styles.imageScroll}>
-        {images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))}
-        <Pressable onPress={() => {
-          Alert.alert(
-             "Add Image",
-              "Choose an image source",
-            [
-             { text: "Camera", onPress: captureImage },
-             { text: "Gallery", onPress: pickImage },
-             { text: "Cancel", style: "cancel" }
-           ]
-          );
-        }} style={styles.addImageContainer}>
-           <Ionicons name="add" size={40} color="#aaa" />
-           <Text style={styles.addImageText}>Add Image</Text>
-        </Pressable>
-      </ScrollView>
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Pressable key={star} onPress={() => setRating(star)}>
-            <Ionicons
-              name={star <= rating ? "star" : "star-outline"}
-              size={28}
-              color={star <= rating ? "#FFD700" : "#aaa"}
-            />
-          </Pressable>
-        ))}
-      </View>
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setSuggestions([]);
+  
+      if (query === '') {
+        setSelectedPlaceDetails(null);
+        setSelectedMarker(null);
+  
+        if (initialRegion) {
+          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+        }
+      }
+    }
+  };
 
-      <View style={styles.buttonContainer}>
-        <PressableButton
-          title="Cancel"
-          onPress={handleCancel}
-          buttonStyle={styles.cancelButton}
+  return (
+    <ScrollView>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        <View style={styles.imageContainer}>
+            { images.length == 0 ? (
+            <Pressable onPress={() => {
+              Alert.alert(
+                "Add Image",
+                  "Choose an image source",
+                [
+                { text: "Camera", onPress: captureImage },
+                { text: "Gallery", onPress: pickImage },
+                { text: "Cancel", style: "cancel" }
+              ]);}} 
+              style={styles.addImageContainer}>
+
+                <Ionicons name="add" size={40} color="#aaa" />
+                <Text style={styles.addImageText}>Add Image</Text>
+            </Pressable>
+              ) : (
+              <ScrollView horizontal style={styles.imageScroll}>
+              {images.map((uri, index) => (
+                <Image key={index} source={{ uri }} style={styles.image} />
+              ))}
+            </ScrollView>
+            )}
+        </View>
+        
+        <View style={styles.restaurantContainer}>
+          <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search for restaurants..."
+            placeholderTextColor={theme.textColor}
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+          />
+        </View>
+
+        <View style={[styles.ratingContainer]}>
+        <Text style={[styles.label, { color: theme.textColor }]}></Text>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Pressable key={star} onPress={() => setRating(star)}>
+              <Ionicons
+                name={star <= rating ? "star" : "star-outline"}
+                size={16}
+                color={star <= rating ? theme.textColor : "#aaa"}
+              />
+            </Pressable>
+          ))}
+        </View>
+        
+        <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
+        <TextInput
+          style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+          placeholder="Enter a detailed review"
+          placeholderTextColor="#888"
+          value={description}
+          onChangeText={setDescription}
+          multiline
         />
-        <PressableButton
-          title="Save"
-          onPress={handleSave}
-          buttonStyle={styles.saveButton}
-        />
+
+        <View style={styles.buttonContainer}>
+          <PressableButton
+            title="Cancel"
+            onPress={handleCancel}
+            buttonStyle={styles.cancelButton}
+            textStyle={{ fontSize: 16 }}
+          />
+          <PressableButton
+            title="Save"
+            onPress={handleSave}
+            buttonStyle={styles.saveButton}
+            textStyle={{ fontSize: 16 }}
+          />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -185,7 +217,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 15,
   },
   input: {
     height: 40,
@@ -194,7 +225,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   descriptionInput: {
-    height: 100, 
+    height: 300, 
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
@@ -205,14 +236,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginRight: 10,
+    width: width - 40,
+    height: 300,
   },
   addImageContainer: {
-    width: 100,
-    height: 100,
+    width: width - 40,
+    height: 300,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
@@ -233,19 +262,36 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginTop: -90,
   },
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
     marginRight: 10,
   },
   saveButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
+  },
+  imageContainer: {
+    marginBottom: 20,
+  },
+  locationIcon: {
+    fontSize: 20,
+  },
+  searchBar: {
+    padding: 5,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginLeft: 10,
+    marginTop: -1,
+    width: width - 70,
+  },
+  restaurantContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
   },
 });

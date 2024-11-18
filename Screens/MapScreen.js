@@ -9,13 +9,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-const localImages = [
-  require('../SamplePhotos/TheLunchLady0.png'),
-  require('../SamplePhotos/TheLunchLady1.png'),
-  require('../SamplePhotos/TheLunchLady2.png'),
-  require('../SamplePhotos/TheLunchLady3.png'),
-];
-
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
