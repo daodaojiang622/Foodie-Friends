@@ -17,16 +17,15 @@ export default function EditPostScreen() {
   const route = useRoute();
 
   const postId = route.params?.postId || null;
-  const initialTitle = route.params?.initialTitle || '';
+  const initialrestaurantName = route.params?.initialRestaurant || '';
   const initialDescription = route.params?.initialDescription || '';
   const initialImages = route.params?.images || [];
   const initialRating = route.params?.rating || 0;
 
-  const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialrestaurantName); 
 
   const pickImage = async () => {
     // Request permission to access the gallery
@@ -159,6 +158,7 @@ export default function EditPostScreen() {
           <TextInput
             style={styles.searchBar}
             placeholder="Search for restaurants..."
+            placeholderTextColor={theme.textColor}
             value={searchQuery}
             onChangeText={handleSearchChange}
           />
