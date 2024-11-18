@@ -21,7 +21,8 @@ export default function ReviewDetailScreen() {
   const [images, setImages] = useState(route.params?.images || []);
   const [rating, setRating] = useState(route.params?.rating || 0);
   const [restaurant, setRestaurant] = useState(route.params?.initialRestaurant || ''); 
-  
+  const [profilePhoto, setProfilePhoto] = useState(route.params?.profile_photo_url || null);
+  const [user, setUser] = useState(route.params?.user || '');
 
   return (
     <ScrollView>
@@ -59,6 +60,13 @@ export default function ReviewDetailScreen() {
           ))}
         </View>
         
+        <View style={styles.userContainer}>
+          <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
+          <Text style={[styles.userText, { color: theme.textColor }]}>
+            {user}
+          </Text>
+        </View>
+
         <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
         <TextInput
           style={[styles.descriptionInput, { borderColor: theme.textColor }]}
@@ -152,5 +160,19 @@ const styles = StyleSheet.create({
   restaurantContainer: {
     flexDirection: 'row',
     marginBottom: 20,
+  },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  profilePhoto: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  userText: {
+    marginLeft: 10,
+    fontSize: 16,
   },
 });

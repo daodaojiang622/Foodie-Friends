@@ -114,6 +114,8 @@ export default function RestaurantDetailScreen() {
       initialDescription: review.text,
       images: review.photos || [], // Assuming the review contains photos
       rating: review.rating || 0, // Pass the review's rating
+      user: review.author_name,
+      profile_photo_url: review.profile_photo_url,
     });
   };
   
