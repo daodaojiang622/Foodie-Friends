@@ -9,6 +9,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 import axios from 'axios';
 
+const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
@@ -68,7 +71,6 @@ export default function EditPostScreen() {
     // Clear suggestions after selecting
     setRestaurantSuggestions([]);
   };  
-  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -176,6 +178,25 @@ export default function EditPostScreen() {
     navigation.goBack();
   };
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setSuggestions([]);
+  
+      if (query === '') {
+        setSelectedPlaceDetails(null);
+        setSelectedMarker(null);
+  
+        if (initialRegion) {
+          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+        }
+      }
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       {/* Restaurant Search */}
@@ -255,7 +276,7 @@ export default function EditPostScreen() {
         <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
         <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -327,14 +348,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginRight: 10,
+    width: width - 40,
+    height: 300,
   },
   addImageContainer: {
-    width: 100,
-    height: 100,
+    width: width - 40,
+    height: 300,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
@@ -361,14 +380,31 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
     marginRight: 10,
   },
   saveButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
+  },
+  imageContainer: {
+    marginBottom: 20,
+  },
+  locationIcon: {
+    fontSize: 20,
+  },
+  searchBar: {
+    padding: 5,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginLeft: 10,
+    marginTop: -1,
+    width: width - 70,
+  },
+  restaurantContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
   },
 });

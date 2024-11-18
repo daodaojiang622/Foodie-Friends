@@ -10,14 +10,7 @@ import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
-const localImages = [
-  require('../SamplePhotos/TheLunchLady0.png'),
-  require('../SamplePhotos/TheLunchLady1.png'),
-  require('../SamplePhotos/TheLunchLady2.png'),
-  require('../SamplePhotos/TheLunchLady3.png'),
-];
-
-const renderStars = (rating) => {
+const renderStars = (rating, color) => {
   const fullStars = Math.floor(rating); // Number of full stars
   const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
@@ -28,13 +21,13 @@ const renderStars = (rating) => {
       {Array(fullStars)
         .fill()
         .map((_, index) => (
-          <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
+          <Ionicons key={`full-${index}`} name="star" style={[styles.starIcon, { color }]} />
         ))}
-      {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
+      {hasHalfStar && <Ionicons name="star-half" style={[styles.starIcon, { color }]} />}
       {Array(emptyStars)
         .fill()
         .map((_, index) => (
-          <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
+          <Ionicons key={`empty-${index}`} name="star-outline" style={[styles.starIcon, { color }]} />
         ))}
     </>
   );
@@ -53,7 +46,7 @@ export default function RestaurantDetailScreen() {
     const fetchRestaurantDetails = async () => {
       const apiKey = process.env.EXPO_PUBLIC_apiKey;
       const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
-
+  
       try {
         const response = await axios.get(url);
         console.log(response.data); // Log the API response
@@ -65,7 +58,7 @@ export default function RestaurantDetailScreen() {
       
         const restaurantDetails = {
           name: place.name,
-          rating: place.rating || 'N/A',
+          rating:place.rating || 'N/A',
           photos: place.photos
             ? place.photos.map((photo) =>
                 `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
@@ -73,8 +66,9 @@ export default function RestaurantDetailScreen() {
             : [], // Default to empty if no photos
           address: place.formatted_address || 'Address not available',
           phone: place.formatted_phone_number || 'Phone number not available',
+          reviews: place.reviews || [], // Include reviews if available
         };
-      
+
         setRestaurant(restaurantDetails);
         setLoading(false);
       } catch (error) {
@@ -82,11 +76,11 @@ export default function RestaurantDetailScreen() {
         Alert.alert('Error', 'Unable to fetch restaurant details.');
         setLoading(false);
       }
-      
     };
-
+  
     fetchRestaurantDetails();
   }, [placeId]);
+  
 
   if (loading) {
     return (
@@ -112,6 +106,19 @@ export default function RestaurantDetailScreen() {
     Alert.alert('Authentication Required', 'Please log in to add a new post');
     navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen
   };
+
+  const handleReview = (review) => {
+    navigation.navigate('ReviewDetailScreen', {
+      postId: review.id, // If the review has a unique identifier
+      initialRestaurant: restaurant.name, // Optionally pass the restaurant name
+      initialDescription: review.text,
+      images: review.photos || [], // Assuming the review contains photos
+      rating: review.rating || 0, // Pass the review's rating
+      user: review.author_name,
+      profile_photo_url: review.profile_photo_url,
+    });
+  };
+  
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -139,9 +146,9 @@ export default function RestaurantDetailScreen() {
 
         {/* Rating */}
         <View style={styles.infoContainer}>
-          {renderStars(restaurant.rating)}
+          {renderStars(restaurant.rating, theme.textColor)}
           <Text style={[styles.ratingText, { color: theme.textColor }]}>
-            ({restaurant.rating})
+            {' '}({restaurant.rating})
           </Text>
         </View>
 
@@ -169,7 +176,9 @@ export default function RestaurantDetailScreen() {
             </Pressable>
           </View>
 
-          <ScrollView style={styles.section}>
+
+            <ScrollView style={styles.section}>
+            {restaurant.reviews.length === 0 ? (
             <View style={styles.noReviewContainer}>
               <Text style={styles.noReviewText}>No review</Text>
               <PressableButton 
@@ -178,7 +187,36 @@ export default function RestaurantDetailScreen() {
                 textStyle={{ color: theme.buttonColor, fontSize: 18 }}
               />
             </View>
-          </ScrollView>
+            ) : (
+              restaurant.reviews.map((review, index) => (
+                <Pressable key={index} onPress={() => handleReview(review)}>
+                  <View key={index} style={styles.reviewItem}>
+    
+                    <View style={styles.reviewContainer}>
+                    <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
+    
+                      <View style={styles.reviewInfoContainer}>
+                      <View style={styles.reviewDateTimeContainer}>
+                          <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
+                          <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
+                        </View>
+                        <Text style={styles.reviewText}>{review.text}</Text>
+                      </View>
+    
+                      <View style={styles.deleteButtonContainer}>
+                        <Ionicons 
+                          name="trash" 
+                          style={styles.deleteButton}
+                          onPress={() => handleDeleteReview(review.id)}
+                        />
+                      </View>
+                      
+                    </View>
+                  </View>
+                </Pressable>
+            ))
+          )}
+          </ScrollView> 
         </View>
       </View>
     </ScrollView>
@@ -265,5 +303,51 @@ addPostIcon: {
   fontSize: 24,
   marginLeft: 10,
   marginBottom: -10,
+},
+reviewTitle: {
+  fontSize: 14,
+},
+reviewDateTimeContainer: {
+  flexDirection: 'row',
+},
+reviewTimeIcon: {
+  marginRight: 5,
+  color: 'black',
+  fontSize: 16, 
+},
+reviewContainer: {
+  flexDirection: 'row',
+},
+deleteButton: {
+  fontSize: 20,
+  color: 'black',
+}, 
+deleteButtonContainer: {
+  flex: 1,
+  alignItems: 'flex-end',
+  alignSelf: 'center',
+},
+reviewDateTimeIcon: {
+  marginTop: 2,
+  marginHorizontal: 5,
+  color: 'black',
+  fontSize: 16, 
+},
+reviewText: {
+  fontSize: 14,
+  color: 'black',
+  marginTop: 1,
+  maxWidth: 250,
+},
+reviewImage: {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  marginRight: 10,
+},
+reviewItem: {
+  padding: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: '#ccc',
 },
 });

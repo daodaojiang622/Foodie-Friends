@@ -9,13 +9,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-const localImages = [
-  require('../SamplePhotos/TheLunchLady0.png'),
-  require('../SamplePhotos/TheLunchLady1.png'),
-  require('../SamplePhotos/TheLunchLady2.png'),
-  require('../SamplePhotos/TheLunchLady3.png'),
-];
-
 const MapScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -83,7 +76,6 @@ const MapScreen = () => {
       }));
     
       setSuggestions(fetchedSuggestions);
-      console.log('Fetched suggestions:', suggestions.id);
     } catch (error) {
       console.error('Error fetching autocomplete suggestions', error);
     }
@@ -91,19 +83,24 @@ const MapScreen = () => {
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
-
+  
     if (query.length > 2) {
       fetchSuggestions(query);
     } else {
       setSuggestions([]);
-
-      // If search bar is cleared, reset the map to the initial region
-      if (query === '' && initialRegion) {
+  
+      // Clear selected place details and reset map if search bar is cleared
+      if (query === '') {
+        setSelectedPlaceDetails(null);
         setSelectedMarker(null);
-        mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+  
+        if (initialRegion) {
+          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+        }
       }
     }
   };
+  
 
   const handleSuggestionSelect = async (suggestion) => {
     setSearchQuery(suggestion.description);
@@ -196,7 +193,7 @@ const MapScreen = () => {
         </MapView>
       )}
 
-      {selectedPlaceDetails && (
+      {selectedPlaceDetails && searchQuery !== '' && (
 
           <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
             <ScrollView
