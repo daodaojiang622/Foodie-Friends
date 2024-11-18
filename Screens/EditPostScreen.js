@@ -7,6 +7,7 @@ import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
+import axios from 'axios';
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -21,6 +22,26 @@ export default function EditPostScreen() {
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
+  const [restaurantQuery, setRestaurantQuery] = useState('');
+  const [restaurantResults, setRestaurantResults] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState('');
+
+  const handleSearchRestaurant = async () => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${restaurantQuery}&type=restaurant&key=${apiKey}`;
+
+    try {
+      const response = await axios.get(url);
+      const results = response.data.results.map((place) => ({
+        name: place.name,
+        address: place.formatted_address,
+      }));
+      setRestaurantResults(results);
+    } catch (error) {
+      console.error('Error fetching restaurant data:', error);
+      Alert.alert('Error', 'Failed to fetch restaurants. Please try again.');
+    }
+  };
 
   const pickImage = async () => {
     const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -76,8 +97,13 @@ export default function EditPostScreen() {
       return;
     }
 
+    if (!selectedRestaurant) {
+      Alert.alert('Error', 'Please select a restaurant.');
+      return;
+    }
+
     const userId = auth.currentUser?.uid;
-    const newData = { description, images, rating, userId };
+    const newData = { description, images, rating, userId, restaurantName: selectedRestaurant };
 
     try {
       if (postId) {
@@ -99,6 +125,32 @@ export default function EditPostScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      {/* Restaurant Search */}
+      <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
+      <TextInput
+        style={[styles.input, { borderColor: theme.textColor }]}
+        placeholder="Enter restaurant name"
+        value={restaurantQuery}
+        onChangeText={setRestaurantQuery}
+        onSubmitEditing={handleSearchRestaurant}
+      />
+      <ScrollView>
+        {restaurantResults.map((restaurant, index) => (
+          <Pressable
+            key={index}
+            onPress={() => setSelectedRestaurant(restaurant.name)}
+            style={[styles.resultItem, selectedRestaurant === restaurant.name && styles.selectedResult]}
+          >
+            <Text style={[styles.resultText, { color: theme.textColor }]}>{restaurant.name}</Text>
+            <Text style={[styles.resultAddress, { color: theme.textColor }]}>{restaurant.address}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+      <Text style={[styles.selectedText, { color: theme.textColor }]}>
+        Selected Restaurant: {selectedRestaurant || 'None'}
+      </Text>
+
+      {/* Review Details */}
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
         style={[styles.descriptionInput, { borderColor: theme.textColor }]}
@@ -110,6 +162,7 @@ export default function EditPostScreen() {
       />
 
       <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+      <View>
       <ScrollView horizontal style={styles.imageScroll}>
         {images.map((uri, index) => (
           <Image key={index} source={{ uri }} style={styles.image} />
@@ -128,6 +181,7 @@ export default function EditPostScreen() {
           <Text style={styles.addImageText}>Add Image</Text>
         </Pressable>
       </ScrollView>
+      </View>
 
       <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
       <View style={[styles.ratingContainer, { marginTop: 20 }]}>
@@ -158,7 +212,35 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 15,
+    marginTop: 10,
+  },
+  input: {
+    height: 40,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    fontSize: 16,
+    borderRadius: 8,
+  },
+  resultItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  selectedResult: {
+    backgroundColor: '#ddd',
+  },
+  resultText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  resultAddress: {
+    fontSize: 14,
+  },
+  selectedText: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   descriptionInput: {
     height: 150,
@@ -196,12 +278,13 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20, // Add spacing
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 20,
+    marginTop: 0, // Reduced excess spacing below
   },
   cancelButton: {
     flex: 1,
