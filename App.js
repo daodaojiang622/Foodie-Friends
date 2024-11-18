@@ -208,6 +208,14 @@ function AppContent() {
             headerTintColor: Colors.tertiary,
           }}
         />
+        <Stack.Screen
+          name="EditPostScreen"
+          component={EditPostScreen}
+          options={{
+            title: 'Post',
+            headerTintColor: Colors.tertiary,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

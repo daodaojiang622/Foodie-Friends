@@ -107,6 +107,17 @@ export default function RestaurantDetailScreen() {
     navigation.navigate('SignUpScreen'); // Redirect to the signup/login screen
   };
 
+  const handleReview = (review) => {
+    navigation.navigate('EditPostScreen', {
+      postId: review.id, // If the review has a unique identifier
+      initialTitle: restaurant.name, // Optionally pass the restaurant name as title
+      initialDescription: review.text,
+      images: review.photos || [], // Assuming the review contains photos
+      rating: review.rating || 0, // Pass the review's rating
+    });
+  };
+  
+
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -201,20 +212,6 @@ export default function RestaurantDetailScreen() {
                     </View>
                   </View>
                 </Pressable>
-
-            // restaurant.reviews.map((review, index) => (
-            //   <View key={index} style={styles.reviewContainer}>
-            //     <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.text}</Text>
-            //     <View style={styles.ratingContainer}>
-            //       {renderStars(review.rating, theme.textColor)}
-            //       <Text style={[styles.ratingText, { color: theme.textColor }]}>
-            //         {' '}({review.rating})
-            //       </Text>
-            //     </View>
-            //     <Text style={[styles.authorText, { color: theme.textColor }]}>
-            //       - {review.author_name}
-            //     </Text>
-            //   </View>
             ))
           )}
           </ScrollView> 
