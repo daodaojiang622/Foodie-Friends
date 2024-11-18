@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   descriptionInput: {
     marginVertical: 10,
     textAlignVertical: 'top', 
+    marginBottom: 200,
   },
   imageScroll: {
     flexDirection: 'row',
