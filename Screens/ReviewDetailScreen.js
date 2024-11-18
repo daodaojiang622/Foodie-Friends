@@ -13,120 +13,15 @@ const { height } = Dimensions.get('window');
 
 export default function ReviewDetailScreen() {
   const { theme } = useContext(ThemeContext);
-  const navigation = useNavigation();
   const route = useRoute();
 
   const postId = route.params?.postId || null;
-  const initialrestaurantName = route.params?.initialRestaurant || '';
-  const initialDescription = route.params?.initialDescription || '';
-  const initialImages = route.params?.images || [];
-  const initialRating = route.params?.rating || 0;
 
-  const [description, setDescription] = useState(initialDescription);
-  const [images, setImages] = useState(initialImages);
-  const [rating, setRating] = useState(initialRating);
-  const [searchQuery, setSearchQuery] = useState(initialrestaurantName); 
-
-  const pickImage = async () => {
-    // Request permission to access the gallery
-    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (galleryStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
-      return;
-    }
+  const [description, setDescription] = useState(route.params?.initialDescription || '');
+  const [images, setImages] = useState(route.params?.images || []);
+  const [rating, setRating] = useState(route.params?.rating || 0);
+  const [restaurant, setRestaurant] = useState(route.params?.initialRestaurant || ''); 
   
-    // Launch image picker for gallery
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.canceled) {
-      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
-      if (selectedImageUri) {
-        setImages([...images, selectedImageUri]);
-      }
-    }
-  };
-  
-  const captureImage = async () => {
-    // Request permission to access the camera
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    if (cameraStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the camera is required.');
-      return;
-    }
-  
-    // Launch camera
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.canceled) {
-      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
-      if (selectedImageUri) {
-        setImages([...images, selectedImageUri]);
-      }
-    }
-  };
-  
-
-  const handleSave = async () => {
-    
-    if (!title.trim() || !description.trim()) {
-      Alert.alert("Error", "Title and description are required.");
-      return;
-    }
-    
-    if (rating === 0) {
-      Alert.alert("Error", "Please select a rating.");
-      return;
-    }
-  
-    const userId = auth.currentUser?.uid; // Get the current user ID
-    const newData = { title, description, images, rating, userId };
-    
-    try {
-      if (postId) {
-        await updateDB(postId, newData, 'posts');
-      } else {
-        await writeToDB(newData, 'posts');    
-      }
-      console.log("Save successful, navigating back to Home");
-      navigation.goBack(); // Navigate back
-    } catch (error) {
-      console.error("Error saving post:", error);
-      Alert.alert("Save Error", "There was a problem saving your post.");
-    }
-  };
-  
-
-  const handleCancel = () => {
-    navigation.goBack();
-  };
-
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
-  
-    if (query.length > 2) {
-      fetchSuggestions(query);
-    } else {
-      setSuggestions([]);
-  
-      if (query === '') {
-        setSelectedPlaceDetails(null);
-        setSelectedMarker(null);
-  
-        if (initialRegion) {
-          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
-        }
-      }
-    }
-  };
 
   return (
     <ScrollView>
@@ -146,10 +41,8 @@ export default function ReviewDetailScreen() {
         <View style={styles.restaurantContainer}>
           <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
           <TextInput
-            style={styles.restaurantText}
-            placeholder="Search for restaurants..."
-            placeholderTextColor={theme.textColor}
-            value={searchQuery}
+            style={[styles.restaurantText, { color: theme.textColor }]}
+            value={restaurant}
           />
         </View>
 
@@ -252,8 +145,9 @@ const styles = StyleSheet.create({
   },
   restaurantText: {
     marginLeft: 10,
-    marginTop: -1,
     width: width - 70,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   restaurantContainer: {
     flexDirection: 'row',
