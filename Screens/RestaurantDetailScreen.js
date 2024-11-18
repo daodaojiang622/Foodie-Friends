@@ -184,7 +184,7 @@ export default function RestaurantDetailScreen() {
     
                       <View style={styles.reviewInfoContainer}>
                       <View style={styles.reviewDateTimeContainer}>
-                          <Ionicons name="time-outline" style={styles.reviewDateTimeIcon} />
+                          <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
                           <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
                         </View>
                         <Text style={styles.reviewText}>{review.text}</Text>
@@ -337,7 +337,8 @@ reviewDateTimeIcon: {
 reviewText: {
   fontSize: 14,
   color: 'black',
-  marginTop: 2,
+  marginTop: 1,
+  maxWidth: 250,
 },
 reviewImage: {
   width: 40,
