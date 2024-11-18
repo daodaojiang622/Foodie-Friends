@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, Dimensions, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -7,6 +7,7 @@ import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -17,7 +18,6 @@ export default function EditPostScreen() {
   const route = useRoute();
 
   const postId = route.params?.postId || null;
-  const initialrestaurantName = route.params?.initialRestaurant || '';
   const initialDescription = route.params?.initialDescription || '';
   const initialImages = route.params?.images || [];
   const initialRating = route.params?.rating || 0;
@@ -25,17 +25,60 @@ export default function EditPostScreen() {
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
-  const [searchQuery, setSearchQuery] = useState(initialrestaurantName); 
+  const [restaurantQuery, setRestaurantQuery] = useState('');
+  const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState('');
+
+  const fetchSuggestions = async (query) => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
+    try {
+      const response = await axios.get(url);
+      const results = response.data.predictions.map((place) => ({
+        id: place.place_id,
+        description: place.description,
+      }));
+      setRestaurantSuggestions(results);
+    } catch (error) {
+      console.error('Error fetching restaurant suggestions:', error);
+    }
+  };
+  
+  const handleSearchChange = (query) => {
+    setRestaurantQuery(query);
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setRestaurantSuggestions([]);
+    }
+  };
+
+  const handleSuggestionSelect = (suggestion) => {
+    console.log("Selected suggestion:", suggestion); // Debug
+  
+    // Extract the name (part before the first punctuation mark)
+    const name = suggestion.description.split(/[.,-]/)[0].trim();
+  
+    // Update the search bar to show the full description
+    setRestaurantQuery(suggestion.description);
+  
+    // Update the selected restaurant with extracted name and place_id
+    setSelectedRestaurant({
+      name: name, // Extracted name
+      place_id: suggestion.id, // Assign the id to place_id
+    });
+  
+    // Clear suggestions after selecting
+    setRestaurantSuggestions([]);
+  };  
 
   const pickImage = async () => {
-    // Request permission to access the gallery
-    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (galleryStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Permission to access the media library is required.');
       return;
     }
   
-    // Launch image picker for gallery
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -52,14 +95,12 @@ export default function EditPostScreen() {
   };
   
   const captureImage = async () => {
-    // Request permission to access the camera
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    if (cameraStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the camera is required.');
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Permission to access the camera is required.');
       return;
     }
   
-    // Launch camera
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
@@ -72,38 +113,66 @@ export default function EditPostScreen() {
         setImages([...images, selectedImageUri]);
       }
     }
-  };
-  
+  };  
+
 
   const handleSave = async () => {
-    
-    if (!title.trim() || !description.trim()) {
-      Alert.alert("Error", "Title and description are required.");
+    if (!description.trim()) {
+      Alert.alert('Error', 'Review details are required.');
       return;
     }
-    
+
     if (rating === 0) {
-      Alert.alert("Error", "Please select a rating.");
+      Alert.alert('Error', 'Please select a rating.');
       return;
     }
-  
-    const userId = auth.currentUser?.uid; // Get the current user ID
-    const newData = { title, description, images, rating, userId };
-    
-    try {
-      if (postId) {
-        await updateDB(postId, newData, 'posts');
-      } else {
-        await writeToDB(newData, 'posts');    
-      }
-      console.log("Save successful, navigating back to Home");
-      navigation.goBack(); // Navigate back
-    } catch (error) {
-      console.error("Error saving post:", error);
-      Alert.alert("Save Error", "There was a problem saving your post.");
+
+    if (!selectedRestaurant || !selectedRestaurant.name) {
+      Alert.alert('Error', 'Please select a restaurant.');
+      return;
     }
-  };
-  
+
+    const userId = auth.currentUser?.uid;
+    const newData = {
+      description,
+      images,
+      rating,
+      userId,
+      restaurantName: selectedRestaurant.name,
+      restaurantId: selectedRestaurant.place_id, // Store the place_id for reference
+    };
+
+    // Ask for confirmation before saving
+  Alert.alert(
+    'Confirm Save',
+    'Are you sure you want to save this post?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel', // Option to cancel
+      },
+      {
+        text: 'Save',
+        onPress: async () => {
+          try {
+            console.log('Saving post:', newData);
+            if (postId) {
+              await updateDB(postId, newData, 'posts');
+            } else {
+              await writeToDB(newData, 'posts');
+            }
+            console.log('Post saved successfully.');
+            navigation.goBack(); // Navigate back to the previous screen
+          } catch (error) {
+            console.error('Error saving post:', error);
+            Alert.alert('Save Error', 'There was a problem saving your post.');
+          }
+        },
+      },
+    ],
+    { cancelable: false } // Prevent dismissal without choosing an option
+  );
+};
 
   const handleCancel = () => {
     navigation.goBack();
@@ -129,81 +198,83 @@ export default function EditPostScreen() {
   };
 
   return (
-    <ScrollView>
-      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-        <View style={styles.imageContainer}>
-            { images.length == 0 ? (
-            <Pressable onPress={() => {
-              Alert.alert(
-                "Add Image",
-                  "Choose an image source",
-                [
-                { text: "Camera", onPress: captureImage },
-                { text: "Gallery", onPress: pickImage },
-                { text: "Cancel", style: "cancel" }
-              ]);}} 
-              style={styles.addImageContainer}>
-
-                <Ionicons name="add" size={40} color="#aaa" />
-                <Text style={styles.addImageText}>Add Image</Text>
-            </Pressable>
-              ) : (
-              <ScrollView horizontal style={styles.imageScroll}>
-              {images.map((uri, index) => (
-                <Image key={index} source={{ uri }} style={styles.image} />
-              ))}
-            </ScrollView>
-            )}
-        </View>
-        
-        <View style={styles.restaurantContainer}>
-          <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search for restaurants..."
-            placeholderTextColor={theme.textColor}
-            value={searchQuery}
-            onChangeText={handleSearchChange}
-          />
-        </View>
-
-        <View style={[styles.ratingContainer]}>
-        <Text style={[styles.label, { color: theme.textColor }]}></Text>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Pressable key={star} onPress={() => setRating(star)}>
-              <Ionicons
-                name={star <= rating ? "star" : "star-outline"}
-                size={16}
-                color={star <= rating ? theme.textColor : "#aaa"}
-              />
-            </Pressable>
-          ))}
-        </View>
-        
-        <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-        <TextInput
-          style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-          placeholder="Enter a detailed review"
-          placeholderTextColor="#888"
-          value={description}
-          onChangeText={setDescription}
-          multiline
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      {/* Restaurant Search */}
+      <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
+      <TextInput
+        style={[styles.input, { borderColor: theme.textColor }]}
+        placeholder="Enter restaurant name"
+        value={restaurantQuery}
+        onChangeText={handleSearchChange}
+        clearButtonMode="while-editing"
+      />
+      {restaurantSuggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+        <FlatList
+          data={restaurantSuggestions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleSuggestionSelect(item)}
+              style={styles.suggestionItem}
+            >
+              <Text style={[styles.suggestionText, { color: theme.textColor }]}>
+                {item.description}
+              </Text>
+            </TouchableOpacity>
+          )}
         />
+      </View>
+      )}
+      {/* Review Details */}
+      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
+      <TextInput
+        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+        placeholder="Enter a detailed review"
+        placeholderTextColor="#888"
+        value={description}
+        onChangeText={setDescription}
+        multiline
+      />
 
-        <View style={styles.buttonContainer}>
-          <PressableButton
-            title="Cancel"
-            onPress={handleCancel}
-            buttonStyle={styles.cancelButton}
-            textStyle={{ fontSize: 16 }}
-          />
-          <PressableButton
-            title="Save"
-            onPress={handleSave}
-            buttonStyle={styles.saveButton}
-            textStyle={{ fontSize: 16 }}
-          />
-        </View>
+      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+      <View>
+      <ScrollView horizontal style={styles.imageScroll}>
+        {images.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={styles.image} />
+        ))}
+        <Pressable
+          onPress={() => {
+            Alert.alert('Add Image', 'Choose an image source', [
+              { text: 'Camera', onPress: captureImage },
+              { text: 'Gallery', onPress: pickImage },
+              { text: 'Cancel', style: 'cancel' },
+            ]);
+          }}
+          style={styles.addImageContainer}
+        >
+          <Ionicons name="add" size={40} color="#aaa" />
+          <Text style={styles.addImageText}>Add Image</Text>
+        </Pressable>
+      </ScrollView>
+      </View>
+
+      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
+      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Pressable key={star} onPress={() => setRating(star)}>
+            <Ionicons
+              name={star <= rating ? 'star' : 'star-outline'}
+              size={28}
+              color={star <= rating ? '#FFD700' : '#aaa'}
+            />
+          </Pressable>
+        ))}
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
+        <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
       </View>
     </ScrollView>
   );
@@ -217,19 +288,60 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 10,
   },
   input: {
     height: 40,
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
+    fontSize: 16,
+    borderRadius: 8,
+  },
+  suggestionsContainer: {
+    position: 'absolute', // Position it on top of other content
+    top: 95, // Adjust based on input field location
+    left: 20,
+    right: 20,
+    zIndex: 10, // Ensure it appears above everything else
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    maxHeight: 200, // Limit dropdown height
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
+  },
+  suggestionItem: {
+    padding: 15, // Add padding to make it visually appealing
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  resultItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  selectedResult: {
+    backgroundColor: '#ddd',
+  },
+  resultText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  resultAddress: {
+    fontSize: 14,
   },
   descriptionInput: {
-    height: 300, 
+    height: 150,
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
-    textAlignVertical: 'top', 
+    textAlignVertical: 'top',
+    fontSize: 18,
   },
   imageScroll: {
     flexDirection: 'row',
@@ -257,12 +369,13 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: 20, // Add spacing
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: -90,
+    marginVertical: 20,
+    marginTop: 0, // Reduced excess spacing below
   },
   cancelButton: {
     flex: 1,

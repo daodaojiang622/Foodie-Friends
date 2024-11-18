@@ -3,6 +3,7 @@ import { database } from "./firebaseSetup";
 
 export async function writeToDB(data, collectionName) {
   try {
+    console.log("Data being written:", data); // Log data before writing
     const docRef = await addDoc(collection(database, collectionName), data);
     console.log("Document written with ID: ", docRef.id);
     return docRef;
@@ -11,6 +12,7 @@ export async function writeToDB(data, collectionName) {
     throw err;  // Rethrow to let the caller handle it if needed
   }
 }
+
 
 export async function fetchDataFromDB(collectionName, filter = {}) {
   try {

@@ -35,10 +35,16 @@ export default function ProfileScreen() {
     checkUsername();
   }, []);
 
-  const loadUserPosts = async (user) => {
-    const posts = await fetchDataFromDB('posts', { userId: auth.currentUser.uid }); 
-    setUserPosts(posts);
+  const loadUserPosts = async () => {
+    try {
+      const posts = await fetchDataFromDB('posts');
+      const filteredPosts = posts.filter((post) => post.userId === auth.currentUser.uid);
+      setUserPosts(filteredPosts);
+    } catch (error) {
+      console.error("Error loading user posts:", error);
+    }
   };
+  
 
   const handleSaveUsername = async () => {
     if (username.trim().length === 0) {
@@ -107,31 +113,32 @@ export default function ProfileScreen() {
   };
   
   const renderRow = (rowItems, rowIndex) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} key={`row-${rowIndex}`}>
+    <View style={{ flexDirection: 'row', justifyContent: rowItems.length === 1 ? 'flex-start' : 'space-between' }} key={`row-${rowIndex}`}>
       {rowItems.map((item) => (
         <Pressable
           key={item.id}
           onPress={() =>
             navigation.navigate('EditPost', {
               postId: item.id,
-              initialTitle: item.title,
               initialDescription: item.description,
               initialImages: item.images,
               initialRating: item.rating,
             })
           }
-          style={styles.postItem}
+          style={[
+            styles.postItem,
+            rowItems.length === 1 && { width: '48%' } // Adjust width for single item in a row
+          ]}
         >
           <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-          <Text style={[styles.postTitle, { color: theme.textColor }]}>{item.title}</Text>
-          <Text style={[styles.postDescription, { color: theme.textColor }]} numberOfLines={2}>
-            {item.description}
+          <Text style={[styles.postTitle, { color: theme.textColor }]}>
+            {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
           </Text>
         </Pressable>
       ))}
     </View>
   );
-
+  
   return (
     <ScreenWrapper>
       {/* Username Modal */}
@@ -218,18 +225,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 15,
   },
-  postsList: {
-    flexGrow: 1,
-    padding: 10,
-    alignItems: 'center',
-  },
   postItem: {
-    flex: 1,
+    flex: 0.48, // Adjusted for two posts in a row
     margin: 5,
     backgroundColor: '#e0e0e0',
     borderRadius: 8,
     padding: 10,
     alignItems: 'center',
+  },
+  postsList: {
+    flexGrow: 1,
+    padding: 10,
+    alignItems: 'flex-start', // Align items to the left
   },
   postImage: {
     width: '100%',
