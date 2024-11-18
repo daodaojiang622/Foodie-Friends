@@ -53,7 +53,7 @@ export default function RestaurantDetailScreen() {
     const fetchRestaurantDetails = async () => {
       const apiKey = process.env.EXPO_PUBLIC_apiKey;
       const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
-
+  
       try {
         const response = await axios.get(url);
         console.log(response.data); // Log the API response
@@ -67,12 +67,13 @@ export default function RestaurantDetailScreen() {
           name: place.name,
           rating: place.rating || 'N/A',
           photos: place.photos
-            ? place.photos.map((photo) =>
+            ? place.photos.slice(0, 100).map((photo) =>
                 `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
               )
             : [], // Default to empty if no photos
           address: place.formatted_address || 'Address not available',
           phone: place.formatted_phone_number || 'Phone number not available',
+          reviews: place.reviews || [], // Include reviews if available
         };
       
         setRestaurant(restaurantDetails);
@@ -82,11 +83,11 @@ export default function RestaurantDetailScreen() {
         Alert.alert('Error', 'Unable to fetch restaurant details.');
         setLoading(false);
       }
-      
     };
-
+  
     fetchRestaurantDetails();
   }, [placeId]);
+  
 
   if (loading) {
     return (

@@ -83,7 +83,6 @@ const MapScreen = () => {
       }));
     
       setSuggestions(fetchedSuggestions);
-      console.log('Fetched suggestions:', suggestions.id);
     } catch (error) {
       console.error('Error fetching autocomplete suggestions', error);
     }
@@ -196,7 +195,7 @@ const MapScreen = () => {
         </MapView>
       )}
 
-      {selectedPlaceDetails && (
+      {selectedPlaceDetails && searchQuery !== '' && (
 
           <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
             <ScrollView
