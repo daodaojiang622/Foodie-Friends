@@ -10,14 +10,7 @@ import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
-const localImages = [
-  require('../SamplePhotos/TheLunchLady0.png'),
-  require('../SamplePhotos/TheLunchLady1.png'),
-  require('../SamplePhotos/TheLunchLady2.png'),
-  require('../SamplePhotos/TheLunchLady3.png'),
-];
-
-const renderStars = (rating) => {
+const renderStars = (rating, color) => {
   const fullStars = Math.floor(rating); // Number of full stars
   const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
@@ -28,13 +21,13 @@ const renderStars = (rating) => {
       {Array(fullStars)
         .fill()
         .map((_, index) => (
-          <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
+          <Ionicons key={`full-${index}`} name="star" style={[styles.starIcon, { color }]} />
         ))}
-      {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
+      {hasHalfStar && <Ionicons name="star-half" style={[styles.starIcon, { color }]} />}
       {Array(emptyStars)
         .fill()
         .map((_, index) => (
-          <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
+          <Ionicons key={`empty-${index}`} name="star-outline" style={[styles.starIcon, { color }]} />
         ))}
     </>
   );
@@ -65,9 +58,9 @@ export default function RestaurantDetailScreen() {
       
         const restaurantDetails = {
           name: place.name,
-          rating: place.rating || 'N/A',
+          rating:place.rating || 'N/A',
           photos: place.photos
-            ? place.photos.slice(0, 100).map((photo) =>
+            ? place.photos.map((photo) =>
                 `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
               )
             : [], // Default to empty if no photos
@@ -140,9 +133,9 @@ export default function RestaurantDetailScreen() {
 
         {/* Rating */}
         <View style={styles.infoContainer}>
-          {renderStars(restaurant.rating)}
+          {renderStars(restaurant.rating, theme.textColor)}
           <Text style={[styles.ratingText, { color: theme.textColor }]}>
-            ({restaurant.rating})
+            {' '}({restaurant.rating})
           </Text>
         </View>
 
