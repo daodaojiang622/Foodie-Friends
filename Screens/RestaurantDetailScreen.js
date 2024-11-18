@@ -180,14 +180,14 @@ export default function RestaurantDetailScreen() {
                   <View key={index} style={styles.reviewItem}>
     
                     <View style={styles.reviewContainer}>
-                      <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+                    <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
     
                       <View style={styles.reviewInfoContainer}>
-                        <Text style={styles.reviewTitle}>{review.author_name}</Text>
-                        <View style={styles.reviewDateTimeContainer}>
+                      <View style={styles.reviewDateTimeContainer}>
                           <Ionicons name="time-outline" style={styles.reviewDateTimeIcon} />
-                          <Text style={styles.reviewText}>{review.relative_time_description}</Text>
+                          <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
                         </View>
+                        <Text style={styles.reviewText}>{review.text}</Text>
                       </View>
     
                       <View style={styles.deleteButtonContainer}>
@@ -306,8 +306,7 @@ addPostIcon: {
   marginBottom: -10,
 },
 reviewTitle: {
-  fontSize: 16,
-  fontWeight: 'bold',
+  fontSize: 14,
 },
 reviewDateTimeContainer: {
   flexDirection: 'row',
@@ -335,12 +334,20 @@ reviewDateTimeIcon: {
   color: 'black',
   fontSize: 16, 
 },
-reviewInfoContainer: {
-  flexDirection: 'row',
-},
 reviewText: {
   fontSize: 14,
   color: 'black',
   marginTop: 2,
+},
+reviewImage: {
+  width: 40,
+  height: 40,
+  borderRadius: 20,
+  marginRight: 10,
+},
+reviewItem: {
+  padding: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: '#ccc',
 },
 });
