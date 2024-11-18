@@ -35,10 +35,16 @@ export default function ProfileScreen() {
     checkUsername();
   }, []);
 
-  const loadUserPosts = async (user) => {
-    const posts = await fetchDataFromDB('posts', { userId: auth.currentUser.uid }); 
-    setUserPosts(posts);
+  const loadUserPosts = async () => {
+    try {
+      const posts = await fetchDataFromDB('posts');
+      const filteredPosts = posts.filter((post) => post.userId === auth.currentUser.uid);
+      setUserPosts(filteredPosts);
+    } catch (error) {
+      console.error("Error loading user posts:", error);
+    }
   };
+  
 
   const handleSaveUsername = async () => {
     if (username.trim().length === 0) {
