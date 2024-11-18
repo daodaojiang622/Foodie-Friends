@@ -113,7 +113,7 @@ export default function ProfileScreen() {
   };
   
   const renderRow = (rowItems, rowIndex) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} key={`row-${rowIndex}`}>
+    <View style={{ flexDirection: 'row', justifyContent: rowItems.length === 1 ? 'flex-start' : 'space-between' }} key={`row-${rowIndex}`}>
       {rowItems.map((item) => (
         <Pressable
           key={item.id}
@@ -125,10 +125,12 @@ export default function ProfileScreen() {
               initialRating: item.rating,
             })
           }
-          style={styles.postItem}
+          style={[
+            styles.postItem,
+            rowItems.length === 1 && { width: '48%' } // Adjust width for single item in a row
+          ]}
         >
           <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-          {/* Show only description snippet in one line */}
           <Text style={[styles.postTitle, { color: theme.textColor }]}>
             {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
           </Text>
@@ -136,8 +138,7 @@ export default function ProfileScreen() {
       ))}
     </View>
   );
-   
-
+  
   return (
     <ScreenWrapper>
       {/* Username Modal */}
@@ -224,18 +225,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 15,
   },
-  postsList: {
-    flexGrow: 1,
-    padding: 10,
-    alignItems: 'center',
-  },
   postItem: {
-    flex: 1,
+    flex: 0.48, // Adjusted for two posts in a row
     margin: 5,
     backgroundColor: '#e0e0e0',
     borderRadius: 8,
     padding: 10,
     alignItems: 'center',
+  },
+  postsList: {
+    flexGrow: 1,
+    padding: 10,
+    alignItems: 'flex-start', // Align items to the left
   },
   postImage: {
     width: '100%',
