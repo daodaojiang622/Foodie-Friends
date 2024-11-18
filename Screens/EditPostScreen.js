@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, Dimensions, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -7,6 +7,8 @@ import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
+
+const { width } = Dimensions.get('window');
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -108,26 +110,28 @@ export default function EditPostScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
-      <ScrollView horizontal style={styles.imageScroll}>
-        {images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))}
-        <Pressable onPress={() => {
-          Alert.alert(
-             "Add Image",
-              "Choose an image source",
-            [
-             { text: "Camera", onPress: captureImage },
-             { text: "Gallery", onPress: pickImage },
-             { text: "Cancel", style: "cancel" }
-           ]
-          );
-        }} style={styles.addImageContainer}>
-           <Ionicons name="add" size={40} color="#aaa" />
-           <Text style={styles.addImageText}>Add Image</Text>
-        </Pressable>
-      </ScrollView>
+      <View style={styles.imageContainer}>
+        <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+        <ScrollView horizontal style={styles.imageScroll}>
+          {images.map((uri, index) => (
+            <Image key={index} source={{ uri }} style={styles.image} />
+          ))}
+          <Pressable onPress={() => {
+            Alert.alert(
+              "Add Image",
+                "Choose an image source",
+              [
+              { text: "Camera", onPress: captureImage },
+              { text: "Gallery", onPress: pickImage },
+              { text: "Cancel", style: "cancel" }
+            ]
+            );
+          }} style={styles.addImageContainer}>
+            <Ionicons name="add" size={40} color="#aaa" />
+            <Text style={styles.addImageText}>Add Image</Text>
+          </Pressable>
+        </ScrollView>
+        </View>
 
       <View style={[styles.ratingContainer]}>
       <Text style={[styles.label, { color: theme.textColor }]}>Rating: </Text>
@@ -141,7 +145,7 @@ export default function EditPostScreen() {
           </Pressable>
         ))}
       </View>
-      
+
       <Text style={[styles.label, { color: theme.textColor }]}>Title</Text>
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
@@ -210,8 +214,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   addImageContainer: {
-    width: 100,
-    height: 100,
+    width: width - 40,
+    height: 300,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
@@ -246,5 +250,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     borderRadius: 8,
+  },
+  imageContainer: {
+    marginBottom: 20,
   },
 });
