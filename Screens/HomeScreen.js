@@ -94,14 +94,6 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search for restaurants..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onSubmitEditing={handleSearch}
-      />
-
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {Array.from({ length: Math.ceil(posts.length / 2) }, (_, index) => 
          renderRow(posts.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
