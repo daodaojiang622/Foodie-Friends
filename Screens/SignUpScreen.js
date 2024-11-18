@@ -14,19 +14,28 @@ export default function SignUpScreen() {
   const [passwordStrength, setPasswordStrength] = useState('');
 
   const handleRegister = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 邮箱格式正则表达式
+  
+    if (!emailRegex.test(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+  
     if (password !== confirmPassword) {
       Alert.alert('Mismatch', 'Passwords do not match. Please try again.');
       return;
     }
+  
     if (email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
       Alert.alert('Empty Fields', 'All fields are required. Please complete the form.');
       return;
     }
+  
     if (password.length < 8) {
       Alert.alert('Weak Password', 'Your password should be at least 8 characters long.');
       return;
     }
-
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -38,6 +47,7 @@ export default function SignUpScreen() {
       Alert.alert('Registration Error', error.message);
     }
   };
+  
 
   const handlePasswordChange = (value) => {
     setPassword(value);
