@@ -132,10 +132,7 @@ export default function EditPostScreen() {
     <ScrollView>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
         <View style={styles.imageContainer}>
-          <ScrollView horizontal style={styles.imageScroll}>
-            {images.map((uri, index) => (
-              <Image key={index} source={{ uri }} style={styles.image} />
-            ))}
+            { images.length == 0 ? (
             <Pressable onPress={() => {
               Alert.alert(
                 "Add Image",
@@ -144,14 +141,20 @@ export default function EditPostScreen() {
                 { text: "Camera", onPress: captureImage },
                 { text: "Gallery", onPress: pickImage },
                 { text: "Cancel", style: "cancel" }
-              ]
-              );
-            }} style={styles.addImageContainer}>
-              <Ionicons name="add" size={40} color="#aaa" />
-              <Text style={styles.addImageText}>Add Image</Text>
+              ]);}} 
+              style={styles.addImageContainer}>
+
+                <Ionicons name="add" size={40} color="#aaa" />
+                <Text style={styles.addImageText}>Add Image</Text>
             </Pressable>
-          </ScrollView>
-          </View>
+              ) : (
+              <ScrollView horizontal style={styles.imageScroll}>
+              {images.map((uri, index) => (
+                <Image key={index} source={{ uri }} style={styles.image} />
+              ))}
+            </ScrollView>
+            )}
+        </View>
         
         <View style={styles.restaurantContainer}>
           <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />

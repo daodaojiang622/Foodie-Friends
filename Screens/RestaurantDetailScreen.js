@@ -108,7 +108,7 @@ export default function RestaurantDetailScreen() {
   };
 
   const handleReview = (review) => {
-    navigation.navigate('EditPostScreen', {
+    navigation.navigate('ReviewDetailScreen', {
       postId: review.id, // If the review has a unique identifier
       initialRestaurant: restaurant.name, // Optionally pass the restaurant name
       initialDescription: review.text,
