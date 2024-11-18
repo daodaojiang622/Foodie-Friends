@@ -25,6 +25,7 @@ export default function EditPostScreen() {
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const pickImage = async () => {
     // Request permission to access the gallery
@@ -108,6 +109,25 @@ export default function EditPostScreen() {
     navigation.goBack();
   };
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setSuggestions([]);
+  
+      if (query === '') {
+        setSelectedPlaceDetails(null);
+        setSelectedMarker(null);
+  
+        if (initialRegion) {
+          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+        }
+      }
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <View style={styles.imageContainer}>
@@ -133,14 +153,15 @@ export default function EditPostScreen() {
         </ScrollView>
         </View>
       
-      <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-      <TextInput
-        style={[styles.input, { borderColor: theme.textColor }]}
-        placeholder="Enter a title"
-        placeholderTextColor="#888"
-        value={title}
-        onChangeText={setTitle}
-      />
+      <View style={styles.restaurantContainer}>
+        <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search for restaurants..."
+          value={searchQuery}
+          onChangeText={handleSearchChange}
+        />
+      </View>
 
       <View style={[styles.ratingContainer]}>
       <Text style={[styles.label, { color: theme.textColor }]}></Text>
@@ -256,5 +277,18 @@ const styles = StyleSheet.create({
   },
   locationIcon: {
     fontSize: 20,
+  },
+  searchBar: {
+    padding: 5,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginLeft: 10,
+    marginTop: -1,
+    width: width - 70,
+  },
+  restaurantContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
   },
 });
