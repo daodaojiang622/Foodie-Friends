@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 
 const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -129,76 +130,79 @@ export default function EditPostScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <View style={styles.imageContainer}>
-        <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
-        <ScrollView horizontal style={styles.imageScroll}>
-          {images.map((uri, index) => (
-            <Image key={index} source={{ uri }} style={styles.image} />
-          ))}
-          <Pressable onPress={() => {
-            Alert.alert(
-              "Add Image",
-                "Choose an image source",
-              [
-              { text: "Camera", onPress: captureImage },
-              { text: "Gallery", onPress: pickImage },
-              { text: "Cancel", style: "cancel" }
-            ]
-            );
-          }} style={styles.addImageContainer}>
-            <Ionicons name="add" size={40} color="#aaa" />
-            <Text style={styles.addImageText}>Add Image</Text>
-          </Pressable>
-        </ScrollView>
+    <ScrollView>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        <View style={styles.imageContainer}>
+          <ScrollView horizontal style={styles.imageScroll}>
+            {images.map((uri, index) => (
+              <Image key={index} source={{ uri }} style={styles.image} />
+            ))}
+            <Pressable onPress={() => {
+              Alert.alert(
+                "Add Image",
+                  "Choose an image source",
+                [
+                { text: "Camera", onPress: captureImage },
+                { text: "Gallery", onPress: pickImage },
+                { text: "Cancel", style: "cancel" }
+              ]
+              );
+            }} style={styles.addImageContainer}>
+              <Ionicons name="add" size={40} color="#aaa" />
+              <Text style={styles.addImageText}>Add Image</Text>
+            </Pressable>
+          </ScrollView>
+          </View>
+        
+        <View style={styles.restaurantContainer}>
+          <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search for restaurants..."
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+          />
         </View>
-      
-      <View style={styles.restaurantContainer}>
-        <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
+
+        <View style={[styles.ratingContainer]}>
+        <Text style={[styles.label, { color: theme.textColor }]}></Text>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Pressable key={star} onPress={() => setRating(star)}>
+              <Ionicons
+                name={star <= rating ? "star" : "star-outline"}
+                size={16}
+                color={star <= rating ? theme.textColor : "#aaa"}
+              />
+            </Pressable>
+          ))}
+        </View>
+        
+        <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
         <TextInput
-          style={styles.searchBar}
-          placeholder="Search for restaurants..."
-          value={searchQuery}
-          onChangeText={handleSearchChange}
+          style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+          placeholder="Enter a detailed review"
+          placeholderTextColor="#888"
+          value={description}
+          onChangeText={setDescription}
+          multiline
         />
-      </View>
 
-      <View style={[styles.ratingContainer]}>
-      <Text style={[styles.label, { color: theme.textColor }]}></Text>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Pressable key={star} onPress={() => setRating(star)}>
-            <Ionicons
-              name={star <= rating ? "star" : "star-outline"}
-              size={16}
-              color={star <= rating ? theme.textColor : "#aaa"}
-            />
-          </Pressable>
-        ))}
+        <View style={styles.buttonContainer}>
+          <PressableButton
+            title="Cancel"
+            onPress={handleCancel}
+            buttonStyle={styles.cancelButton}
+            textStyle={{ fontSize: 16 }}
+          />
+          <PressableButton
+            title="Save"
+            onPress={handleSave}
+            buttonStyle={styles.saveButton}
+            textStyle={{ fontSize: 16 }}
+          />
+        </View>
       </View>
-      
-      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-      <TextInput
-        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-        placeholder="Enter a detailed review"
-        placeholderTextColor="#888"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
-
-      <View style={styles.buttonContainer}>
-        <PressableButton
-          title="Cancel"
-          onPress={handleCancel}
-          buttonStyle={styles.cancelButton}
-        />
-        <PressableButton
-          title="Save"
-          onPress={handleSave}
-          buttonStyle={styles.saveButton}
-        />
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -218,7 +222,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   descriptionInput: {
-    height: 100, 
+    height: 300, 
     borderWidth: 1,
     paddingHorizontal: 10,
     marginVertical: 10,
@@ -229,10 +233,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginRight: 10,
+    width: width - 40,
+    height: 300,
   },
   addImageContainer: {
     width: width - 40,
@@ -257,19 +259,17 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginTop: -90,
   },
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
     marginRight: 10,
   },
   saveButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 15,
     borderRadius: 8,
   },
   imageContainer: {
