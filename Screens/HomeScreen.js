@@ -67,7 +67,10 @@ export default function HomeScreen() {
           style={styles.imageWrapper}
         >
           <Image source={{ uri: item.images[0] }} style={styles.image} />
-          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.title}>
+            {/* Use first few words from the description */}
+            {item.description.split(' ').slice(0, 5).join(' ')}...
+          </Text>
           <View style={styles.infoContainer}>
             <View style={styles.userInfo}>
               <Image source={{ uri: item.userProfileImage }} style={styles.profileImage} />
@@ -79,6 +82,7 @@ export default function HomeScreen() {
       ))}
     </View>
   );
+  
   
 
   return (
