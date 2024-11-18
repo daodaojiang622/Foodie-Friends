@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -23,40 +23,67 @@ export default function EditPostScreen() {
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
   const [restaurantQuery, setRestaurantQuery] = useState('');
-  const [restaurantResults, setRestaurantResults] = useState([]);
+  const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
 
-  const handleSearchRestaurant = async () => {
+  const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${restaurantQuery}&type=restaurant&key=${apiKey}`;
-
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
     try {
       const response = await axios.get(url);
-      const results = response.data.results.map((place) => ({
-        name: place.name,
-        address: place.formatted_address,
+      const results = response.data.predictions.map((place) => ({
+        id: place.place_id,
+        description: place.description,
       }));
-      setRestaurantResults(results);
+      setRestaurantSuggestions(results);
     } catch (error) {
-      console.error('Error fetching restaurant data:', error);
-      Alert.alert('Error', 'Failed to fetch restaurants. Please try again.');
+      console.error('Error fetching restaurant suggestions:', error);
+    }
+  };
+  
+  const handleSearchChange = (query) => {
+    setRestaurantQuery(query);
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setRestaurantSuggestions([]);
     }
   };
 
+  const handleSuggestionSelect = (suggestion) => {
+    console.log("Selected suggestion:", suggestion); // Debug
+  
+    // Extract the name (part before the first punctuation mark)
+    const name = suggestion.description.split(/[.,-]/)[0].trim();
+  
+    // Update the search bar to show the full description
+    setRestaurantQuery(suggestion.description);
+  
+    // Update the selected restaurant with extracted name and place_id
+    setSelectedRestaurant({
+      name: name, // Extracted name
+      place_id: suggestion.id, // Assign the id to place_id
+    });
+  
+    // Clear suggestions after selecting
+    setRestaurantSuggestions([]);
+  };  
+  
+
   const pickImage = async () => {
-    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (galleryStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Permission to access the media library is required.');
       return;
     }
-
+  
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
@@ -64,27 +91,28 @@ export default function EditPostScreen() {
       }
     }
   };
-
+  
   const captureImage = async () => {
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    if (cameraStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Permission to access the camera is required.');
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Permission to access the camera is required.');
       return;
     }
-
+  
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
         setImages([...images, selectedImageUri]);
       }
     }
-  };
+  };  
+
 
   const handleSave = async () => {
     if (!description.trim()) {
@@ -97,27 +125,52 @@ export default function EditPostScreen() {
       return;
     }
 
-    if (!selectedRestaurant) {
+    if (!selectedRestaurant || !selectedRestaurant.name) {
       Alert.alert('Error', 'Please select a restaurant.');
       return;
     }
 
     const userId = auth.currentUser?.uid;
-    const newData = { description, images, rating, userId, restaurantName: selectedRestaurant };
+    const newData = {
+      description,
+      images,
+      rating,
+      userId,
+      restaurantName: selectedRestaurant.name,
+      restaurantId: selectedRestaurant.place_id, // Store the place_id for reference
+    };
 
-    try {
-      if (postId) {
-        await updateDB(postId, newData, 'posts');
-      } else {
-        await writeToDB(newData, 'posts');
-      }
-      console.log('Save successful, navigating back to Home');
-      navigation.goBack();
-    } catch (error) {
-      console.error('Error saving post:', error);
-      Alert.alert('Save Error', 'There was a problem saving your post.');
-    }
-  };
+    // Ask for confirmation before saving
+  Alert.alert(
+    'Confirm Save',
+    'Are you sure you want to save this post?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel', // Option to cancel
+      },
+      {
+        text: 'Save',
+        onPress: async () => {
+          try {
+            console.log('Saving post:', newData);
+            if (postId) {
+              await updateDB(postId, newData, 'posts');
+            } else {
+              await writeToDB(newData, 'posts');
+            }
+            console.log('Post saved successfully.');
+            navigation.goBack(); // Navigate back to the previous screen
+          } catch (error) {
+            console.error('Error saving post:', error);
+            Alert.alert('Save Error', 'There was a problem saving your post.');
+          }
+        },
+      },
+    ],
+    { cancelable: false } // Prevent dismissal without choosing an option
+  );
+};
 
   const handleCancel = () => {
     navigation.goBack();
@@ -131,25 +184,27 @@ export default function EditPostScreen() {
         style={[styles.input, { borderColor: theme.textColor }]}
         placeholder="Enter restaurant name"
         value={restaurantQuery}
-        onChangeText={setRestaurantQuery}
-        onSubmitEditing={handleSearchRestaurant}
+        onChangeText={handleSearchChange}
+        clearButtonMode="while-editing"
       />
-      <ScrollView>
-        {restaurantResults.map((restaurant, index) => (
-          <Pressable
-            key={index}
-            onPress={() => setSelectedRestaurant(restaurant.name)}
-            style={[styles.resultItem, selectedRestaurant === restaurant.name && styles.selectedResult]}
-          >
-            <Text style={[styles.resultText, { color: theme.textColor }]}>{restaurant.name}</Text>
-            <Text style={[styles.resultAddress, { color: theme.textColor }]}>{restaurant.address}</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-      <Text style={[styles.selectedText, { color: theme.textColor }]}>
-        Selected Restaurant: {selectedRestaurant || 'None'}
-      </Text>
-
+      {restaurantSuggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+        <FlatList
+          data={restaurantSuggestions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleSuggestionSelect(item)}
+              style={styles.suggestionItem}
+            >
+              <Text style={[styles.suggestionText, { color: theme.textColor }]}>
+                {item.description}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+      )}
       {/* Review Details */}
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
@@ -222,6 +277,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 8,
   },
+  suggestionsContainer: {
+    position: 'absolute', // Position it on top of other content
+    top: 95, // Adjust based on input field location
+    left: 20,
+    right: 20,
+    zIndex: 10, // Ensure it appears above everything else
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    maxHeight: 200, // Limit dropdown height
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
+  },
+  suggestionItem: {
+    padding: 15, // Add padding to make it visually appealing
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
   resultItem: {
     padding: 10,
     borderBottomWidth: 1,
@@ -236,11 +313,6 @@ const styles = StyleSheet.create({
   },
   resultAddress: {
     fontSize: 14,
-  },
-  selectedText: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   descriptionInput: {
     height: 150,
