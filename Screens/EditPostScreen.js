@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -178,24 +178,24 @@ export default function EditPostScreen() {
     navigation.goBack();
   };
 
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
+  // const handleSearchChange = (query) => {
+  //   setSearchQuery(query);
   
-    if (query.length > 2) {
-      fetchSuggestions(query);
-    } else {
-      setSuggestions([]);
+  //   if (query.length > 2) {
+  //     fetchSuggestions(query);
+  //   } else {
+  //     setSuggestions([]);
   
-      if (query === '') {
-        setSelectedPlaceDetails(null);
-        setSelectedMarker(null);
+  //     if (query === '') {
+  //       setSelectedPlaceDetails(null);
+  //       setSelectedMarker(null);
   
-        if (initialRegion) {
-          mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
-        }
-      }
-    }
-  };
+  //       if (initialRegion) {
+  //         mapRef.current.animateToRegion(initialRegion, 1000); // Smooth animation to initial region
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -276,7 +276,7 @@ export default function EditPostScreen() {
         <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
         <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
