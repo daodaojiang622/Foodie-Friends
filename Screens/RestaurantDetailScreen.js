@@ -175,19 +175,46 @@ export default function RestaurantDetailScreen() {
               />
             </View>
             ) : (
-            restaurant.reviews.map((review, index) => (
-              <View key={index} style={styles.reviewContainer}>
-                <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.text}</Text>
-                <View style={styles.ratingContainer}>
-                  {renderStars(review.rating, theme.textColor)}
-                  <Text style={[styles.ratingText, { color: theme.textColor }]}>
-                    {' '}({review.rating})
-                  </Text>
-                </View>
-                <Text style={[styles.authorText, { color: theme.textColor }]}>
-                  - {review.author_name}
-                </Text>
-              </View>
+              restaurant.reviews.map((review, index) => (
+                <Pressable key={index} onPress={() => handleReview(review)}>
+                  <View key={index} style={styles.reviewItem}>
+    
+                    <View style={styles.reviewContainer}>
+                      <Ionicons name="images" size={40} style={{marginRight: 10}}/>
+    
+                      <View style={styles.reviewInfoContainer}>
+                        <Text style={styles.reviewTitle}>{review.author_name}</Text>
+                        <View style={styles.reviewDateTimeContainer}>
+                          <Ionicons name="time-outline" style={styles.reviewDateTimeIcon} />
+                          <Text style={styles.reviewText}>{review.relative_time_description}</Text>
+                        </View>
+                      </View>
+    
+                      <View style={styles.deleteButtonContainer}>
+                        <Ionicons 
+                          name="trash" 
+                          style={styles.deleteButton}
+                          onPress={() => handleDeleteReview(review.id)}
+                        />
+                      </View>
+                      
+                    </View>
+                  </View>
+                </Pressable>
+
+            // restaurant.reviews.map((review, index) => (
+            //   <View key={index} style={styles.reviewContainer}>
+            //     <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.text}</Text>
+            //     <View style={styles.ratingContainer}>
+            //       {renderStars(review.rating, theme.textColor)}
+            //       <Text style={[styles.ratingText, { color: theme.textColor }]}>
+            //         {' '}({review.rating})
+            //       </Text>
+            //     </View>
+            //     <Text style={[styles.authorText, { color: theme.textColor }]}>
+            //       - {review.author_name}
+            //     </Text>
+            //   </View>
             ))
           )}
           </ScrollView> 
@@ -277,5 +304,43 @@ addPostIcon: {
   fontSize: 24,
   marginLeft: 10,
   marginBottom: -10,
+},
+reviewTitle: {
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+reviewDateTimeContainer: {
+  flexDirection: 'row',
+},
+reviewTimeIcon: {
+  marginRight: 5,
+  color: 'black',
+  fontSize: 16, 
+},
+reviewContainer: {
+  flexDirection: 'row',
+},
+deleteButton: {
+  fontSize: 20,
+  color: 'black',
+}, 
+deleteButtonContainer: {
+  flex: 1,
+  alignItems: 'flex-end',
+  alignSelf: 'center',
+},
+reviewDateTimeIcon: {
+  marginTop: 2,
+  marginHorizontal: 5,
+  color: 'black',
+  fontSize: 16, 
+},
+reviewInfoContainer: {
+  flexDirection: 'row',
+},
+reviewText: {
+  fontSize: 14,
+  color: 'black',
+  marginTop: 2,
 },
 });
