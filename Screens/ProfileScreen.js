@@ -114,7 +114,6 @@ export default function ProfileScreen() {
           onPress={() =>
             navigation.navigate('EditPost', {
               postId: item.id,
-              initialTitle: item.title,
               initialDescription: item.description,
               initialImages: item.images,
               initialRating: item.rating,
@@ -123,14 +122,15 @@ export default function ProfileScreen() {
           style={styles.postItem}
         >
           <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-          <Text style={[styles.postTitle, { color: theme.textColor }]}>{item.title}</Text>
-          <Text style={[styles.postDescription, { color: theme.textColor }]} numberOfLines={2}>
-            {item.description}
+          {/* Show only description snippet in one line */}
+          <Text style={[styles.postTitle, { color: theme.textColor }]}>
+            {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
           </Text>
         </Pressable>
       ))}
     </View>
   );
+   
 
   return (
     <ScreenWrapper>
