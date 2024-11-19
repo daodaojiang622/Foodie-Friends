@@ -8,6 +8,9 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 import axios from 'axios';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import * as FileSystem from 'expo-file-system';
+import { storage } from '../Firebase/firebaseSetup'; 
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -73,26 +76,27 @@ export default function EditPostScreen() {
   };  
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Permission to access the media library is required.');
-      return;
-    }
-  
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaType.Images,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
   
     if (!result.canceled) {
-      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
-      if (selectedImageUri) {
-        setImages([...images, selectedImageUri]);
+      const selectedImageUri = result.uri;
+      console.log('Selected Image URI:', selectedImageUri);
+  
+      try {
+        // Upload the normalized URI
+        const downloadURL = await uploadImageToFirebase(selectedImageUri);
+        console.log('Uploaded Image URL:', downloadURL);
+      } catch (error) {
+        console.error('Error uploading image:', error);
       }
     }
   };
+  
+  
   
   const captureImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -110,10 +114,16 @@ export default function EditPostScreen() {
     if (!result.canceled) {
       const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
       if (selectedImageUri) {
-        setImages([...images, selectedImageUri]);
+        try {
+          const downloadURL = await uploadImageToFirebase(selectedImageUri);
+          setImages([...images, downloadURL]); // Add the download URL to the images array
+        } catch (error) {
+          Alert.alert('Upload Error', 'There was an issue uploading the image.');
+        }
       }
     }
-  };  
+  };
+  
 
 
   const handleSave = async () => {
@@ -196,6 +206,47 @@ export default function EditPostScreen() {
   //     }
   //   }
   // };
+
+  const uploadImageToFirebase = async (uri) => {
+    try {
+      if (!uri) {
+        throw new Error('Invalid URI');
+      }
+  
+      console.log('Uploading Image URI:', uri);
+  
+      // Normalize URI for iOS if necessary (removing "file://" prefix)
+      const normalizedUri = uri.startsWith('file://') ? uri.replace('file://', '') : uri;
+  
+      // Fetch the file and convert to Blob
+      const response = await fetch(normalizedUri); // Using the raw `uri`
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image. Status: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+  
+      // Generate a unique file name
+      const fileName = `${Date.now()}.jpg`;
+  
+      // Reference in Firebase Storage
+      const storageRef = ref(storage, `images/${fileName}`);
+  
+      // Upload Blob
+      const snapshot = await uploadBytes(storageRef, blob);
+  
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      console.log('Image uploaded successfully. URL:', downloadURL);
+      return downloadURL;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+  
+  
+  
+  
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
