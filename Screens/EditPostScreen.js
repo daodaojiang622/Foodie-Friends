@@ -69,27 +69,25 @@ export default function EditPostScreen() {
   };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Permission to access the media library is required.');
+    // Request permission to access the gallery
+    const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (galleryStatus !== 'granted') {
+      Alert.alert('Permission Required', 'Permission to access the gallery is required.');
       return;
     }
+  
+    // Launch image picker for gallery
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [4, 3],
       quality: 1,
     });
-
-    if (!result.canceled) {
-      const selectedImageUri = result.uri;
-      console.log('Selected Image URI:', selectedImageUri);
   
-      try {
-        // Upload the normalized URI
-        const downloadURL = await uploadImageToFirebase(selectedImageUri);
-        console.log('Uploaded Image URL:', downloadURL);
-      } catch (error) {
-        console.error('Error uploading image:', error);
+    if (!result.canceled) {
+      const selectedImageUri = result.uri || (result.assets && result.assets[0].uri);
+      if (selectedImageUri) {
+        setImages([...images, selectedImageUri]);
       }
     }
   };
