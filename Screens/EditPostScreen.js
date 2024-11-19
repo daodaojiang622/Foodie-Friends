@@ -241,8 +241,20 @@ export default function EditPostScreen() {
       <View>
       <ScrollView horizontal style={styles.imageScroll}>
         {images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))}
+          <View key={index} style={styles.imageWrapper}>
+           <Image source={{ uri }} style={styles.image} />
+            <Pressable
+             style={styles.deleteButton}
+             onPress={() => {
+               // Remove the selected image from the images array
+               const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
+               setImages(updatedImages);
+              }}
+           >
+             <Ionicons name="close-circle" size={24} color="red" />
+           </Pressable>
+          </View>
+       ))}
         <Pressable
           onPress={() => {
             Alert.alert('Add Image', 'Choose an image source', [
@@ -299,41 +311,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   suggestionsContainer: {
-    position: 'absolute', // Position it on top of other content
-    top: 95, // Adjust based on input field location
+    position: 'absolute',
+    top: 95,
     left: 20,
     right: 20,
-    zIndex: 10, // Ensure it appears above everything else
+    zIndex: 10,
     backgroundColor: '#fff',
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
-    maxHeight: 200, // Limit dropdown height
+    maxHeight: 200,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5, // For Android shadow
+    elevation: 5,
   },
   suggestionItem: {
-    padding: 15, // Add padding to make it visually appealing
+    padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-  },
-  resultItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedResult: {
-    backgroundColor: '#ddd',
-  },
-  resultText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  resultAddress: {
-    fontSize: 14,
   },
   descriptionInput: {
     height: 150,
@@ -343,39 +340,55 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 18,
   },
+  imageWrapper: {
+    position: 'relative', // Allows the delete button to be positioned absolutely
+    margin: 5,
+  },
   imageScroll: {
     flexDirection: 'row',
     marginVertical: 10,
   },
   image: {
-    width: width - 40,
-    height: 300,
+    width: width / 3 - 20,
+    height: 100,
+    borderRadius: 8,
+    margin: 5,
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'white',
+    borderRadius: 50,
+    padding: 2,
+    elevation: 3, // For Android shadow
   },
   addImageContainer: {
-    width: width - 40,
-    height: 300,
+    width: width / 3 - 20,
+    height: 100,
     borderWidth: 1,
     borderColor: '#aaa',
     borderRadius: 8,
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 5,
   },
   addImageText: {
     color: '#aaa',
     marginTop: 5,
-    fontSize: 16,
+    fontSize: 14,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20, // Add spacing
+    marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 20,
-    marginTop: 0, // Reduced excess spacing below
+    marginTop: 0,
   },
   cancelButton: {
     flex: 1,
@@ -388,23 +401,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
   },
-  imageContainer: {
-    marginBottom: 20,
-  },
-  locationIcon: {
-    fontSize: 20,
-  },
-  searchBar: {
-    padding: 5,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginLeft: 10,
-    marginTop: -1,
-    width: width - 70,
-  },
-  restaurantContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
 });
+ 

@@ -11,13 +11,13 @@ import { auth } from '../Firebase/firebaseSetup';
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
-  const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState([]);
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
     try {
       const data = await fetchDataFromDB('posts');
+      console.log('Fetched posts:', data); // 验证数据是否正确
       setPosts(data);
     } catch (error) {
       console.error("Error loading posts:", error);
@@ -29,26 +29,6 @@ export default function HomeScreen() {
     loadPosts();
   }, []);
 
-  const handleSearch = async () => {
-    const apiKey = 'YOUR_GOOGLE_API_KEY';
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&type=restaurant&key=${apiKey}`;
-
-    try {
-      const response = await axios.get(url);
-      const results = response.data.results;
-
-      const fetchedMarkers = results.map((place) => ({
-        latitude: place.geometry.location.lat,
-        longitude: place.geometry.location.lng,
-        name: place.name,
-      }));
-
-      console.log(fetchedMarkers);
-    } catch (error) {
-      console.error('Error fetching data from Google Places API', error);
-    }
-  };
-
   const handleAddPost = () => {
     if (auth.currentUser) {
       navigation.navigate('EditPost');
@@ -59,31 +39,29 @@ export default function HomeScreen() {
   };
 
   const renderRow = (rowItems, rowIndex) => (
-    <View style={styles.row} key={`row-${rowIndex}`}>
-      {rowItems.map((item) => (
+  <View style={styles.row} key={`row-${rowIndex}`}>
+    {rowItems.map((item) => {
+      console.log('Rendering post:', item);
+
+      return (
         <Pressable
-          key={item.id} // Unique key for each item in the row
+          key={item.id}
           onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
           style={styles.imageWrapper}
         >
-          <Image source={{ uri: item.images[0] }} style={styles.image} />
+          {item.images?.[0] ? (
+            <Image source={{ uri: item.images[0] }} style={styles.image} />
+          ) : (
+            <Text>No Image Available</Text>
+          )}
           <Text style={styles.title}>
-            {/* Use first few words from the description */}
             {item.description.split(' ').slice(0, 5).join(' ')}...
           </Text>
-          <View style={styles.infoContainer}>
-            <View style={styles.userInfo}>
-              <Image source={{ uri: item.userProfileImage }} style={styles.profileImage} />
-              <Text style={styles.username}>{item.username}</Text>
-            </View>
-            <Text style={styles.likes}>{item.likes} Likes</Text>
-          </View>
         </Pressable>
-      ))}
-    </View>
-  );
-  
-  
+      );
+    })}
+  </View>
+);
 
   return (
     <ScreenWrapper>
