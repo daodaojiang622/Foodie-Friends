@@ -123,6 +123,8 @@ export default function ProfileScreen() {
               initialDescription: item.description,
               initialImages: item.images,
               initialRating: item.rating,
+              restaurantName: item.restaurantName || 'No restaurant specified', // Pass restaurantName
+              restaurantId: item.restaurantId || '', // Pass restaurantId
             })
           }
           style={[

@@ -1,179 +1,142 @@
-import React, { useState, useContext } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, Dimensions, StyleSheet, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
-import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
-import { auth } from '../Firebase/firebaseSetup';
+import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; // Import auth
 
 const { width } = Dimensions.get('window');
-const { height } = Dimensions.get('window');
 
 export default function ReviewDetailScreen() {
   const { theme } = useContext(ThemeContext);
+  const navigation = useNavigation();
   const route = useRoute();
+  const { postId } = route.params;
 
-  const postId = route.params?.postId || null;
+  const [reviewData, setReviewData] = useState({
+    description: route.params?.description || '',
+    images: route.params?.images || [],
+    rating: route.params?.rating || 0,
+    userId: '', // Add userId to store the post creator's ID
+    restaurant: route.params?.restaurantName || '', 
+  });
 
-  const [description, setDescription] = useState(route.params?.initialDescription || '');
-  const [images, setImages] = useState(route.params?.images || []);
-  const [rating, setRating] = useState(route.params?.rating || 0);
-  const [restaurant, setRestaurant] = useState(route.params?.initialRestaurant || ''); 
-  const [profilePhoto, setProfilePhoto] = useState(route.params?.profile_photo_url || null);
-  const [user, setUser] = useState(route.params?.user || '');
+  useEffect(() => {
+    const fetchReview = async () => {
+      if (!reviewData.title || !reviewData.description) {
+        const allPosts = await fetchDataFromDB('posts');
+        const post = allPosts.find((p) => p.id === postId);
+        if (post) {
+          setReviewData({
+            description: post.description || '',
+            images: post.images || [],
+            rating: post.rating || 0,
+            userId: post.userId || '', // Store the userId of the post creator
+            restaurant: post.restaurantName || '',
+          });
+        }
+      }
+    };
+    fetchReview();
+  }, [postId]);
+
+  const handleDelete = async () => {
+    const currentUserId = auth.currentUser?.uid;
+    if (reviewData.userId === currentUserId) {
+      Alert.alert("Confirm Delete", "Are you sure you want to delete this review?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: async () => {
+            await deleteFromDB(postId, 'posts');
+            navigation.goBack();
+          },
+          style: "destructive",
+        },
+      ]);
+    } else {
+      Alert.alert("Permission Denied", "You can only delete your own posts.");
+    }
+  };
+
+
+  const renderStars = (rating) => {
+    return Array.from({ length: rating }, (_, index) => (
+      <Ionicons key={index} name="star" size={40} color="gold" />
+    ));
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Ionicons
+          name="trash"
+          size={24}
+          color="white"
+          onPress={handleDelete}
+          style={{ marginRight: 15 }}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
-    <ScrollView>
-      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <View style={styles.imageContainer}>
-            { images.length == 0 ? (
-              <Text style={styles.noImageText}>No Image</Text>
-              ) : (
-              <ScrollView horizontal style={styles.imageScroll}>
-              {images.map((uri, index) => (
-                <Image key={index} source={{ uri }} style={styles.image} />
-              ))}
-            </ScrollView>
-            )}
-        </View>
-        
-        <View style={styles.restaurantContainer}>
-          <Ionicons name="location-outline" style={[styles.locationIcon, { color: theme.textColor }]} />
-          <TextInput
-            style={[styles.restaurantText, { color: theme.textColor }]}
-            value={restaurant}
-          />
-        </View>
-
-        <View style={[styles.ratingContainer]}>
-        <Text style={[styles.label, { color: theme.textColor }]}></Text>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <View key={star}>
-              <Ionicons
-                name={star <= rating ? "star" : "star-outline"}
-                size={16}
-                color={star <= rating ? theme.textColor : "#aaa"}
-              />
-            </View>
-          ))}
-        </View>
-        
-        <View style={styles.userContainer}>
-          <Image source={{ uri: profilePhoto }} style={styles.profilePhoto} />
-          <Text style={[styles.userText, { color: theme.textColor }]}>
-            {user}
-          </Text>
-        </View>
-
-        <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-        <TextInput
-          style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-          value={description}
-          multiline
-          editable={false}
-        />
-
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <View style={styles.textContainer}>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.imageScrollView}
+      >
+        {reviewData.images.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={styles.image} />
+        ))}
+      </ScrollView>
       </View>
-    </ScrollView>
+      <View style={styles.textContainer}>
+      <Text style={[styles.title, { color: theme.textColor }]}>
+          {reviewData.restaurant || 'No restaurant information available'}
+        </Text>
+        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
+        <View style={styles.ratingContainer}>
+          {renderStars(reviewData.rating)}
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
-  label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  input: {
-    height: 40,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-  },
-  descriptionInput: {
-    marginVertical: 10,
-    textAlignVertical: 'top', 
-    marginBottom: 200,
-  },
-  imageScroll: {
-    flexDirection: 'row',
-    marginVertical: 10,
-  },
-  image: {
-    width: width - 40,
-    height: 300,
-  },
-  imageContainer: {
-    width: width - 40,
-    height: 300,
-    borderWidth: 1,
-    borderColor: '#aaa',
-    borderRadius: 8,
-    borderStyle: 'dashed',
-    justifyContent: 'center',
+  imageScrollView: {
     alignItems: 'center',
   },
-  noImageText: {
-    color: '#aaa',
-    marginTop: 5,
-    fontSize: 80,
-    padding: 30,
-    textAlign: 'center',
+  image: {
+    width: width, // Full screen width
+    height: 300,
+    resizeMode: 'cover',
+  },
+  textContainer: {
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  description: {
+    fontSize: 20,
+    marginTop: 10,
+    marginBottom: 20,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: -90,
-  },
-  cancelButton: {
-    flex: 1,
-    alignItems: 'center',
-    borderRadius: 8,
-    marginRight: 10,
-  },
-  saveButton: {
-    flex: 1,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  imageContainer: {
-    marginBottom: 20,
-  },
-  locationIcon: {
-    fontSize: 20,
-  },
-  restaurantText: {
-    marginLeft: 10,
-    width: width - 70,
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  restaurantContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  profilePhoto: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  userText: {
-    marginLeft: 10,
-    fontSize: 16,
   },
 });
