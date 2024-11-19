@@ -1,9 +1,7 @@
-// LoginScreen.js
-
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { auth } from '../Firebase/firebaseSetup';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -31,6 +29,20 @@ export default function LoginScreen() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      Alert.alert('Email Required', 'Please enter your email to reset your password.');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert('Password Reset', 'A password reset link has been sent to your email.');
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      Alert.alert('Password Reset Error', error.message);
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={[styles.label, { color: theme.textColor }]}>Email Address</Text>
@@ -51,6 +63,10 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
       <Button title="Login" onPress={handleLogin} color={theme.buttonColor} />
+
+      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotPasswordButton}>
+        <Text style={styles.link}>Forgot Password?</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -72,5 +88,13 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 16,
     borderRadius: 5,
+  },
+  forgotPasswordButton: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  link: {
+    color: 'blue',
+    fontSize: 16,
   },
 });
