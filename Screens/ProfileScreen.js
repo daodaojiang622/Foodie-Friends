@@ -113,33 +113,66 @@ export default function ProfileScreen() {
   };
   
   const renderRow = (rowItems, rowIndex) => (
-    <View style={{ flexDirection: 'row', justifyContent: rowItems.length === 1 ? 'flex-start' : 'space-between' }} key={`row-${rowIndex}`}>
+    <View
+      style={{ flexDirection: 'row', justifyContent: rowItems.length === 1 ? 'flex-start' : 'space-between' }}
+      key={`row-${rowIndex}`}
+    >
       {rowItems.map((item) => (
-        <Pressable
-          key={item.id}
-          onPress={() =>
-            navigation.navigate('EditPost', {
-              postId: item.id,
-              initialDescription: item.description,
-              initialImages: item.images,
-              initialRating: item.rating,
-              restaurantName: item.restaurantName || 'No restaurant specified', // Pass restaurantName
-              restaurantId: item.restaurantId || '', // Pass restaurantId
-            })
-          }
-          style={[
-            styles.postItem,
-            rowItems.length === 1 && { width: '48%' } // Adjust width for single item in a row
-          ]}
-        >
-          <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-          <Text style={[styles.postTitle, { color: theme.textColor }]}>
-            {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
-          </Text>
-        </Pressable>
+        <View key={item.id} style={[styles.postItem, rowItems.length === 1 && { width: '48%' }]}>
+          <Pressable
+            onPress={() =>
+              navigation.navigate('EditPost', {
+                postId: item.id,
+                initialDescription: item.description,
+                initialImages: item.images,
+                initialRating: item.rating,
+                restaurantName: item.restaurantName || 'No restaurant specified',
+                restaurantId: item.restaurantId || '',
+              })
+            }
+          >
+            <Image source={{ uri: item.images[0] }} style={styles.postImage} />
+            <Text style={[styles.postTitle, { color: theme.textColor }]}>
+              {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
+            </Text>
+          </Pressable>
+          {/* Delete Button */}
+          <Pressable
+            style={styles.deleteButton}
+            onPress={() => handleDeletePost(item.id, item.userId)}
+          >
+            <Ionicons name="close" size={20} color="red" />
+          </Pressable>
+        </View>
       ))}
     </View>
   );
+  
+  const handleDeletePost = async (postId, userId) => {
+    if (userId !== auth.currentUser?.uid) {
+      Alert.alert('Permission Denied', 'You can only delete your own posts.');
+      return;
+    }
+  
+    Alert.alert('Confirm Delete', 'Are you sure you want to delete this post?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteFromDB(postId, 'posts');
+            setUserPosts(userPosts.filter((post) => post.id !== postId)); // Update UI
+            Alert.alert('Post Deleted', 'Your post has been successfully deleted.');
+          } catch (error) {
+            console.error('Error deleting post:', error);
+            Alert.alert('Delete Error', 'There was an issue deleting your post.');
+          }
+        },
+      },
+    ]);
+  };
+  
   
   return (
     <ScreenWrapper>
@@ -289,5 +322,14 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 5,
+    elevation: 3, // Android shadow
   },
 });
