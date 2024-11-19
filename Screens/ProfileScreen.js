@@ -78,11 +78,12 @@ export default function ProfileScreen() {
 
       console.log("Image Picker Result:", result); // Log the entire result to see the structure
 
-      if (!result.canceled && result.uri) {
-        setProfileImage(result.uri);
-        await AsyncStorage.setItem('profileImage', result.uri);
+      if (!result.canceled && result.assets && result.assets[0].uri) {
+        const selectedImageUri = result.assets[0].uri;
+        setProfileImage(selectedImageUri);
+        await AsyncStorage.setItem('profileImage', selectedImageUri); // Save locally
       } else {
-        console.log("No image selected or action was canceled.");
+        console.log("No image selected.");
       }
     } catch (error) {
       console.error("Error picking image:", error);
@@ -98,19 +99,41 @@ export default function ProfileScreen() {
         quality: 1,
       });
 
-      console.log("Camera Result:", result); // Log the entire result to see the structure
-
-      if (!result.canceled && result.uri) {
-        setProfileImage(result.uri);
-        await AsyncStorage.setItem('profileImage', result.uri);
+      if (!result.canceled && result.assets && result.assets[0].uri) {
+        const capturedImageUri = result.assets[0].uri;
+        setProfileImage(capturedImageUri);
+        await AsyncStorage.setItem('profileImage', capturedImageUri); // Save locally
       } else {
-        console.log("No image captured or action was canceled.");
+        console.log("No image captured.");
       }
     } catch (error) {
       console.error("Error capturing image:", error);
       Alert.alert("Error", "Failed to capture image.");
     }
   };
+
+  const handleProfileImagePress = async () => {
+    Alert.alert(
+      "Set Profile Picture",
+      "Choose an option:",
+      [
+        {
+          text: "Take a Photo",
+          onPress: captureProfileImage,
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: pickProfileImage,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+  
   
   const renderRow = (rowItems, rowIndex) => (
     <View
@@ -195,14 +218,21 @@ export default function ProfileScreen() {
       </Modal>
 
       <View style={styles.profileHeader}>
-        <Pressable onPress={pickProfileImage} onLongPress={captureProfileImage}>
-          <Image 
-            source={{ uri: profileImage || 'https://via.placeholder.com/100' }} 
-            style={styles.profileImage} 
-          />
-        </Pressable>
-        <Text style={[styles.username, { color: theme.textColor }]}>{username || "User"}</Text>
-        
+      <Pressable onPress={handleProfileImagePress}>
+        <Image
+         source={{ uri: profileImage || 'https://via.placeholder.com/100' }}
+         style={styles.profileImage}
+       />
+      </Pressable>
+
+        <View style={styles.usernameContainer}>
+         <Text style={[styles.username, { color: theme.textColor }]}>
+             {username || "User"}
+         </Text>
+         <Pressable onPress={() => setUsernameModalVisible(true)} style={styles.editIcon}>
+           <Ionicons name="pencil" size={20} color={theme.textColor} />
+         </Pressable>
+        </View>
         {/* Action Button */}
         <Pressable onPress={() => navigation.navigate('FoodGallery')} style={styles.actionButton}>
           <Ionicons name="images-outline" size={24} color={theme.textColor} />
@@ -232,12 +262,22 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#d1d1d1',
     marginBottom: 10,
+  },
+  usernameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  editIcon: {
+    marginLeft: 8,
+    padding: 4,
   },
   username: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   actionButton: {
     flexDirection: 'row',
