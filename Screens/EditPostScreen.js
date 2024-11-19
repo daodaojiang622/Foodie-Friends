@@ -54,24 +54,29 @@ export default function EditPostScreen() {
   };
 
   const handleSuggestionSelect = (suggestion) => {
-    console.log("Selected suggestion:", suggestion); // Debug
+    try {
+      console.log("Selected suggestion:", suggestion);
   
-    // Extract the name (part before the first punctuation mark)
-    const name = suggestion.description.split(/[.,-]/)[0].trim();
+      const name = suggestion.description.split(/[.,-]/)[0].trim();
   
-    // Update the search bar to show the full description
-    setRestaurantQuery(suggestion.description);
+      if (!name || !suggestion.id) {
+        throw new Error('Invalid restaurant selection');
+      }
   
-    // Update the selected restaurant with extracted name and place_id
-    setSelectedRestaurant({
-      name: name, // Extracted name
-      place_id: suggestion.id, // Assign the id to place_id
-    });
+      setRestaurantQuery(suggestion.description);
   
-    // Clear suggestions after selecting
-    setRestaurantSuggestions([]);
-  };  
-
+      setSelectedRestaurant({
+        name: name,
+        place_id: suggestion.id,
+      });
+  
+      setRestaurantSuggestions([]);
+    } catch (error) {
+      console.error('Error selecting restaurant:', error);
+      Alert.alert('Selection Error', error.message);
+    }
+  };
+  
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {

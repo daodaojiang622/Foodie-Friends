@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { auth } from '../Firebase/firebaseSetup';
-import { createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -14,28 +14,28 @@ export default function SignUpScreen() {
   const [passwordStrength, setPasswordStrength] = useState('');
 
   const handleRegister = async () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 邮箱格式正则表达式
-  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
       Alert.alert('Invalid Email', 'Please enter a valid email address.');
       return;
     }
-  
+
     if (password !== confirmPassword) {
       Alert.alert('Mismatch', 'Passwords do not match. Please try again.');
       return;
     }
-  
+
     if (email.length === 0 || password.length === 0 || confirmPassword.length === 0) {
       Alert.alert('Empty Fields', 'All fields are required. Please complete the form.');
       return;
     }
-  
+
     if (password.length < 8) {
       Alert.alert('Weak Password', 'Your password should be at least 8 characters long.');
       return;
     }
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -47,7 +47,6 @@ export default function SignUpScreen() {
       Alert.alert('Registration Error', error.message);
     }
   };
-  
 
   const handlePasswordChange = (value) => {
     setPassword(value);
@@ -57,20 +56,6 @@ export default function SignUpScreen() {
       setPasswordStrength('Moderate');
     } else {
       setPasswordStrength('Strong');
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      Alert.alert('Email Required', 'Please enter your email to reset your password.');
-      return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      Alert.alert('Password Reset', 'A password reset link has been sent to your email.');
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      Alert.alert('Password Reset Error', error.message);
     }
   };
 
@@ -112,10 +97,6 @@ export default function SignUpScreen() {
       <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.loginButton}>
         <Text style={styles.link}>Already Registered? Login</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotPasswordButton}>
-        <Text style={styles.link}>Forgot Password?</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -143,10 +124,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   loginButton: {
-    marginTop: 16,
-    alignItems: 'center',
-  },
-  forgotPasswordButton: {
     marginTop: 16,
     alignItems: 'center',
   },
