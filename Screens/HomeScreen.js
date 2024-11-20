@@ -71,7 +71,7 @@ export default function HomeScreen() {
             : [],
         }));
 
-      setReviews(nearbyReviews.slice(0, 2)); // Limit to 1-2 reviews for display
+      setReviews(nearbyReviews.slice(0, 5)); // Limit to 1-2 reviews for display
     } catch (error) {
       console.error('Error fetching reviews:', error);
     } finally {
@@ -84,32 +84,41 @@ export default function HomeScreen() {
     loadPosts();
     fetchLocationAndReviews();
   }, []);
+// Randomly include 1 post from user's own posts in the feed
+const includeRandomPost = (data) => {
+  if (posts.length > 0) {
+    const randomPost = posts[Math.floor(Math.random() * posts.length)];
+    data.push(randomPost); // Add random post
+  }
+  return data;
+};
 
-  // Unified render function for posts and reviews
-  const renderRow = (rowItems, rowIndex) => (
-    <View style={styles.row} key={`row-${rowIndex}`}>
-      {rowItems.map((item) => (
-        <Pressable
-          key={item.id}
-          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
-          style={styles.imageWrapper}
-        >
-          {item.images?.[0] ? (
-            <Image source={{ uri: item.images[0] }} style={styles.image} />
-          ) : (
-            <Text>No Image Available</Text>
-          )}
-          <Text style={styles.title}>
-            {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
-          </Text>
-          {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
-        </Pressable>
-      ))}
-    </View>
-  );
+// Unified render function for posts and reviews
+const renderRow = (rowItems, rowIndex) => (
+  <View style={styles.row} key={`row-${rowIndex}`}>
+    {rowItems.map((item) => (
+      <Pressable
+        key={item.id}
+        onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
+        style={styles.imageWrapper}
+      >
+        {item.images?.[0] ? (
+          <Image source={{ uri: item.images[0] }} style={styles.image} />
+        ) : (
+          <Text>No Image Available</Text>
+        )}
+        <Text style={styles.title}>
+          {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
+        </Text>
+        {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
+      </Pressable>
+    ))}
+  </View>
+);
 
-  // Combine posts and reviews for rendering
-  const combinedData = [...posts, ...reviews];
+// Combine posts and reviews for rendering (Ensure 6 items are displayed)
+const combinedData = includeRandomPost([...reviews]);
+
 
   return (
     <ScreenWrapper>
