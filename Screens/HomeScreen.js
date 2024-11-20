@@ -58,7 +58,7 @@ export default function HomeScreen() {
       const apiKey = process.env.EXPO_PUBLIC_apiKey;
 
       // API URL for fetching reviews with pagination support
-      let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=restaurant&key=${apiKey}`;
+      let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&key=${apiKey}`;
 
       if (nextPageToken) {
         url += `&pagetoken=${nextPageToken}`;
@@ -66,9 +66,23 @@ export default function HomeScreen() {
 
       const response = await axios.get(url);
 
-      const nearbyReviews = response.data.results
-        .filter((place) => place.rating >= minRating)
-        .map((place) => ({
+      const allowedKeywords = ["restaurant", "bar", "food", "delicious"];
+    
+      // Function to filter reviews based on keywords
+      const filterReview = (reviewText) => {
+        return allowedKeywords.some((keyword) => reviewText.toLowerCase().includes(keyword));
+      };
+  
+      // Fetch detailed reviews for each place and filter based on keywords
+      const nearbyReviews = [];
+      for (const place of response.data.results) {
+        const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${place.place_id}&key=${apiKey}`;
+        const placeDetailsResponse = await axios.get(placeDetailsUrl);
+  
+        // Filter reviews based on keywords
+        const filteredReviews = placeDetailsResponse.data.result.reviews
+          ?.filter((review) => filterReview(review.text))
+          .map((review) => ({
           id: place.place_id,
           name: place.name,
           rating: place.rating,
@@ -79,6 +93,11 @@ export default function HomeScreen() {
             : [],
         }));
 
+        if (filteredReviews && filteredReviews.length > 0) {
+          nearbyReviews.push(...filteredReviews); // Add only reviews that match keywords
+        }
+      }
+  
       setReviews((prevReviews) => [...prevReviews, ...nearbyReviews]); // Append new reviews
       setPageToken(response.data.next_page_token); // Update the page token for next batch of reviews
     } catch (error) {
@@ -136,7 +155,7 @@ export default function HomeScreen() {
       <FlatList
         data={combinedData}
         renderItem={renderRow}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => `${item.id}-${item.name}`}
         numColumns={2} // Display 2 items per row
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
