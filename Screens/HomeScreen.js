@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,8 +15,6 @@ export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
-
 
   const handleAddPost = () => {
     if (auth.currentUser) {
@@ -27,15 +25,23 @@ export default function HomeScreen() {
     }
   };
 
-  // Fetch posts from the database
+  // Function to load posts from Firebase
   const loadPosts = async () => {
-    try {
-      const data = await fetchDataFromDB('posts');
-      setPosts(data);
-    } catch (error) {
-      console.error('Error loading posts:', error);
-    }
+    const data = await fetchDataFromDB('posts');
+    setPosts(data);
   };
+
+  // Load posts once on component mount
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  // Reload posts each time HomeScreen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPosts();
+    }, [])
+  );
 
   // Fetch location and nearby reviews
   const fetchLocationAndReviews = async () => {
