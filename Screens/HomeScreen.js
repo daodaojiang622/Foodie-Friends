@@ -66,7 +66,7 @@ export default function HomeScreen() {
   return (
     <ScreenWrapper>
       <View style={styles.header}>
-        <Text style={[styles.headerText, { color: theme.textColor }]}>Checkout the latest hotspots</Text>
+        <Text style={[styles.headerText, { color: theme.textColor }]}>Nearby Hot Spots</Text>
         <Pressable onPress={handleAddPost} style={styles.addPostButton}>
           <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
         </Pressable>
