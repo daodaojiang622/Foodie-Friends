@@ -13,6 +13,7 @@ const firebaseConfig = {
     authDomain: process.env.EXPO_PUBLIC_authDomain,
     projectId: process.env.EXPO_PUBLIC_projectId,
     storageBucket: process.env.EXPO_PUBLIC_storageBucket,
+    databaseURL: process.env.EXPO_PUBLIC_databaseURL,
     messagingSenderId: process.env.EXPO_PUBLIC_messagingSenderId,
     appId: process.env.EXPO_PUBLIC_appId,
 };
