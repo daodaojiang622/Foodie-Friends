@@ -7,27 +7,16 @@ import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup';
+import * as Location from 'expo-location';
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Function to load posts from Firebase
-  const loadPosts = async () => {
-    try {
-      const data = await fetchDataFromDB('posts');
-      console.log('Fetched posts:', data); // 验证数据是否正确
-      setPosts(data);
-    } catch (error) {
-      console.error("Error loading posts:", error);
-    }
-  };
-
-  // Load posts once on component mount
-  useEffect(() => {
-    loadPosts();
-  }, []);
 
   const handleAddPost = () => {
     if (auth.currentUser) {
@@ -38,15 +27,71 @@ export default function HomeScreen() {
     }
   };
 
-  const renderRow = (rowItems, rowIndex) => (
-  <View style={styles.row} key={`row-${rowIndex}`}>
-    {rowItems.map((item) => {
-      console.log('Rendering post:', item);
+  // Fetch posts from the database
+  const loadPosts = async () => {
+    try {
+      const data = await fetchDataFromDB('posts');
+      setPosts(data);
+    } catch (error) {
+      console.error('Error loading posts:', error);
+    }
+  };
 
-      return (
+  // Fetch location and nearby reviews
+  const fetchLocationAndReviews = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
+
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords);
+
+      const { latitude, longitude } = loc.coords;
+      const radius = 5000; // 5 km radius
+      const minRating = 3.8;
+      const apiKey = process.env.EXPO_PUBLIC_apiKey;
+
+      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=restaurant&key=${apiKey}`;
+      const response = await axios.get(url);
+
+      const nearbyReviews = response.data.results
+        .filter((place) => place.rating >= minRating)
+        .map((place) => ({
+          id: place.place_id,
+          name: place.name,
+          rating: place.rating,
+          images: place.photos
+            ? [
+                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${apiKey}`,
+              ]
+            : [],
+        }));
+
+      setReviews(nearbyReviews.slice(0, 2)); // Limit to 1-2 reviews for display
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load posts and reviews on component mount
+  useEffect(() => {
+    loadPosts();
+    fetchLocationAndReviews();
+  }, []);
+
+  // Unified render function for posts and reviews
+  const renderRow = (rowItems, rowIndex) => (
+    <View style={styles.row} key={`row-${rowIndex}`}>
+      {rowItems.map((item) => (
         <Pressable
           key={item.id}
-          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
+          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
           style={styles.imageWrapper}
         >
           {item.images?.[0] ? (
@@ -55,13 +100,16 @@ export default function HomeScreen() {
             <Text>No Image Available</Text>
           )}
           <Text style={styles.title}>
-            {item.description.split(' ').slice(0, 5).join(' ')}...
+            {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
           </Text>
+          {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
         </Pressable>
-      );
-    })}
-  </View>
-);
+      ))}
+    </View>
+  );
+
+  // Combine posts and reviews for rendering
+  const combinedData = [...posts, ...reviews];
 
   return (
     <ScreenWrapper>
@@ -73,8 +121,8 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {Array.from({ length: Math.ceil(posts.length / 2) }, (_, index) => 
-         renderRow(posts.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
+        {Array.from({ length: Math.ceil(combinedData.length / 2) }, (_, index) => 
+         renderRow(combinedData.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
        )}
       </ScrollView>
 
