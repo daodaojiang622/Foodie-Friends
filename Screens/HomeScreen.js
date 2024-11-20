@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert } from 'react-native';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert, FlatList } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -16,7 +16,7 @@ export default function HomeScreen() {
   const [reviews, setReviews] = useState([]);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [pageToken, setPageToken] = useState(null); // For pagination
 
   const handleAddPost = () => {
     if (auth.currentUser) {
@@ -37,8 +37,10 @@ export default function HomeScreen() {
     }
   };
 
-  // Fetch location and nearby reviews
-  const fetchLocationAndReviews = async () => {
+  // Fetch location and nearby reviews with pagination
+  const fetchLocationAndReviews = async (nextPageToken = null) => {
+    setLoading(true);
+
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -55,7 +57,13 @@ export default function HomeScreen() {
       const minRating = 3.8;
       const apiKey = process.env.EXPO_PUBLIC_apiKey;
 
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=restaurant&key=${apiKey}`;
+      // API URL for fetching reviews with pagination support
+      let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&type=restaurant&key=${apiKey}`;
+
+      if (nextPageToken) {
+        url += `&pagetoken=${nextPageToken}`;
+      }
+
       const response = await axios.get(url);
 
       const nearbyReviews = response.data.results
@@ -71,7 +79,8 @@ export default function HomeScreen() {
             : [],
         }));
 
-      setReviews(nearbyReviews.slice(0, 5)); // Limit to 1-2 reviews for display
+      setReviews((prevReviews) => [...prevReviews, ...nearbyReviews]); // Append new reviews
+      setPageToken(response.data.next_page_token); // Update the page token for next batch of reviews
     } catch (error) {
       console.error('Error fetching reviews:', error);
     } finally {
@@ -84,41 +93,36 @@ export default function HomeScreen() {
     loadPosts();
     fetchLocationAndReviews();
   }, []);
-// Randomly include 1 post from user's own posts in the feed
-const includeRandomPost = (data) => {
-  if (posts.length > 0) {
-    const randomPost = posts[Math.floor(Math.random() * posts.length)];
-    data.push(randomPost); // Add random post
-  }
-  return data;
-};
 
-// Unified render function for posts and reviews
-const renderRow = (rowItems, rowIndex) => (
-  <View style={styles.row} key={`row-${rowIndex}`}>
-    {rowItems.map((item) => (
-      <Pressable
-        key={item.id}
-        onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
-        style={styles.imageWrapper}
-      >
-        {item.images?.[0] ? (
-          <Image source={{ uri: item.images[0] }} style={styles.image} />
-        ) : (
-          <Text>No Image Available</Text>
-        )}
-        <Text style={styles.title}>
-          {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
-        </Text>
-        {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
-      </Pressable>
-    ))}
-  </View>
-);
+  
+  // Render item for FlatList
+  const renderRow = ({ item }) => (
+    <Pressable
+      key={item.id}
+      onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
+      style={styles.imageWrapper}
+    >
+      {item.images?.[0] ? (
+        <Image source={{ uri: item.images[0] }} style={styles.image} />
+      ) : (
+        <Text>No Image Available</Text>
+      )}
+      <Text style={styles.title}>
+        {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
+      </Text>
+      {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
+    </Pressable>
+  );
 
-// Combine posts and reviews for rendering (Ensure 6 items are displayed)
-const combinedData = includeRandomPost([...reviews]);
+  // Combine posts and reviews for rendering
+  const combinedData = [...posts, ...reviews];
 
+  // Handle when user reaches the end of the list to load more reviews
+  const handleLoadMore = () => {
+    if (pageToken && !loading) {
+      fetchLocationAndReviews(pageToken);
+    }
+  };
 
   return (
     <ScreenWrapper>
@@ -129,12 +133,16 @@ const combinedData = includeRandomPost([...reviews]);
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {Array.from({ length: Math.ceil(combinedData.length / 2) }, (_, index) => 
-         renderRow(combinedData.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
-       )}
-      </ScrollView>
-
+      <FlatList
+        data={combinedData}
+        renderItem={renderRow}
+        keyExtractor={(item) => item.id}
+        numColumns={2} // Display 2 items per row
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
+        ListFooterComponent={loading ? <Text>Loading...</Text> : null}
+        contentContainerStyle={styles.scrollContainer}
+      />
     </ScreenWrapper>
   );
 }
