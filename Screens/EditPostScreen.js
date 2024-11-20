@@ -77,8 +77,6 @@ export default function EditPostScreen() {
     return true;
   };
 
-  const normalizeUri = (uri) => (uri.startsWith('file://') ? uri.replace('file://', '') : uri);
-
   const pickImage = async () => {
     console.log('Opening gallery...');
     const hasPermission = await requestPermissions();
