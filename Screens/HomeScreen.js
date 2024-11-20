@@ -105,7 +105,7 @@ export default function HomeScreen() {
           ) : (
             <Text>No Image Available</Text>
           )}
-          <Text style={styles.title}>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
             {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
           </Text>
           {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
@@ -193,8 +193,9 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 12,
   },
-  likes: {
-    fontSize: 12,
+  rating: {
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: 'row',
