@@ -129,61 +129,77 @@ export default function EditPostScreen() {
       }
     }
   };
-
+  
   const handleSave = async () => {
     if (!description.trim()) {
       Alert.alert('Error', 'Review details are required.');
       return;
     }
-
+  
     if (rating === 0) {
       Alert.alert('Error', 'Please select a rating.');
       return;
     }
-
+  
     if (!selectedRestaurant || !selectedRestaurant.name) {
       Alert.alert('Error', 'Please select a restaurant.');
       return;
     }
-
+  
     const userId = auth.currentUser?.uid;
-    const newData = {
-      description,
-      images,
-      rating,
-      userId,
-      restaurantName: selectedRestaurant.name,
-      restaurantId: selectedRestaurant.place_id,
-    };
-
-    Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Save',
-        onPress: async () => {
-          try {
-            if (postId) {
-              await updateDB(postId, newData, 'posts');
-            } else {
-              await writeToDB(newData, 'posts');
-            }
-            navigation.goBack();
-          } catch (error) {
-            console.error('Error saving post:', error);
-            Alert.alert('Save Error', 'There was a problem saving your post.');
+  
+    try {
+      const uploadedImageURLs = await Promise.all(
+        images.map(async (uri) => {
+          if (uri.startsWith('http')) {
+            return uri;
+          } else {
+            return await uploadImageToFirebase(uri);
           }
+        })
+      );
+  
+      const newData = {
+        description,
+        images: uploadedImageURLs,
+        rating,
+        userId,
+        restaurantName: selectedRestaurant.name,
+        restaurantId: selectedRestaurant.place_id,
+      };
+  
+      Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
         },
-      },
-    ]);
+        {
+          text: 'Save',
+          onPress: async () => {
+            try {
+              if (postId) {
+                await updateDB(postId, newData, 'posts');
+              } else {
+                await writeToDB(newData, 'posts');
+              }
+              navigation.goBack();
+            } catch (error) {
+              console.error('Error saving post:', error);
+              Alert.alert('Save Error', 'There was a problem saving your post.');
+            }
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
+    }
   };
+  
 
   const handleCancel = () => {
     navigation.goBack();
   };
-
 
   const uploadImageToFirebase = async (uri) => {
     try {
@@ -193,26 +209,18 @@ export default function EditPostScreen() {
   
       console.log('Uploading Image URI:', uri);
   
-      // Normalize URI for iOS if necessary (removing "file://" prefix)
-      const normalizedUri = uri.startsWith('file://') ? uri.replace('file://', '') : uri;
-  
-      // Fetch the file and convert to Blob
-      const response = await fetch(normalizedUri); // Using the raw `uri`
+      const response = await fetch(uri);
       if (!response.ok) {
         throw new Error(`Failed to fetch image. Status: ${response.statusText}`);
       }
       const blob = await response.blob();
   
-      // Generate a unique file name
       const fileName = `${Date.now()}.jpg`;
   
-      // Reference in Firebase Storage
       const storageRef = ref(storage, `images/${fileName}`);
   
-      // Upload Blob
       const snapshot = await uploadBytes(storageRef, blob);
   
-      // Get the download URL
       const downloadURL = await getDownloadURL(snapshot.ref);
       console.log('Image uploaded successfully. URL:', downloadURL);
       return downloadURL;
@@ -221,6 +229,7 @@ export default function EditPostScreen() {
       throw error;
     }
   };
+  
   
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>

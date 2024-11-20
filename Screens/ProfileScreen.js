@@ -38,6 +38,7 @@ export default function ProfileScreen() {
   const loadUserPosts = async () => {
     try {
       const posts = await fetchDataFromDB('posts');
+      console.log('Fetched Posts:', posts);
       const filteredPosts = posts.filter((post) => post.userId === auth.currentUser.uid);
       setUserPosts(filteredPosts);
     } catch (error) {
