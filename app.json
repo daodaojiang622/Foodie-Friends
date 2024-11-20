@@ -11,20 +11,8 @@
     "android": {
       "package": "com.anonymous.activity_diet_tracker_app",
       "permissions": [
-        {
-          "permission": "ACCESS_FINE_LOCATION",
-          "rationale": {
-            "title": "Location Access Required",
-            "message": "We need your location to show restaurant results."
-          }
-        },
-        {
-          "permission": "ACCESS_COARSE_LOCATION",
-          "rationale": {
-            "title": "Location Access Required",
-            "message": "We need your location to show restaurant results."
-          }
-        }
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
       ]
     },
     "ios": {
