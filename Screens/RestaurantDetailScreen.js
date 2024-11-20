@@ -112,7 +112,8 @@ export default function RestaurantDetailScreen() {
       postId: review.id, // If the review has a unique identifier
       initialRestaurant: restaurant.name, // Optionally pass the restaurant name
       initialDescription: review.text,
-      images: review.photos || [], // Assuming the review contains photos
+      // pass 2 random photos of the place as the images of the review
+      images: restaurant.photos.slice(0, 2),
       rating: review.rating || 0, // Pass the review's rating
       user: review.author_name,
       profile_photo_url: review.profile_photo_url,
