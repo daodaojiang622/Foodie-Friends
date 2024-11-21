@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +15,15 @@ export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const handleAddPost = () => {
+    if (auth.currentUser) {
+      navigation.navigate('EditPost');
+    } else {
+      Alert.alert('Authentication Required', 'Please log in to add a new post');
+      navigation.navigate('SignUpScreen');
+    }
+  };
 
 
   const handleAddPost = () => {
@@ -29,13 +37,26 @@ export default function HomeScreen() {
 
   // Fetch posts from the database
   const loadPosts = async () => {
-    try {
-      const data = await fetchDataFromDB('posts');
-      setPosts(data);
-    } catch (error) {
-      console.error('Error loading posts:', error);
-    }
+    const data = await fetchDataFromDB('posts');
+    setPosts(data);
   };
+
+  // Fetch location and nearby reviews
+  const fetchLocationAndReviews = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
+
+  // Reload posts each time HomeScreen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPosts();
+    }, [])
+  );
 
   // Fetch location and nearby reviews
   const fetchLocationAndReviews = async () => {
@@ -99,7 +120,9 @@ export default function HomeScreen() {
           ) : (
             <Text>No Image Available</Text>
           )}
-          <Text style={styles.title}>
+
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+
             {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
           </Text>
           {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
@@ -187,8 +210,9 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 12,
   },
-  likes: {
-    fontSize: 12,
+  rating: {
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: 'row',

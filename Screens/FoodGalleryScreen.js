@@ -9,12 +9,11 @@ export default function FoodGalleryScreen() {
   useEffect(() => {
     // Load images for the current user's posts
     const loadGallery = async () => {
-      const userId = auth.currentUser?.uid;
-      if (userId) {
-        const posts = await fetchDataFromDB('posts', { userId });
-        const photos = posts.flatMap((post) => post.images || []);
-        setImages(photos);
-      }
+      const posts = await fetchDataFromDB('posts');
+      const filteredPosts = posts.filter((post) => post.userId === auth.currentUser.uid);
+      const photos = filteredPosts.flatMap((post) => post.images || []);
+      setImages(photos);
+    
     };
     loadGallery();
   }, []);
