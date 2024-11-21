@@ -25,16 +25,31 @@ export default function HomeScreen() {
     }
   };
 
-  // Function to load posts from Firebase
+
+  const handleAddPost = () => {
+    if (auth.currentUser) {
+      navigation.navigate('EditPost');
+    } else {
+      Alert.alert('Authentication Required', 'Please log in to add a new post');
+      navigation.navigate('SignUpScreen');
+    }
+  };
+
+  // Fetch posts from the database
   const loadPosts = async () => {
     const data = await fetchDataFromDB('posts');
     setPosts(data);
   };
 
-  // Load posts once on component mount
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  // Fetch location and nearby reviews
+  const fetchLocationAndReviews = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
 
   // Reload posts each time HomeScreen is focused
   useFocusEffect(
@@ -105,7 +120,9 @@ export default function HomeScreen() {
           ) : (
             <Text>No Image Available</Text>
           )}
+
           <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+
             {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
           </Text>
           {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
