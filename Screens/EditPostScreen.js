@@ -21,8 +21,8 @@ export default function EditPostScreen() {
 
   const postId = route.params?.postId || null;
   const initialDescription = route.params?.initialDescription || '';
-  const initialImages = route.params?.images || [];
-  const initialRating = route.params?.rating || 0;
+  const initialImages = route.params?.initialImages || [];
+  const initialRating = route.params?.initialRating || 0;
   const initialRestaurantName = route.params?.restaurantName || '';
 
   const [description, setDescription] = useState(initialDescription);
