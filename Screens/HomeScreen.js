@@ -81,24 +81,28 @@ export default function HomeScreen() {
         const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${place.place_id}&key=${apiKey}`;
         const placeDetailsResponse = await axios.get(placeDetailsUrl);
   
-        // Filter reviews based on keywords
-        const filteredReviews = placeDetailsResponse.data.result.reviews
+          // Extract reviews from place details and filter them
+          const filteredReviews = placeDetailsResponse.data.result.reviews
           ?.filter((review) => filterReview(review.text))
           .map((review) => ({
-          id: place.place_id,
-          name: place.name,
-          rating: place.rating,
-          images: place.photos
-            ? [
-                `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${apiKey}`,
-              ]
-            : [],
-        }));
+            authorName: review.author_name,
+            rating: review.rating,
+            text: review.text,
+            time: review.relative_time_description,
+          }));
 
-        if (filteredReviews && filteredReviews.length > 0) {
-          nearbyReviews.push(...filteredReviews); // Add only reviews that match keywords
+          nearbyReviews.push({
+            id: place.place_id,
+            name: place.name,
+            rating: place.rating,
+            images: place.photos
+              ? [
+                  `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photos[0].photo_reference}&key=${apiKey}`,
+                ]
+              : [],
+            reviews: filteredReviews || [], // Include reviews if available
+          });
         }
-      }
   
       setReviews((prevReviews) => [...prevReviews, ...nearbyReviews]); // Append new reviews
       setPageToken(response.data.next_page_token); // Update the page token for next batch of reviews
@@ -126,7 +130,7 @@ export default function HomeScreen() {
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
       ) : (
-        <Text>No Image Available</Text>
+        <MaterialCommunityIcons name="image-off-outline" size={24} color="black" />
       )}
       <Text style={styles.title}>
         {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
