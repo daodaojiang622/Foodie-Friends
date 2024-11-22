@@ -8,6 +8,7 @@ import { writeToDB } from '../Firebase/firestoreHelper';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { updateDB } from '../Firebase/firestoreHelper';
+import * as Notifications from 'expo-notifications';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -105,6 +106,18 @@ export default function EditMeetUpScreen({ navigation, route }) {
 
     // Save the meet-up (you can add your save logic here)
     Alert.alert("Success", "Meet-up saved successfully!");
+
+    // Schedule a notification for the meet-up
+    const notificationId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Meet-Up Reminder',
+        body: `Time for your Meet-up at ${restaurant} at ${time}`,
+      },
+      trigger: selectedDateTime.toDate(),
+    });
+
+    console.log('Scheduled notification with id:', notificationId);
+
     navigation.goBack();
   };
 

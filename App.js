@@ -29,6 +29,15 @@ import RestaurantDetailScreen from './Screens/RestaurantDetailScreen';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+
 async function registerForPushNotificationsAsync() {
   let token;
   if (Platform.OS === 'android') {
