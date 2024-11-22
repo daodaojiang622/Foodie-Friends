@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert, TextInput, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Alert, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import DateInput from '../Components/Inputs/DateInput';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 import { updateDB } from '../Firebase/firestoreHelper';
 import * as Notifications from 'expo-notifications';
+import axios from 'axios';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -16,6 +17,9 @@ export default function EditMeetUpScreen({ navigation, route }) {
   const [date, setDate] = useState(route.params?.date || new Date());
   const [time, setTime] = useState(route.params?.time || '');
   const [details, setDetails] = useState(route.params?.details || '');
+  const [restaurantQuery, setRestaurantQuery] = useState('');
+  const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const collectionName = 'meetups';
 
   useEffect(() => {
@@ -121,14 +125,77 @@ export default function EditMeetUpScreen({ navigation, route }) {
     navigation.goBack();
   };
 
+  const fetchSuggestions = async (query) => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
+    try {
+      const response = await axios.get(url);
+      const results = response.data.predictions.map((place) => ({
+        id: place.place_id,
+        description: place.description,
+      }));
+      setRestaurantSuggestions(results);
+    } catch (error) {
+      console.error('Error fetching restaurant suggestions:', error);
+    }
+  };
+  
+  const handleSearchChange = (query) => {
+    setRestaurantQuery(query);
+    if (query.length > 2) {
+      fetchSuggestions(query);
+    } else {
+      setRestaurantSuggestions([]);
+    }
+  };
+
+  const handleSuggestionSelect = (suggestion) => {
+    console.log("Selected suggestion:", suggestion); // Debug
+  
+    // Extract the name (part before the first punctuation mark)
+    const name = suggestion.description.split(/[.,-]/)[0].trim();
+  
+    // Update the search bar to show the full description
+    setRestaurantQuery(suggestion.description);
+  
+    // Update the selected restaurant with extracted name and place_id
+    setSelectedRestaurant({
+      name: name, // Extracted name
+      place_id: suggestion.id, // Assign the id to place_id
+    });
+    
+    setRestaurant(name);
+    
+    // Clear suggestions after selecting
+    setRestaurantSuggestions([]);
+  };  
+
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <Text style={styles.inputText}>Restaurant*</Text>
       <TextInput 
         style={styles.inputContainer} 
-        value={restaurant}
-        onChangeText={setRestaurant}
+        value={restaurantQuery}
+        onChangeText={handleSearchChange}
       />
+      {restaurantSuggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+        <FlatList
+          data={restaurantSuggestions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleSuggestionSelect(item)}
+              style={styles.suggestionItem}
+            >
+              <Text style={[styles.suggestionText, { color: theme.textColor }]}>
+                {item.description}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+      )}
 
       <TimeInput time={time} setTime={setTime} />
 
