@@ -133,9 +133,14 @@ export default function HomeScreen() {
         <MaterialCommunityIcons name="image-off-outline" size={24} color="black" />
       )}
       <Text style={styles.title}>
-        {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
+        {item.description ? item.description.split(' ').slice(0, 5).join(' ') + '...' : ''}
       </Text>
-      {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>
+          {item.name ? item.name.split(' ').slice(0, 2).join(' ') + '...' : ''}
+        </Text>
+        {item.rating && <Text style={styles.rating}>{item.rating.toFixed(1)}</Text>}
+      </View>
     </Pressable>
   );
 
@@ -245,5 +250,19 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '95%',
+    marginBottom: 2,
+  },
+  name: {
+    fontSize: 12,
+    textAlign: 'left',
+  },
+  rating: {
+    fontSize: 12,
+    textAlign: 'right',
   },
 });
