@@ -117,6 +117,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
       content: {
         title: 'Foodie Meet-up',
         body: `Time for your Meet-up at ${restaurant} at ${time}`,
+        sound: "../assets/sounds/notification.m4a",
       },
       trigger: selectedDateTime.toDate(),
     });
@@ -271,5 +272,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: -20,
     marginBottom: 10,
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
 });

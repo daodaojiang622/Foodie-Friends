@@ -85,7 +85,6 @@ export default function MeetUpScreen({ navigation }) {
               <View key={index} style={styles.meetUpItem}>
 
                 <View style={styles.meetUpContainer}>
-                  <Ionicons name="images" size={40} style={{marginRight: 10}}/>
 
                   <View style={styles.meetUpInfoContainer}>
                     <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
@@ -122,7 +121,6 @@ export default function MeetUpScreen({ navigation }) {
               <View key={index} style={styles.meetUpItem}>
 
                 <View style={styles.meetUpContainer}>
-                  <Ionicons name="images" size={40} style={{marginRight: 10}}/>
 
                   <View style={styles.meetUpInfoContainer}>
                     <Text style={styles.meetUpTitle}>{meetUp.restaurant}</Text>
