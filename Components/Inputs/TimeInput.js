@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { Colors, Padding, Font, BorderWidth, BorderRadius, Margin, Width } from '../../Utils/Style';
+import { ThemeContext } from '../ThemeContext';
 
 export default function TimeInput({ time, setTime }) {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [displayTime, setDisplayTime] = useState('');
+  const { theme } = useContext(ThemeContext);
 
   // Update display time whenever the time prop changes or when component mounts
   useEffect(() => {
@@ -57,6 +59,7 @@ export default function TimeInput({ time, setTime }) {
           mode="time"
           display='spinner'
           onChange={onChangeTime}
+          textColor={theme.textColor}
         />
       )}
     </View>
