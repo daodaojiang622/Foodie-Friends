@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Padding, BorderRadius, Margin, } from '../../Utils/Style';
+import { ThemeContext } from '../ThemeContext';
 
 export default function DateInput({ date, setDate }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { theme } = useContext(ThemeContext);
 
   const onChangeDate = (event, selectedDate) => {
     const { type } = event;
@@ -37,6 +39,7 @@ export default function DateInput({ date, setDate }) {
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
+          style={{backgroundColor: theme.textColor}}
           value={date || new Date()}
           mode="date"
           display='inline'
