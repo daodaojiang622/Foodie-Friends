@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -25,6 +25,36 @@ import EditPostScreen from './Screens/EditPostScreen';
 import FoodGalleryScreen from './Screens/FoodGalleryScreen';
 import ReviewDetailScreen from './Screens/ReviewDetailScreen';
 import RestaurantDetailScreen from './Screens/RestaurantDetailScreen';
+
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
+  if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+  if (finalStatus !== 'granted') {
+    alert('Failed to get push token for push notification!');
+    return;
+  }
+
+  token = (await Notifications.getExpoPushTokenAsync()).data;
+  console.log(token);
+  return token;
+}
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -100,6 +130,10 @@ function BottomTabs() {
 }
 
 export default function App() {
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
+
   return (
     <ThemeProvider>
       <AppContent />
