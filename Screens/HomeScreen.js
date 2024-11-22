@@ -41,17 +41,23 @@ export default function HomeScreen() {
     setPosts(data);
   };
 
-  // Fetch location and nearby reviews with pagination
-  const fetchLocationAndReviews = async (nextPageToken = null) => {
-    setLoading(true);
+  // // Fetch location and nearby reviews with pagination
+  // const fetchLocationAndReviews = async (nextPageToken = null) => {
+  //   setLoading(true);
 
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
-        setLoading(false);
-        return;
-      }
+  //   try {
+  //     const { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+  //       setLoading(false);
+  //       return;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching location:', error);
+  //     setLoading(false);
+  //     return;
+  //   }
+  // };
 
   // Reload posts each time HomeScreen is focused
   useFocusEffect(
