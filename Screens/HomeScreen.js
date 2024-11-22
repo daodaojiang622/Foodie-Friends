@@ -155,7 +155,7 @@ export default function HomeScreen() {
       <FlatList
         data={combinedData}
         renderItem={renderRow}
-        keyExtractor={(item) => `${item.id}-${item.name}`}
+        keyExtractor={(item, index) => `item-${item.id}-${index}`}
         numColumns={2} // Display 2 items per row
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
