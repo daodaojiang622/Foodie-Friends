@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert, FlatList } from 'react-native';
+import { StyleSheet, TextInput, View, Image, Text, Pressable, Alert, FlatList } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
@@ -16,7 +16,8 @@ export default function HomeScreen() {
   const [reviews, setReviews] = useState([]);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [pageToken, setPageToken] = useState(null); // For pagination
+  const [pageToken, setPageToken] = useState(null);
+  const [refreshing, setRefreshing] = useState(false); // New state for pull-to-refresh
 
   const handleAddPost = () => {
     if (auth.currentUser) {
@@ -25,6 +26,13 @@ export default function HomeScreen() {
       Alert.alert('Authentication Required', 'Please log in to add a new post');
       navigation.navigate('SignUpScreen');
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true); // Start refresh spinner
+    setPageToken(null); // Reset pagination
+    await fetchLocationAndReviews(); // Reload reviews
+    setRefreshing(false); // Stop refresh spinner
   };
 
   // Fetch posts from the database
@@ -157,7 +165,7 @@ export default function HomeScreen() {
   return (
     <ScreenWrapper>
       <View style={styles.header}>
-        <Text style={[styles.headerText, { color: theme.textColor }]}>Nearby Hot Spots</Text>
+        <Text style={[styles.headerText, { color: theme.textColor }]}>Explore Nearby</Text>
         <Pressable onPress={handleAddPost} style={styles.addPostButton}>
           <Ionicons name="create-sharp" style={[styles.addPostIcon, { color: theme.textColor }]} />
         </Pressable>
@@ -172,6 +180,8 @@ export default function HomeScreen() {
         onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
         ListFooterComponent={loading ? <Text>Loading...</Text> : null}
         contentContainerStyle={styles.scrollContainer}
+        refreshing={refreshing} // Pull-to-refresh spinner
+        onRefresh={onRefresh} // Trigger refresh function
       />
     </ScreenWrapper>
   );
