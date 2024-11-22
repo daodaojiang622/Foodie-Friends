@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { updateDB } from '../Firebase/firestoreHelper';
 import * as Notifications from 'expo-notifications';
 import axios from 'axios';
+import notificationSound from '../assets/sounds/notification.mp3';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -114,7 +115,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
       content: {
         title: 'Foodie Meet-up',
         body: `Time for your Meet-up at ${restaurant} at ${time}`,
-        sound: "../assets/sounds/notification.m4a",
+        sound: notificationSound,
       },
       trigger: selectedDateTime.toDate(),
     });

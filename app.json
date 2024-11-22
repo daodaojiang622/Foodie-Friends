@@ -20,7 +20,8 @@
       "bundleIdentifier": "ios",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location to show restaurant results."
-      }
+      },
+      "sound": true
     },
     "plugins": [
       [
