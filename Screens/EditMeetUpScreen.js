@@ -26,6 +26,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
     if (route.params?.meetUp) {
       const { restaurant, date, time, details } = route.params.meetUp;
       setRestaurant(restaurant);
+      setRestaurantQuery(restaurant);
       setDate(moment(date, 'YYYY-MM-DD').toDate());
       setTime(time);
       setDetails(details);
@@ -114,7 +115,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
     // Schedule a notification for the meet-up
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Meet-Up Reminder',
+        title: 'Foodie Meet-up',
         body: `Time for your Meet-up at ${restaurant} at ${time}`,
       },
       trigger: selectedDateTime.toDate(),
@@ -165,7 +166,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
     });
     
     setRestaurant(name);
-    
+
     // Clear suggestions after selecting
     setRestaurantSuggestions([]);
   };  
