@@ -125,6 +125,7 @@ const MapScreen = () => {
       // Construct place details with cuisine type
       const placeDetails = {
         name: place.name,
+        type: place.types,
         rating: place.rating || 'N/A',
         photos: place.photos
           ? place.photos.slice(0, 10).map((photo) =>
@@ -133,6 +134,7 @@ const MapScreen = () => {
           : [], // Default to empty if no photos
       };
   
+      console.log('Selected place details:', placeDetails);
       setSelectedPlaceDetails(placeDetails);
   
       // Animate the map to the selected marker's location
