@@ -182,6 +182,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
       {restaurantSuggestions.length > 0 && (
         <View style={styles.suggestionsContainer}>
         <FlatList
+          style={styles.suggestionsList}
           data={restaurantSuggestions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -261,5 +262,14 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     fontSize: 16,
+  },
+  suggestionsList: {
+    maxHeight: 150,
+    backgroundColor: 'transparent',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: -20,
+    marginBottom: 10,
   },
 });
