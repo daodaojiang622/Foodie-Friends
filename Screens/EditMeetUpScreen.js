@@ -109,9 +109,6 @@ export default function EditMeetUpScreen({ navigation, route }) {
         Alert.alert("Success", "Meet-up created successfully!");
       }
 
-    // Save the meet-up (you can add your save logic here)
-    Alert.alert("Success", "Meet-up saved successfully!");
-
     // Schedule a notification for the meet-up
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
