@@ -13,6 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import { storage } from '../Firebase/firebaseSetup'; 
 
 const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -21,19 +22,15 @@ export default function EditPostScreen() {
 
   const postId = route.params?.postId || null;
   const initialDescription = route.params?.initialDescription || '';
-  const initialImages = route.params?.images || [];
-  const initialRating = route.params?.rating || 0;
+  const initialImages = route.params?.initialImages || [];
+  const initialRating = route.params?.initialRating || 0;
   const initialRestaurantName = route.params?.restaurantName || '';
-
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
-  const [restaurantQuery, setRestaurantQuery] = useState(initialRestaurantName);
+  const [restaurantQuery, setRestaurantQuery] = useState('');
   const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
-  const [selectedRestaurant, setSelectedRestaurant] = useState({
-    name: initialRestaurantName,
-    place_id: route.params?.restaurantId || '',
-  });
+  const [selectedRestaurant, setSelectedRestaurant] = useState('');
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -49,7 +46,7 @@ export default function EditPostScreen() {
       console.error('Error fetching restaurant suggestions:', error);
     }
   };
-
+  
   const handleSearchChange = (query) => {
     setRestaurantQuery(query);
     if (query.length > 2) {
@@ -60,13 +57,23 @@ export default function EditPostScreen() {
   };
 
   const handleSuggestionSelect = (suggestion) => {
+    console.log("Selected suggestion:", suggestion); // Debug
+  
+    // Extract the name (part before the first punctuation mark)
+    const name = suggestion.description.split(/[.,-]/)[0].trim();
+  
+    // Update the search bar to show the full description
     setRestaurantQuery(suggestion.description);
+  
+    // Update the selected restaurant with extracted name and place_id
     setSelectedRestaurant({
-      name: suggestion.description,
-      place_id: suggestion.id,
+      name: name, // Extracted name
+      place_id: suggestion.id, // Assign the id to place_id
     });
+  
+    // Clear suggestions after selecting
     setRestaurantSuggestions([]);
-  };
+  };  
 
   const requestPermissions = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -102,20 +109,19 @@ export default function EditPostScreen() {
     }
   };
   
-
   const captureImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'Permission to access the camera is required.');
       return;
     }
-
+  
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
+  
     if (!result.canceled) {
       const normalizedUri = uri.startsWith('file://') ? uri.replace('file://', '') : uri;
       const selectedImageUri = normalizedUri || (result.assets && result.assets[0].uri);
@@ -129,62 +135,77 @@ export default function EditPostScreen() {
       }
     }
   };
-
+  
   const handleSave = async () => {
     if (!description.trim()) {
       Alert.alert('Error', 'Review details are required.');
       return;
     }
-
+  
     if (rating === 0) {
       Alert.alert('Error', 'Please select a rating.');
       return;
     }
-
+  
     if (!selectedRestaurant || !selectedRestaurant.name) {
       Alert.alert('Error', 'Please select a restaurant.');
       return;
     }
-
+  
     const userId = auth.currentUser?.uid;
-    const newData = {
-      description,
-      images,
-      rating,
-      userId,
-      restaurantName: selectedRestaurant.name,
-      restaurantId: selectedRestaurant.place_id,
-    };
-
-    Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Save',
-        onPress: async () => {
-          try {
-            if (postId) {
-              await updateDB(postId, newData, 'posts');
-            } else {
-              await writeToDB(newData, 'posts');
-            }
-            navigation.goBack();
-          } catch (error) {
-            console.error('Error saving post:', error);
-            Alert.alert('Save Error', 'There was a problem saving your post.');
+  
+    try {
+      const uploadedImageURLs = await Promise.all(
+        images.map(async (uri) => {
+          if (uri.startsWith('http')) {
+            return uri;
+          } else {
+            return await uploadImageToFirebase(uri);
           }
+        })
+      );
+  
+      const newData = {
+        description,
+        images: uploadedImageURLs,
+        rating,
+        userId,
+        restaurantName: selectedRestaurant.name,
+        restaurantId: selectedRestaurant.place_id,
+      };
+  
+      Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
         },
-      },
-    ]);
+        {
+          text: 'Save',
+          onPress: async () => {
+            try {
+              if (postId) {
+                await updateDB(postId, newData, 'posts');
+              } else {
+                await writeToDB(newData, 'posts');
+              }
+              navigation.goBack();
+            } catch (error) {
+              console.error('Error saving post:', error);
+              Alert.alert('Save Error', 'There was a problem saving your post.');
+            }
+          },
+        },
+      ]);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
+    }
   };
 
   const handleCancel = () => {
     navigation.goBack();
   };
-
-
+  
   const uploadImageToFirebase = async (uri) => {
     try {
       if (!uri) {
@@ -193,26 +214,18 @@ export default function EditPostScreen() {
   
       console.log('Uploading Image URI:', uri);
   
-      // Normalize URI for iOS if necessary (removing "file://" prefix)
-      const normalizedUri = uri.startsWith('file://') ? uri.replace('file://', '') : uri;
-  
-      // Fetch the file and convert to Blob
-      const response = await fetch(normalizedUri); // Using the raw `uri`
+      const response = await fetch(uri);
       if (!response.ok) {
         throw new Error(`Failed to fetch image. Status: ${response.statusText}`);
       }
       const blob = await response.blob();
   
-      // Generate a unique file name
       const fileName = `${Date.now()}.jpg`;
   
-      // Reference in Firebase Storage
       const storageRef = ref(storage, `images/${fileName}`);
   
-      // Upload Blob
       const snapshot = await uploadBytes(storageRef, blob);
   
-      // Get the download URL
       const downloadURL = await getDownloadURL(snapshot.ref);
       console.log('Image uploaded successfully. URL:', downloadURL);
       return downloadURL;
@@ -224,6 +237,7 @@ export default function EditPostScreen() {
   
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      {/* Restaurant Search */}
       <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
       <TextInput
         style={[styles.input, { borderColor: theme.textColor }]}
@@ -234,18 +248,23 @@ export default function EditPostScreen() {
       />
       {restaurantSuggestions.length > 0 && (
         <View style={styles.suggestionsContainer}>
-          <FlatList
-            data={restaurantSuggestions}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSuggestionSelect(item)} style={styles.suggestionItem}>
-                <Text style={[styles.suggestionText, { color: theme.textColor }]}>{item.description}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
+        <FlatList
+          data={restaurantSuggestions}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => handleSuggestionSelect(item)}
+              style={styles.suggestionItem}
+            >
+              <Text style={[styles.suggestionText, { color: theme.textColor }]}>
+                {item.description}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
       )}
-
+      {/* Review Details */}
       <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
       <TextInput
         style={[styles.descriptionInput, { borderColor: theme.textColor }]}
@@ -261,18 +280,19 @@ export default function EditPostScreen() {
       <ScrollView horizontal style={styles.imageScroll}>
         {images.map((uri, index) => (
           <View key={index} style={styles.imageWrapper}>
-            <Image source={{ uri }} style={styles.image} />
+           <Image source={{ uri }} style={styles.image} />
             <Pressable
-              style={styles.deleteButton}
-              onPress={() => {
-                const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
-                setImages(updatedImages);
+             style={styles.deleteButton}
+             onPress={() => {
+               // Remove the selected image from the images array
+               const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
+               setImages(updatedImages);
               }}
-            >
-              <Ionicons name="close-circle" size={24} color="red" />
-            </Pressable>
+           >
+             <Ionicons name="close-circle" size={24} color="red" />
+           </Pressable>
           </View>
-        ))}
+       ))}
         <Pressable
           onPress={() => {
             Alert.alert('Add Image', 'Choose an image source', [
@@ -359,7 +379,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   imageWrapper: {
-    position: 'relative',
+    position: 'relative', // Allows the delete button to be positioned absolutely
     margin: 5,
   },
   imageScroll: {
@@ -379,7 +399,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 50,
     padding: 2,
-    elevation: 3,
+    elevation: 3, // For Android shadow
   },
   addImageContainer: {
     width: width / 3 - 20,
@@ -406,6 +426,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 20,
+    marginTop: 0,
   },
   cancelButton: {
     flex: 1,
@@ -419,3 +440,4 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
+ 

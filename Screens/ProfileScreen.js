@@ -38,14 +38,16 @@ export default function ProfileScreen() {
   const loadUserPosts = async () => {
     try {
       const posts = await fetchDataFromDB('posts');
+      console.log('Fetched Posts:', posts);
+  
       const filteredPosts = posts.filter((post) => post.userId === auth.currentUser.uid);
+  
       setUserPosts(filteredPosts);
     } catch (error) {
-      console.error("Error loading user posts:", error);
+      console.error('Error loading user posts:', error);
     }
   };
   
-
   const handleSaveUsername = async () => {
     if (username.trim().length === 0) {
       Alert.alert("Error", "Username cannot be empty");
@@ -154,10 +156,14 @@ export default function ProfileScreen() {
               })
             }
           >
-            <Image source={{ uri: item.images[0] }} style={styles.postImage} />
-            <Text style={[styles.postTitle, { color: theme.textColor }]}>
-              {item.description ? item.description.split(' ').slice(0, 5).join(' ') : 'No details'}...
-            </Text>
+           {item.images?.[0] ? (
+            <Image source={{ uri: item.images[0] }} style={styles.image} />
+          ) : (
+            <Text>No Image Available</Text>
+          )}
+            <Text style={styles.postTitle} numberOfLines={1} ellipsizeMode="tail">
+            {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
+          </Text>
           </Pressable>
           {/* Delete Button */}
           <Pressable
@@ -313,11 +319,12 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'flex-start', // Align items to the left
   },
-  postImage: {
-    width: '100%',
-    height: 120,
+  image: {
+    width: 160,
+    height: 160,
     borderRadius: 8,
     marginBottom: 5,
+    resizeMode: 'cover',
   },
   postTitle: {
     fontSize: 16,

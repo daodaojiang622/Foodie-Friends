@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View, Image, Text, Pressable, Alert, FlatList } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,18 +37,31 @@ export default function HomeScreen() {
 
   // Fetch posts from the database
   const loadPosts = async () => {
-    try {
-      const data = await fetchDataFromDB('posts');
-      setPosts(data);
-    } catch (error) {
-      console.error('Error loading posts:', error);
-    }
+    const data = await fetchDataFromDB('posts');
+    setPosts(data);
   };
 
   // Fetch location and nearby reviews with pagination
   const fetchLocationAndReviews = async (nextPageToken = null) => {
     setLoading(true);
 
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
+
+  // Reload posts each time HomeScreen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPosts();
+    }, [])
+  );
+
+  // Fetch location and nearby reviews
+  const fetchLocationAndReviews = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -127,7 +140,6 @@ export default function HomeScreen() {
     fetchLocationAndReviews();
   }, []);
 
-  
   // Render item for FlatList
   const renderRow = ({ item }) => (
     <Pressable
@@ -150,6 +162,31 @@ export default function HomeScreen() {
         {item.rating && <Text style={styles.rating}>{item.rating.toFixed(1)}</Text>}
       </View>
     </Pressable>
+
+//   // Unified render function for posts and reviews
+//   const renderRow = (rowItems, rowIndex) => (
+//     <View style={styles.row} key={`row-${rowIndex}`}>
+//       {rowItems.map((item) => (
+//         <Pressable
+//           key={item.id}
+//           onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id })}
+//           style={styles.imageWrapper}
+//         >
+//           {item.images?.[0] ? (
+//             <Image source={{ uri: item.images[0] }} style={styles.image} />
+//           ) : (
+//             <Text>No Image Available</Text>
+//           )}
+
+//           <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+
+//             {item.name || item.description.split(' ').slice(0, 5).join(' ')}...
+//           </Text>
+//           {item.rating && <Text style={styles.rating}>Rating: {item.rating.toFixed(1)}</Text>}
+//         </Pressable>
+//       ))}
+//     </View>
+
   );
 
   // Combine posts and reviews for rendering
@@ -244,8 +281,9 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 12,
   },
-  likes: {
-    fontSize: 12,
+  rating: {
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: 'row',
