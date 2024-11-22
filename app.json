@@ -1,18 +1,19 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "name": "activity_diet_tracker_app",
-    "slug": "activity_diet_tracker_app",
+    "name": "Foodie_Friends",
+    "slug": "Foodie_Friends",
     "version": "1.0.0",
     "platforms": [
       "ios",
       "android"
     ],
     "android": {
-      "package": "com.anonymous.activity_diet_tracker_app",
+      "package": "com.anonymous.Foodie_Friends",
       "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "ios": {
@@ -28,6 +29,12 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d9f114b5-bd05-4fb2-97fa-422a2c35af5b"
+      }
+    },
+    "owner": "chenyudaodao"
   }
 }
