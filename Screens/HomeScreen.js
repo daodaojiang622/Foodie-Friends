@@ -67,10 +67,12 @@ export default function HomeScreen() {
       const response = await axios.get(url);
 
       const allowedKeywords = ["restaurant", "bar", "food", "delicious"];
+      const disallowedKeywords = ["hotel", "inn", "hostel", "motel", "resort", "lodge", "apartment", "sheraton", "rosewood", "hilton", "marriott", "hyatt", "pan pacific"];
     
       // Function to filter reviews based on keywords
       const filterReview = (reviewText) => {
-        return allowedKeywords.some((keyword) => reviewText.toLowerCase().includes(keyword));
+        return allowedKeywords.some((keyword) => reviewText.toLowerCase().includes(keyword)) &&
+          !disallowedKeywords.some((keyword) => reviewText.toLowerCase().includes(keyword));
       };
   
       // Fetch detailed reviews for each place and filter based on keywords
