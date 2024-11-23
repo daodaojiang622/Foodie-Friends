@@ -146,9 +146,9 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
 
 ## Contributions
 Chenyu has worked on below aspects:
-- Front-end: Implemented API use in Map and Edit Meet Up screens, implemented refresh function in home screen, implemented notification in Meet Up Screen
+- Front-end: Implemented API use in Map and Edit Meet Up screens, implemented refresh function in home screen, implemented notification in Edit Meet Up Screen
 - Back-end: Enabled image upload to Firebase.
-- Code walk video: 
+- Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EVcx_zYdX3pMi9iUK5G7mQABBbFP491k3arD6jcdlFDLmw?e=b2Lnoj 
 
 Yihe has worked on below aspects:
 
