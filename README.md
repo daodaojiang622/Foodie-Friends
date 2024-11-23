@@ -24,7 +24,6 @@ Fields:
 - rating: Average rating of the restaurant.
 - reviews: Array of review reviewIds associated with this restaurant.
 - photos: Array of image URLs showcasing the restaurant or its food.
-- cuisineType: Cuisine type (e.g., Italian, Mexican) for filtering.
 - contactInfo: Restaurant contact details (phone number, website).
 - hours: Opening hours (if available from the API).
 
@@ -39,7 +38,6 @@ Fields:
 - reviewText: Text content of the review.
 - photos: Array of image URLs if the user uploads meal photos.
 - timestamp: Date and time when the review was created.
-- likes: Count or array of userIds that liked this review for engagement tracking.
 
 4. Meet-ups Collection
    
