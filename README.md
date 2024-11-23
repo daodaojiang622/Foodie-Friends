@@ -112,3 +112,43 @@ Yihe has worked on below aspects:
 - Front-end: Built Edit Post, Home, Profile, Sign Up, Log In, and Food Gallery screens.
 - Back-end: Set up the Firestore authentication online and in the project, modified Firestore database online and in the project. 
 - Code walk video: https://drive.google.com/file/d/1al7BHpT1PxIm4SWF27_FDa5Vr35Ldics/view?usp=drive_link
+
+## Current State of the App - Iteration 1
+At the end of iteration 2, we have implemented Authentication, Camera use, Location use, Notification, and External API use.
+
+1. External API key:
+  ```
+  EXPO_PUBLIC_apiKey= "AIzaSyD1jrEUDZFEvyMzjUWvc-WKnFogdT6178M"
+  ```
+2. Firebase rules
+   ```
+   rules_version = '2';
+   
+   service cloud.firestore {
+     match /databases/{database}/documents {
+   
+       // Apply these rules to the posts collection
+       match /posts/{post} {
+         allow read: if true;  // Public read access
+         // Allow authenticated users to read, update, and delete their own posts
+         allow update, delete: if request.auth != null && request.auth.uid == resource.data.owner;
+         // Allow authenticated users to create posts
+         allow create: if request.auth != null;
+       }
+       
+       // This allows general access to other documents but restricts access based on authentication
+       match /{document=**} {
+         allow read, write: if request.auth != null;
+       }
+     }
+   }
+   ```
+
+## Contributions
+Chenyu has worked on below aspects:
+- Front-end: Implemented API use in Map and Edit Meet Up screens, implemented location use in home screen, implemented notification in Meet Up Screen
+- Back-end: Enabled image upload to firebase.
+- Code walk video: 
+
+Yihe has worked on below aspects:
+
