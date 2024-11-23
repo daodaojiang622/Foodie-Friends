@@ -151,4 +151,5 @@ Chenyu has worked on below aspects:
 - Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EVcx_zYdX3pMi9iUK5G7mQABBbFP491k3arD6jcdlFDLmw?e=b2Lnoj 
 
 Yihe has worked on below aspects:
-
+- Front-end: Home Screen, EditPost Screen, Profile Screen(details in the video)
+- Code walk video: https://drive.google.com/file/d/1DLFMA3OeFjV9BZdu14F0brozRR9aPpV5/view?usp=drive_link
