@@ -203,14 +203,7 @@ export default function RestaurantDetailScreen() {
                         </View>
                         <Text style={styles.reviewText}>{review.text}</Text>
                       </View>
-    
-                      <View style={styles.deleteButtonContainer}>
-                        <Ionicons 
-                          name="trash" 
-                          style={styles.deleteButton}
-                          onPress={() => handleDeleteReview(review.id)}
-                        />
-                      </View>
+  
                       
                     </View>
                   </View>

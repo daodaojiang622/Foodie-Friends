@@ -8,6 +8,7 @@ import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup';
 import * as Location from 'expo-location';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -156,7 +157,7 @@ export default function HomeScreen() {
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
       ) : (
-        <MaterialCommunityIcons name="image-off-outline" size={24} color="black" />
+        <MaterialCommunityIcons name="image-off-outline" size={180} color="black" />
       )}
       <Text style={styles.title}>
         {item.description ? item.description.split(' ').slice(0, 5).join(' ') + '...' : ''}
