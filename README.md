@@ -74,7 +74,7 @@ Fields:
 - Update: The organizer or participants can update the upcoming meetup details, such as changing the time and restaurant, and adding notes..
 - Delete: The organizer can cancel or delete the meetup if plans change.
 
-## Current State of the App - Iteration 1
+## Iteration 1
 At the end of iteration 1, we have React Native components created to represent the functionality we will be building, and the overall structure of the app is in place.We also have navigation and the basis of CRUD operations to Firestore established and working.
 
 ### Map Screen 
@@ -113,7 +113,7 @@ Yihe has worked on below aspects:
 - Back-end: Set up the Firestore authentication online and in the project, modified Firestore database online and in the project. 
 - Code walk video: https://drive.google.com/file/d/1al7BHpT1PxIm4SWF27_FDa5Vr35Ldics/view?usp=drive_link
 
-## Current State of the App - Iteration 1
+## Current State of the App - Iteration 2
 At the end of iteration 2, we have implemented Authentication, Camera use, Location use, Notification, and External API use.
 
 1. External API key:
@@ -147,7 +147,7 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
 ## Contributions
 Chenyu has worked on below aspects:
 - Front-end: Implemented API use in Map and Edit Meet Up screens, implemented location use in home screen, implemented notification in Meet Up Screen
-- Back-end: Enabled image upload to firebase.
+- Back-end: Enabled image upload to Firebase.
 - Code walk video: 
 
 Yihe has worked on below aspects:
