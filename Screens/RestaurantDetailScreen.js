@@ -194,17 +194,16 @@ export default function RestaurantDetailScreen() {
                   <View key={index} style={styles.reviewItem}>
     
                     <View style={styles.reviewContainer}>
-                    <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
-    
-                      <View style={styles.reviewInfoContainer}>
-                      <View style={styles.reviewDateTimeContainer}>
-                          <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
-                          <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
+                      <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
+      
+                        <View style={styles.reviewInfoContainer}>
+                          <View style={styles.reviewDateTimeContainer}>
+                              <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
+                              <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
+                          </View>
+                            <Text style={styles.reviewText}>{review.text}</Text>
                         </View>
-                        <Text style={styles.reviewText}>{review.text}</Text>
-                      </View>
   
-                      
                     </View>
                   </View>
                 </Pressable>
@@ -311,15 +310,6 @@ reviewTimeIcon: {
 },
 reviewContainer: {
   flexDirection: 'row',
-},
-deleteButton: {
-  fontSize: 20,
-  color: 'black',
-}, 
-deleteButtonContainer: {
-  flex: 1,
-  alignItems: 'flex-end',
-  alignSelf: 'center',
 },
 reviewDateTimeIcon: {
   marginTop: 2,
