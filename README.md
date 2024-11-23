@@ -145,7 +145,7 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
    ```
 
 ### Home Screen
-<img src="./Demo/HomeScreen2.png" alt="Home Screen" width="400">
+<img src="https://github.com/user-attachments/assets/8fbe4f75-ac16-45da-a2b5-057f0d762d57" width="400">
 
 ### Edit Post Screen
 <img src="./Demo/EditPostScreen2.png" alt="Edit Post Screen" width="400">
@@ -153,6 +153,8 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
 ### Profile Screen
 <img src="./Demo/ProfileScreen2.png" alt="Profile Screen" width="400">
 
+### Notification
+<img src="https://github.com/user-attachments/assets/02b74c21-8bf0-445d-b81e-5d63bdc8636c" width="400">
 
 ## Contributions
 Chenyu has worked on below aspects:
