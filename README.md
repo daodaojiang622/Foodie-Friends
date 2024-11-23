@@ -144,6 +144,16 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
    }
    ```
 
+### Home Screen
+<img src="HomeScreen2.png" alt="Home Screen" width="400">
+
+### Edit Post Screen
+<img src="./Demo/EditPostScreen2.png" alt="Edit Post Screen" width="400">
+
+### Profile Screen
+<img src="./Demo/ProfileScreen2.png" alt="Profile Screen" width="400">
+
+
 ## Contributions
 Chenyu has worked on below aspects:
 - Front-end: Implemented API use in Map and Edit Meet Up screens, implemented refresh function in home screen, implemented notification in Edit Meet Up Screen
@@ -151,5 +161,5 @@ Chenyu has worked on below aspects:
 - Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EVcx_zYdX3pMi9iUK5G7mQABBbFP491k3arD6jcdlFDLmw?e=b2Lnoj 
 
 Yihe has worked on below aspects:
-- Front-end: Home Screen, EditPost Screen, Profile Screen(details in the video)
+- Front-end: Modified Login Screen and Signup Screen to be professional, Home Screen, EditPost Screen, Profile Screen(details in the video)
 - Code walk video: https://drive.google.com/file/d/1DLFMA3OeFjV9BZdu14F0brozRR9aPpV5/view?usp=drive_link
