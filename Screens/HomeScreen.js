@@ -1,7 +1,6 @@
-import { StyleSheet, TextInput, View, Image, Text, Pressable, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Image, Text, Pressable, FlatList, Alert } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
@@ -12,15 +11,18 @@ export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
     try {
       const data = await fetchDataFromDB('posts');
-      console.log('Fetched posts:', data);
-      setPosts(data);
+      // Shuffle posts to display them in a random order
+      const shuffledPosts = data.sort(() => Math.random() - 0.5);
+      setPosts(shuffledPosts);
     } catch (error) {
       console.error("Error loading posts:", error);
+      Alert.alert('Error', 'Unable to load posts. Please try again.');
     }
   };
 
@@ -29,6 +31,14 @@ export default function HomeScreen() {
     loadPosts();
   }, []);
 
+  // Pull-to-refresh handler
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadPosts();
+    setRefreshing(false);
+  };
+
+  // Handle adding a new post
   const handleAddPost = () => {
     if (auth.currentUser) {
       navigation.navigate('EditPost');
@@ -38,30 +48,23 @@ export default function HomeScreen() {
     }
   };
 
-  const renderRow = (rowItems, rowIndex) => (
-  <View style={styles.row} key={`row-${rowIndex}`}>
-    {rowItems.map((item) => {
-      console.log('Rendering post:', item);
-
-      return (
-        <Pressable
-          key={item.id}
-          onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
-          style={styles.imageWrapper}
-        >
-          {item.images?.[0] ? (
-            <Image source={{ uri: item.images[0] }} style={styles.image} />
-          ) : (
-            <Text>No Image Available</Text>
-          )}
-          <Text style={styles.title}>
-            {item.description.split(' ').slice(0, 5).join(' ')}...
-          </Text>
-        </Pressable>
-      );
-    })}
-  </View>
-);
+  // Render item for FlatList
+  const renderItem = ({ item }) => (
+    <Pressable
+      key={item.id}
+      onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
+      style={styles.imageWrapper}
+    >
+      {item.images?.[0] ? (
+        <Image source={{ uri: item.images[0] }} style={styles.image} />
+      ) : (
+        <Text>No Image Available</Text>
+      )}
+      <Text style={styles.title}>
+        {item.description.split(' ').slice(0, 5).join(' ')}...
+      </Text>
+    </Pressable>
+  );
 
   return (
     <ScreenWrapper>
@@ -72,12 +75,15 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {Array.from({ length: Math.ceil(posts.length / 2) }, (_, index) => 
-         renderRow(posts.slice(index * 2, index * 2 + 2), index) // Pass rowIndex as the second argument
-       )}
-      </ScrollView>
-
+      <FlatList
+        data={posts}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.scrollContainer}
+        refreshing={refreshing}
+        onRefresh={handleRefresh} // Pull-to-refresh function
+      />
     </ScreenWrapper>
   );
 }
@@ -86,28 +92,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  searchBar: {
-    marginHorizontal: 10,
-    padding: 10,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
   scrollContainer: {
-    flexGrow: 1,
     padding: 10,
     alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
   },
   imageWrapper: {
     margin: 5,
     alignItems: 'center',
     width: 180,
-    backgroundColor: "#c2d1c6",
+    backgroundColor: '#c2d1c6',
   },
   image: {
     width: 180,
@@ -118,29 +111,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 10,
     width: 180,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    margin: 5,
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 20,
-    height: 20,
-    borderRadius: 15,
-    marginRight: 5,
-  },
-  username: {
-    fontSize: 12,
-  },
-  likes: {
-    fontSize: 12,
   },
   header: {
     flexDirection: 'row',

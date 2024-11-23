@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
-import { fetchDataFromDB, writeToDB } from '../Firebase/firestoreHelper';
+import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../Firebase/firebaseSetup';
