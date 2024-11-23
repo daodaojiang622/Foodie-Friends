@@ -145,7 +145,7 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
    ```
 
 ### Home Screen
-<img src="HomeScreen2.png" alt="Home Screen" width="400">
+<img src="./Demo/HomeScreen2.png" alt="Home Screen" width="400">
 
 ### Edit Post Screen
 <img src="./Demo/EditPostScreen2.png" alt="Edit Post Screen" width="400">
