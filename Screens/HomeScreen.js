@@ -14,7 +14,8 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [pageToken, setPageToken] = useState(null); // For pagination
+  const [pageToken, setPageToken] = useState(null);
+  const [noMorePosts, setNoMorePosts] = useState(false);
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
@@ -71,6 +72,9 @@ export default function HomeScreen() {
   
       setPosts((prevPosts) => [...prevPosts, ...shuffledPosts]);
       setPageToken(data.nextPageToken); // Update the page token
+      if (!data.nextPageToken) {
+        setNoMorePosts(true);
+      }
     } catch (error) {
       console.error('Error fetching reviews:', error);
       Alert.alert('Error', 'Unable to load more posts. Please try again.');
@@ -97,15 +101,18 @@ export default function HomeScreen() {
   );
 
   // Handle when user reaches the end of the list to load more reviews
-  const handleLoadMore = () => {
-    if (pageToken && !loading) {
-      console.log('Loading more posts...');
-      fetchLocationAndReviews(pageToken);
-    } else {
-      console.log('No more posts to load or still loading...');
-      <Text>No more posts to load or still loading...</Text>
+  const handleLoadMore = async () => {
+    if (!pageToken || loading) {
+      // If no more posts or still loading
+      if (!pageToken) {
+        setNoMorePosts(true);
+      }
+      return;
     }
+  
+    await fetchLocationAndReviews(pageToken);
   };
+  
   
 
 
@@ -128,7 +135,13 @@ export default function HomeScreen() {
         onRefresh={handleRefresh} // Pull-to-refresh function
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
-        ListFooterComponent={loading ? <Text>Loading...</Text> : null}
+        ListFooterComponent={
+          loading ? (
+            <Text style={styles.footerText}>Loading...</Text>
+          ) : noMorePosts ? (
+            <Text style={styles.footerText}>No more posts...</Text>
+          ) : null
+        }
       />
     </ScreenWrapper>
   );
@@ -171,5 +184,11 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  footerText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+    marginVertical: 10,
   },
 });
