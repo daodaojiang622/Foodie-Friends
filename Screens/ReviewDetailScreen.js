@@ -63,7 +63,7 @@ export default function ReviewDetailScreen() {
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={40} color="gold" />
+      <Ionicons key={index} name="star" size={20} color="gold" />
     ));
   };
 
@@ -82,29 +82,35 @@ export default function ReviewDetailScreen() {
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <View style={styles.textContainer}>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.imageScrollView}
-      >
-        {reviewData.images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))}
-      </ScrollView>
-      </View>
-      <View style={styles.textContainer}>
-      <Text style={[styles.title, { color: theme.textColor }]}>
-          {reviewData.restaurant || 'No restaurant information available'}
-        </Text>
-        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
-        <View style={styles.ratingContainer}>
-          {renderStars(reviewData.rating)}
+    <ScrollView>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        <View style={styles.textContainer}>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollView}
+        >
+          {reviewData.images.map((uri, index) => (
+            <Image key={index} source={{ uri }} style={styles.image} />
+          ))}
+        </ScrollView>
+        </View>
+        <View style={styles.textContainer}>
+        <View style={styles.locationContainer}>
+          <Ionicons name="location-outline" size={20} color={theme.textColor} />
+          <Text style={[styles.title, { color: theme.textColor }]}>
+              {reviewData.restaurant}
+            </Text>
+        </View>
+          <View style={styles.ratingContainer}>
+            {renderStars(reviewData.rating)}
+            <Text style={[styles.rating, {color: theme.textColor}]}>({reviewData.rating})</Text>
+          </View>
+          <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -125,17 +131,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 10,
   },
   description: {
     fontSize: 20,
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 20,
   },
   ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
