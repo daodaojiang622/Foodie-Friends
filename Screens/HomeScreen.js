@@ -57,11 +57,9 @@ export default function HomeScreen() {
     >
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
-      ) : (
-        <Text>No Image Available</Text>
-      )}
+      ) : ''}
       <Text style={styles.title}>
-        {item.description.split(' ').slice(0, 5).join(' ')}...
+      {item.description?.trim().split(/\s+/).slice(0, 5).join(' ')}...
       </Text>
     </Pressable>
   );
