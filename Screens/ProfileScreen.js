@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
-import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { fetchDataFromDB, deleteFromDB, writeToDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../Firebase/firebaseSetup';
@@ -53,10 +53,34 @@ export default function ProfileScreen() {
       Alert.alert("Error", "Username cannot be empty");
       return;
     }
-    await AsyncStorage.setItem('username', username);
-    setUsernameModalVisible(false);
-    loadUserPosts(username);
+  
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        Alert.alert('Error', 'User is not logged in.');
+        return;
+      }
+  
+      const userCollection = 'users';
+      const userData = await fetchDataFromDB(userCollection, { userId });
+  
+      if (userData.length > 0) {
+        // User exists, update username
+        await updateDB(userData[0].id, { username }, userCollection);
+      } else {
+        // User doesn't exist, create new document
+        await writeToDB({ userId, username }, userCollection);
+      }
+  
+      await AsyncStorage.setItem('username', username);
+      setUsernameModalVisible(false);
+      Alert.alert('Success', 'Username saved successfully.');
+    } catch (error) {
+      console.error('Error saving username:', error);
+      Alert.alert('Error', 'Failed to save username. Please try again.');
+    }
   };
+  
 
   useEffect(() => {
     const requestPermissions = async () => {
