@@ -82,29 +82,31 @@ export default function ReviewDetailScreen() {
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      <View style={styles.textContainer}>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.imageScrollView}
-      >
-        {reviewData.images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
-        ))}
-      </ScrollView>
-      </View>
-      <View style={styles.textContainer}>
-      <Text style={[styles.title, { color: theme.textColor }]}>
-          {reviewData.restaurant || 'No restaurant information available'}
-        </Text>
-        <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
-        <View style={styles.ratingContainer}>
-          {renderStars(reviewData.rating)}
+    <ScrollView>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        <View style={styles.textContainer}>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollView}
+        >
+          {reviewData.images.map((uri, index) => (
+            <Image key={index} source={{ uri }} style={styles.image} />
+          ))}
+        </ScrollView>
+        </View>
+        <View style={styles.textContainer}>
+        <Text style={[styles.title, { color: theme.textColor }]}>
+            {reviewData.restaurant || 'No restaurant information available'}
+          </Text>
+          <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
+          <View style={styles.ratingContainer}>
+            {renderStars(reviewData.rating)}
+          </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
