@@ -28,9 +28,16 @@ export default function EditPostScreen() {
   const [description, setDescription] = useState(initialDescription);
   const [images, setImages] = useState(initialImages);
   const [rating, setRating] = useState(initialRating);
-  const [restaurantQuery, setRestaurantQuery] = useState('');
+  const [restaurantQuery, setRestaurantQuery] = useState(initialRestaurantName || '');
   const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
+
+  useEffect(() => {
+    if (initialRestaurantName) {
+      setRestaurantQuery(initialRestaurantName);
+      setSelectedRestaurant({ name: initialRestaurantName, place_id: route.params?.restaurantId || '' });
+    }
+  }, [initialRestaurantName, route.params?.restaurantId]);
 
   // Set header text
   useEffect(() => {
@@ -46,6 +53,7 @@ export default function EditPostScreen() {
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
     try {
       const response = await axios.get(url);
+      console.log('Restaurant Suggestions:', response.data.predictions);
       const results = response.data.predictions.map((place) => ({
         id: place.place_id,
         description: place.description,

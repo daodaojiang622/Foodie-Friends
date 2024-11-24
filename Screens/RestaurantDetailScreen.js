@@ -41,6 +41,7 @@ export default function RestaurantDetailScreen() {
 
   const [restaurant, setRestaurant] = useState(null); // Store fetched restaurant details
   const [loading, setLoading] = useState(true); // Loading state
+  const [combinedReviews, setCombinedReviews] = useState([]); 
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -70,6 +71,22 @@ export default function RestaurantDetailScreen() {
         };
 
         setRestaurant(restaurantDetails);
+
+        // Fetch reviews from Firestore
+        const dbReviews = await fetchDataFromDB('reviews', { placeId });
+        const formattedDbReviews = dbReviews.map(review => ({
+          text: review.text,
+          rating: review.rating,
+          author_name: review.username || 'Anonymous',
+          profile_photo_url: review.profileImage || null,
+          relative_time_description: review.timestamp || 'Recently',
+        }));
+
+        console.log('Firestore reviews:', formattedDbReviews);
+
+        // Combine API and Firestore reviews
+        setCombinedReviews([...formattedDbReviews, ...restaurantDetails.reviews]);
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching restaurant details:', error);
@@ -179,7 +196,7 @@ export default function RestaurantDetailScreen() {
 
 
             <ScrollView style={styles.section}>
-            {restaurant.reviews.length === 0 ? (
+            {combinedReviews.length === 0 ? (
             <View style={styles.noReviewContainer}>
               <Text style={styles.noReviewText}>No review</Text>
               <PressableButton 
@@ -189,7 +206,7 @@ export default function RestaurantDetailScreen() {
               />
             </View>
             ) : (
-              restaurant.reviews.map((review, index) => (
+              combinedReviews.map((review, index) => (
                 <Pressable key={index} onPress={() => handleReview(review)}>
                   <View key={index} style={styles.reviewItem}>
     

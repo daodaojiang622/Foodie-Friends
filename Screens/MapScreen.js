@@ -23,7 +23,7 @@ const MapScreen = () => {
     const fullStars = Math.floor(rating); // Number of full stars
     const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
-  
+
     // Create an array of star components
     return (
       <>
