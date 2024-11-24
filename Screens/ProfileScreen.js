@@ -4,10 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
-import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { fetchDataFromDB, deleteFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../Firebase/firebaseSetup';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../Firebase/firebaseSetup";
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);
@@ -16,6 +18,29 @@ export default function ProfileScreen() {
   const [usernameModalVisible, setUsernameModalVisible] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
   const [profileImage, setProfileImage] = useState(null); // Set initial value to null
+
+  const uploadImageToStorage = async (uri, userId) => {
+    try {
+      // Fetch the file as a blob
+      const response = await fetch(uri);
+      const blob = await response.blob();
+  
+      // Create a storage reference with a unique path
+      const storageRef = ref(storage, `profileImages/${userId}/${Date.now()}.jpg`);
+  
+      // Upload the file
+      const snapshot = await uploadBytes(storageRef, blob);
+  
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+  
+      console.log("Image uploaded successfully. URL:", downloadURL);
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading image to Firebase Storage:", error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     const checkUsername = async () => {
@@ -53,10 +78,38 @@ export default function ProfileScreen() {
       Alert.alert("Error", "Username cannot be empty");
       return;
     }
-    await AsyncStorage.setItem('username', username);
-    setUsernameModalVisible(false);
-    loadUserPosts(username);
+  
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        Alert.alert('Error', 'User is not logged in.');
+        return;
+      }
+  
+      const userCollection = 'users';
+  
+      // Fetch existing user data
+      const existingUsers = await fetchDataFromDB(userCollection, { userId });
+      if (existingUsers.length > 0) {
+        // Update if user already exists
+        const existingUserDocId = existingUsers[0].id;
+        await updateDB(existingUserDocId, { username }, userCollection);
+        console.log("Username updated successfully.");
+      } else {
+        // Write a new user document if none exists
+        await writeToDB({ userId, username }, userCollection);
+        console.log("New user created successfully.");
+      }
+  
+      await AsyncStorage.setItem('username', username); // Save locally for convenience
+      setUsernameModalVisible(false);
+      Alert.alert('Success', 'Username saved successfully.');
+    } catch (error) {
+      console.error('Error saving username:', error);
+      Alert.alert('Error', 'Failed to save username. Please try again.');
+    }
   };
+  
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -69,29 +122,82 @@ export default function ProfileScreen() {
     requestPermissions();
   }, []);
 
-  const pickProfileImage = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      console.log("Image Picker Result:", result); // Log the entire result to see the structure
-
-      if (!result.canceled && result.assets && result.assets[0].uri) {
-        const selectedImageUri = result.assets[0].uri;
-        setProfileImage(selectedImageUri);
-        await AsyncStorage.setItem('profileImage', selectedImageUri); // Save locally
-      } else {
-        console.log("No image selected.");
+  useEffect(() => {
+    const checkUsernameAndProfileImage = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+          Alert.alert('Error', 'User is not logged in.');
+          return;
+        }
+  
+        const userCollection = 'users';
+  
+        // Fetch user data from Firestore
+        const existingUsers = await fetchDataFromDB(userCollection, { userId });
+        if (existingUsers.length > 0) {
+          const user = existingUsers[0];
+          setUsername(user.username || '');
+          setProfileImage(user.profileImage || ''); 
+        } else {
+          setUsernameModalVisible(true); 
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
       }
-    } catch (error) {
-      console.error("Error picking image:", error);
-      Alert.alert("Error", "Failed to select image.");
+    };
+  
+    checkUsernameAndProfileImage();
+  }, []);
+  
+
+  const pickProfileImage = async () => {
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets[0].uri) {
+      const selectedImageUri = result.assets[0].uri.replace("file://", "");
+
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        Alert.alert("Error", "User is not logged in.");
+        return;
+      }
+
+      // Upload image to Firebase Storage and get the download URL
+      const downloadURL = await uploadImageToStorage(selectedImageUri, userId);
+
+      // Save the URL in Firestore
+      const userCollection = "users";
+      const existingUsers = await fetchDataFromDB(userCollection, { userId });
+      if (existingUsers.length > 0) {
+        // Update if user already exists
+        const existingUserDocId = existingUsers[0].id;
+        await updateDB(existingUserDocId, { profileImage: downloadURL }, userCollection);
+        console.log("Profile image updated successfully.");
+      } else {
+        // Write a new user document if none exists
+        await writeToDB({ userId, profileImage: downloadURL }, userCollection);
+        console.log("New user created successfully.");
+      }
+
+      setProfileImage(downloadURL); // Update the local state with the Firebase URL
+      await AsyncStorage.setItem("profileImage", downloadURL); // Save locally
+      Alert.alert("Success", "Profile picture updated successfully.");
+    } else {
+      console.log("No image selected.");
     }
-  };
+  } catch (error) {
+    console.error("Error picking and uploading image:", error);
+    Alert.alert("Error", "Failed to select or upload image.");
+  }
+};
+  
 
   const captureProfileImage = async () => {
     try {
