@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
-import { fetchDataFromDB, deleteFromDB, writeToDB } from '../Firebase/firestoreHelper';
+import { fetchDataFromDB, deleteFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../Firebase/firebaseSetup';
@@ -62,17 +62,21 @@ export default function ProfileScreen() {
       }
   
       const userCollection = 'users';
-      const userData = await fetchDataFromDB(userCollection, { userId });
   
-      if (userData.length > 0) {
-        // User exists, update username
-        await updateDB(userData[0].id, { username }, userCollection);
+      // Fetch existing user data
+      const existingUsers = await fetchDataFromDB(userCollection, { userId });
+      if (existingUsers.length > 0) {
+        // Update if user already exists
+        const existingUserDocId = existingUsers[0].id;
+        await updateDB(existingUserDocId, { username }, userCollection);
+        console.log("Username updated successfully.");
       } else {
-        // User doesn't exist, create new document
+        // Write a new user document if none exists
         await writeToDB({ userId, username }, userCollection);
+        console.log("New user created successfully.");
       }
   
-      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('username', username); // Save locally for convenience
       setUsernameModalVisible(false);
       Alert.alert('Success', 'Username saved successfully.');
     } catch (error) {
@@ -101,13 +105,30 @@ export default function ProfileScreen() {
         aspect: [1, 1],
         quality: 1,
       });
-
-      console.log("Image Picker Result:", result); // Log the entire result to see the structure
-
+  
       if (!result.canceled && result.assets && result.assets[0].uri) {
         const selectedImageUri = result.assets[0].uri;
         setProfileImage(selectedImageUri);
+  
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+          Alert.alert('Error', 'User is not logged in.');
+          return;
+        }
+  
+        const userCollection = 'users';
+        const userData = await fetchDataFromDB(userCollection, { userId });
+  
+        if (userData.length > 0) {
+          // User exists, update profileImage
+          await updateDB(userData[0].id, { profileImage: selectedImageUri }, userCollection);
+        } else {
+          // User doesn't exist, create new document
+          await writeToDB({ userId, profileImage: selectedImageUri }, userCollection);
+        }
+  
         await AsyncStorage.setItem('profileImage', selectedImageUri); // Save locally
+        Alert.alert('Success', 'Profile picture updated successfully.');
       } else {
         console.log("No image selected.");
       }
@@ -116,6 +137,7 @@ export default function ProfileScreen() {
       Alert.alert("Error", "Failed to select image.");
     }
   };
+  
 
   const captureProfileImage = async () => {
     try {
