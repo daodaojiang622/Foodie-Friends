@@ -166,8 +166,7 @@ const styles = StyleSheet.create({
     height: 180,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
     margin: 10,
     width: 180,
   },
