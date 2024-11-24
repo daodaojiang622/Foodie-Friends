@@ -63,7 +63,7 @@ export default function ReviewDetailScreen() {
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={40} color="gold" />
+      <Ionicons key={index} name="star" size={20} color="gold" />
     ));
   };
 
@@ -100,10 +100,11 @@ export default function ReviewDetailScreen() {
         <Text style={[styles.title, { color: theme.textColor }]}>
             {reviewData.restaurant || 'No restaurant information available'}
           </Text>
-          <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
           <View style={styles.ratingContainer}>
             {renderStars(reviewData.rating)}
+            <Text style={[styles.rating, {color: theme.textColor}]}>({reviewData.rating})</Text>
           </View>
+          <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
         </View>
       </View>
     </ScrollView>
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 20,
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 20,
   },
   ratingContainer: {
