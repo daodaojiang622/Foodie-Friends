@@ -94,8 +94,8 @@ export default function HomeScreen() {
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
       ) : ''}
-      <Text style={styles.title}>
-      {item.description?.trim().split(/\s+/).slice(0, 5).join(' ')}...
+      <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+      {item.description}
       </Text>
     </Pressable>
   );
