@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,6 +32,15 @@ export default function EditPostScreen() {
   const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
 
+  // Set header text
+  useEffect(() => {
+    if (postId) {
+      navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
+    } else {
+      navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
+    }
+  }, [postId, navigation]);
+  
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
