@@ -97,6 +97,35 @@ export default function ProfileScreen() {
     requestPermissions();
   }, []);
 
+  useEffect(() => {
+    const checkUsernameAndProfileImage = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+          Alert.alert('Error', 'User is not logged in.');
+          return;
+        }
+  
+        const userCollection = 'users';
+  
+        // Fetch user data from Firestore
+        const existingUsers = await fetchDataFromDB(userCollection, { userId });
+        if (existingUsers.length > 0) {
+          const user = existingUsers[0];
+          setUsername(user.username || '');
+          setProfileImage(user.profileImage || ''); // Use default image if not found
+        } else {
+          setUsernameModalVisible(true); // Prompt user to set username if not found
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+  
+    checkUsernameAndProfileImage();
+  }, []);
+  
+
   const pickProfileImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -117,14 +146,18 @@ export default function ProfileScreen() {
         }
   
         const userCollection = 'users';
-        const userData = await fetchDataFromDB(userCollection, { userId });
   
-        if (userData.length > 0) {
-          // User exists, update profileImage
-          await updateDB(userData[0].id, { profileImage: selectedImageUri }, userCollection);
+        // Fetch existing user data
+        const existingUsers = await fetchDataFromDB(userCollection, { userId });
+        if (existingUsers.length > 0) {
+          // Update if user already exists
+          const existingUserDocId = existingUsers[0].id;
+          await updateDB(existingUserDocId, { profileImage: selectedImageUri }, userCollection);
+          console.log("Profile image updated successfully.");
         } else {
-          // User doesn't exist, create new document
+          // Write a new user document if none exists
           await writeToDB({ userId, profileImage: selectedImageUri }, userCollection);
+          console.log("New user created successfully.");
         }
   
         await AsyncStorage.setItem('profileImage', selectedImageUri); // Save locally
@@ -137,6 +170,7 @@ export default function ProfileScreen() {
       Alert.alert("Error", "Failed to select image.");
     }
   };
+  
   
 
   const captureProfileImage = async () => {
