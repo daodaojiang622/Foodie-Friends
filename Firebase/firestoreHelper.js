@@ -24,13 +24,20 @@ export async function fetchDataFromDB(collectionName, filter = {}) {
     }
 
     const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Ensure the result has an even number of items
+    if (data.length % 2 !== 0) {
+      data = data.slice(0, data.length - 1);
+    }
+
     return data;
   } catch (err) {
     console.error("Fetch from DB error", err);
     return [];
   }
 }
+
 
   export const updateDB = async (id, updatedData, collectionName) => {
     try {

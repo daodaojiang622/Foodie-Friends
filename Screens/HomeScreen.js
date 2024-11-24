@@ -11,7 +11,11 @@ export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [pageToken, setPageToken] = useState(null);
+  const [noMorePosts, setNoMorePosts] = useState(false);
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
@@ -48,6 +52,38 @@ export default function HomeScreen() {
     }
   };
 
+  // Fetch location and nearby reviews with pagination
+  const fetchLocationAndReviews = async (nextPageToken = null) => {
+    setLoading(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
+  
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords);
+  
+      // Fetch data with pagination support
+      const data = await fetchDataFromDB('posts', nextPageToken); // Ensure this function accepts and processes pageToken
+      const shuffledPosts = data.posts.sort(() => Math.random() - 0.5);
+  
+      setPosts((prevPosts) => [...prevPosts, ...shuffledPosts]);
+      setPageToken(data.nextPageToken); // Update the page token
+      if (!data.nextPageToken) {
+        setNoMorePosts(true);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      Alert.alert('Error', 'Unable to load more posts. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   // Render item for FlatList
   const renderItem = ({ item }) => (
     <Pressable
@@ -58,11 +94,27 @@ export default function HomeScreen() {
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
       ) : ''}
-      <Text style={styles.title}>
-      {item.description?.trim().split(/\s+/).slice(0, 5).join(' ')}...
+      <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+      {item.description}
       </Text>
     </Pressable>
   );
+
+  // Handle when user reaches the end of the list to load more reviews
+  const handleLoadMore = async () => {
+    if (!pageToken || loading) {
+      // If no more posts or still loading
+      if (!pageToken) {
+        setNoMorePosts(true);
+      }
+      return;
+    }
+  
+    await fetchLocationAndReviews(pageToken);
+  };
+  
+  
+
 
   return (
     <ScreenWrapper>
@@ -81,6 +133,15 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContainer}
         refreshing={refreshing}
         onRefresh={handleRefresh} // Pull-to-refresh function
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
+        ListFooterComponent={
+          loading ? (
+            <Text style={styles.footerText}>Loading...</Text>
+          ) : noMorePosts ? (
+            <Text style={styles.footerText}>No more posts...</Text>
+          ) : null
+        }
       />
     </ScreenWrapper>
   );
@@ -105,8 +166,7 @@ const styles = StyleSheet.create({
     height: 180,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
     margin: 10,
     width: 180,
   },
@@ -123,5 +183,11 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  footerText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+    marginVertical: 10,
   },
 });

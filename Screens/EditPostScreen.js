@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,6 +32,15 @@ export default function EditPostScreen() {
   const [restaurantSuggestions, setRestaurantSuggestions] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState('');
 
+  // Set header text
+  useEffect(() => {
+    if (postId) {
+      navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
+    } else {
+      navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
+    }
+  }, [postId, navigation]);
+  
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
@@ -236,97 +245,99 @@ export default function EditPostScreen() {
   };
   
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
-      {/* Restaurant Search */}
-      <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
-      <TextInput
-        style={[styles.input, { borderColor: theme.textColor }]}
-        placeholder="Enter restaurant name"
-        value={restaurantQuery}
-        onChangeText={handleSearchChange}
-        clearButtonMode="while-editing"
-      />
-      {restaurantSuggestions.length > 0 && (
-        <View style={styles.suggestionsContainer}>
-        <FlatList
-          data={restaurantSuggestions}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSuggestionSelect(item)}
-              style={styles.suggestionItem}
-            >
-              <Text style={[styles.suggestionText, { color: theme.textColor }]}>
-                {item.description}
-              </Text>
-            </TouchableOpacity>
-          )}
+    <ScrollView>
+      <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+        {/* Restaurant Search */}
+        <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
+        <TextInput
+          style={[styles.input, { borderColor: theme.textColor }]}
+          placeholder="Enter restaurant name"
+          value={restaurantQuery}
+          onChangeText={handleSearchChange}
+          clearButtonMode="while-editing"
         />
-      </View>
-      )}
-      {/* Review Details */}
-      <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
-      <TextInput
-        style={[styles.descriptionInput, { borderColor: theme.textColor }]}
-        placeholder="Enter a detailed review"
-        placeholderTextColor="#888"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
+        {restaurantSuggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+          <FlatList
+            data={restaurantSuggestions}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => handleSuggestionSelect(item)}
+                style={styles.suggestionItem}
+              >
+                <Text style={[styles.suggestionText, { color: theme.textColor }]}>
+                  {item.description}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+        )}
+        {/* Review Details */}
+        <Text style={[styles.label, { color: theme.textColor }]}>Review Details</Text>
+        <TextInput
+          style={[styles.descriptionInput, { borderColor: theme.textColor }]}
+          placeholder="Enter a detailed review"
+          placeholderTextColor="#888"
+          value={description}
+          onChangeText={setDescription}
+          multiline
+        />
 
-      <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
-      <View>
-      <ScrollView horizontal style={styles.imageScroll}>
-        {images.map((uri, index) => (
-          <View key={index} style={styles.imageWrapper}>
-           <Image source={{ uri }} style={styles.image} />
-            <Pressable
-             style={styles.deleteButton}
-             onPress={() => {
-               // Remove the selected image from the images array
-               const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
-               setImages(updatedImages);
-              }}
-           >
-             <Ionicons name="close-circle" size={24} color="red" />
-           </Pressable>
-          </View>
-       ))}
-        <Pressable
-          onPress={() => {
-            Alert.alert('Add Image', 'Choose an image source', [
-              { text: 'Camera', onPress: captureImage },
-              { text: 'Gallery', onPress: pickImage },
-              { text: 'Cancel', style: 'cancel' },
-            ]);
-          }}
-          style={styles.addImageContainer}
-        >
-          <Ionicons name="add" size={40} color="#aaa" />
-          <Text style={styles.addImageText}>Add Image</Text>
-        </Pressable>
-      </ScrollView>
-      </View>
-
-      <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-      <View style={[styles.ratingContainer, { marginTop: 20 }]}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Pressable key={star} onPress={() => setRating(star)}>
-            <Ionicons
-              name={star <= rating ? 'star' : 'star-outline'}
-              size={28}
-              color={star <= rating ? '#FFD700' : '#aaa'}
-            />
-          </Pressable>
+        <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
+        <View>
+        <ScrollView horizontal style={styles.imageScroll}>
+          {images.map((uri, index) => (
+            <View key={index} style={styles.imageWrapper}>
+            <Image source={{ uri }} style={styles.image} />
+              <Pressable
+              style={styles.deleteButton}
+              onPress={() => {
+                // Remove the selected image from the images array
+                const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
+                setImages(updatedImages);
+                }}
+            >
+              <Ionicons name="close-circle" size={24} color="red" />
+            </Pressable>
+            </View>
         ))}
-      </View>
+          <Pressable
+            onPress={() => {
+              Alert.alert('Add Image', 'Choose an image source', [
+                { text: 'Camera', onPress: captureImage },
+                { text: 'Gallery', onPress: pickImage },
+                { text: 'Cancel', style: 'cancel' },
+              ]);
+            }}
+            style={styles.addImageContainer}
+          >
+            <Ionicons name="add" size={40} color="#aaa" />
+            <Text style={styles.addImageText}>Add Image</Text>
+          </Pressable>
+        </ScrollView>
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
-        <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
+        <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
+        <View style={[styles.ratingContainer, { marginTop: 20 }]}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Pressable key={star} onPress={() => setRating(star)}>
+              <Ionicons
+                name={star <= rating ? 'star' : 'star-outline'}
+                size={28}
+                color={star <= rating ? '#FFD700' : '#aaa'}
+              />
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
+          <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
