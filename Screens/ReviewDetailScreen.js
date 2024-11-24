@@ -97,9 +97,12 @@ export default function ReviewDetailScreen() {
         </ScrollView>
         </View>
         <View style={styles.textContainer}>
-        <Text style={[styles.title, { color: theme.textColor }]}>
-            {reviewData.restaurant || 'No restaurant information available'}
-          </Text>
+        <View style={styles.locationContainer}>
+          <Ionicons name="location-outline" size={20} color={theme.textColor} />
+          <Text style={[styles.title, { color: theme.textColor }]}>
+              {reviewData.restaurant}
+            </Text>
+        </View>
           <View style={styles.ratingContainer}>
             {renderStars(reviewData.rating)}
             <Text style={[styles.rating, {color: theme.textColor}]}>({reviewData.rating})</Text>
@@ -128,7 +131,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     marginTop: 10,
@@ -139,6 +142,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
