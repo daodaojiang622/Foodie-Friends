@@ -11,7 +11,10 @@ export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [pageToken, setPageToken] = useState(null); // For pagination
 
   // Function to load posts from Firebase
   const loadPosts = async () => {
@@ -48,6 +51,35 @@ export default function HomeScreen() {
     }
   };
 
+  // Fetch location and nearby reviews with pagination
+  const fetchLocationAndReviews = async (nextPageToken = null) => {
+    setLoading(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to fetch nearby reviews.');
+        setLoading(false);
+        return;
+      }
+  
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc.coords);
+  
+      // Fetch data with pagination support
+      const data = await fetchDataFromDB('posts', nextPageToken); // Ensure this function accepts and processes pageToken
+      const shuffledPosts = data.posts.sort(() => Math.random() - 0.5);
+  
+      setPosts((prevPosts) => [...prevPosts, ...shuffledPosts]);
+      setPageToken(data.nextPageToken); // Update the page token
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      Alert.alert('Error', 'Unable to load more posts. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   // Render item for FlatList
   const renderItem = ({ item }) => (
     <Pressable
@@ -63,6 +95,19 @@ export default function HomeScreen() {
       </Text>
     </Pressable>
   );
+
+  // Handle when user reaches the end of the list to load more reviews
+  const handleLoadMore = () => {
+    if (pageToken && !loading) {
+      console.log('Loading more posts...');
+      fetchLocationAndReviews(pageToken);
+    } else {
+      console.log('No more posts to load or still loading...');
+      <Text>No more posts to load or still loading...</Text>
+    }
+  };
+  
+
 
   return (
     <ScreenWrapper>
@@ -81,6 +126,9 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContainer}
         refreshing={refreshing}
         onRefresh={handleRefresh} // Pull-to-refresh function
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5} // Trigger loading when 50% of the list is reached
+        ListFooterComponent={loading ? <Text>Loading...</Text> : null}
       />
     </ScreenWrapper>
   );
