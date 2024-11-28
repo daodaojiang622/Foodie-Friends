@@ -88,7 +88,7 @@ export default function HomeScreen() {
   const renderItem = ({ item }) => (
     <Pressable
       key={item.id}
-      onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images })}
+      onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images, user: item.userId })}
       style={styles.imageWrapper}
     >
       {item.images?.[0] ? (

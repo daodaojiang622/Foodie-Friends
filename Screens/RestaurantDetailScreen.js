@@ -127,8 +127,8 @@ export default function RestaurantDetailScreen() {
   const handleReview = (review) => {
     navigation.navigate('ReviewDetailScreen', {
       postId: review.id, // If the review has a unique identifier
-      initialRestaurant: restaurant.name, // Optionally pass the restaurant name
-      initialDescription: review.text,
+      restaurantName: restaurant.name, // Optionally pass the restaurant name
+      description: review.text,
       // pass 2 random photos of the place as the images of the review
       images: restaurant.photos.slice(0, 2),
       rating: review.rating || 0, // Pass the review's rating
