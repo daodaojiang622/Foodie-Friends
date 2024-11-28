@@ -18,9 +18,10 @@ export default function ReviewDetailScreen() {
     description: route.params?.description || '',
     images: route.params?.images || [],
     rating: route.params?.rating || 0,
-    userId: '', // Add userId to store the post creator's ID
     restaurant: route.params?.restaurantName || '', 
-  });
+    profilePhotoUrl: route.params?.profile_photo_url || null,
+    username: route.params?.user || 'Anonymous',  
+  });  
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -33,7 +34,9 @@ export default function ReviewDetailScreen() {
             images: post.images || [],
             rating: post.rating || 0,
             userId: post.userId || '', // Store the userId of the post creator
-            restaurant: post.restaurantName || '',
+            restaurant: post.restaurantName ||'',
+            profilePhotoUrl: post.profile_photo_url || null,
+            username: post.user || 'Anonymous',
           });
         }
       }
