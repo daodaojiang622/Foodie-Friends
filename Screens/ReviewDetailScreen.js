@@ -85,7 +85,7 @@ export default function ReviewDetailScreen() {
   }, [navigation]);
 
   return (
-    <ScrollView>
+    <ScrollView style={[styles.scrollView, {backgroundColor: theme.backgroundColor}]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
         <View style={styles.textContainer}>
         <ScrollView
