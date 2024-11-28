@@ -29,14 +29,17 @@ export default function ReviewDetailScreen() {
         const allPosts = await fetchDataFromDB('posts');
         const post = allPosts.find((p) => p.id === postId);
         if (post) {
+          // Fetch the user data from the users collection
+          const allUsers = await fetchDataFromDB('users');
+          const user = allUsers.find((u) => u.userId === post.userId);
           setReviewData({
             description: post.description || '',
             images: post.images || [],
             rating: post.rating || 0,
             userId: post.userId || '', // Store the userId of the post creator
             restaurant: post.restaurantName ||'',
-            profilePhotoUrl: post.profile_photo_url || null,
-            username: post.user || 'Anonymous',
+            profilePhotoUrl: user?.profileImage,
+            username: user?.username || 'Anonymous',
           });
         }
       }
@@ -118,7 +121,7 @@ export default function ReviewDetailScreen() {
           source={{ uri: reviewData.profilePhotoUrl || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
           <Text style={[styles.user, { color: theme.textColor }]}>{reviewData.username}</Text>
         </View>
-        
+
         <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
         </View>
       </View>
