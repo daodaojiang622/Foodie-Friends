@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions } from 'react-native';
+import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Pressable } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,7 +66,7 @@ export default function ReviewDetailScreen() {
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={20} color="gold" />
+      <Ionicons key={index} name="star" size={16} color="gold" />
     ));
   };
 
@@ -100,21 +100,25 @@ export default function ReviewDetailScreen() {
         </ScrollView>
         </View>
         <View style={styles.textContainer}>
+        
         <View style={styles.locationContainer}>
           <Ionicons name="location-outline" size={20} color={theme.textColor} />
           <Text style={[styles.title, { color: theme.textColor }]}>
               {reviewData.restaurant}
             </Text>
         </View>
+
         <View style={styles.ratingContainer}>
           {renderStars(reviewData.rating)}
           <Text style={[styles.rating, {color: theme.textColor}]}>({reviewData.rating})</Text>
         </View>
+
         <View style={styles.locationContainer}>
           <Image 
           source={{ uri: reviewData.profilePhotoUrl || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
           <Text style={[styles.user, { color: theme.textColor }]}>{reviewData.username}</Text>
         </View>
+        
         <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
         </View>
       </View>
@@ -139,8 +143,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 16,
     marginBottom: 10,
     marginTop: 10,
   },
