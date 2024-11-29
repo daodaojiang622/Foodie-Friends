@@ -153,7 +153,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
     console.log("Selected suggestion:", suggestion); // Debug
   
     // Extract the name (part before the first punctuation mark)
-    const name = suggestion.description.split(/[.,-]/)[0].trim();
+    const name = suggestion.description.split(/[,]/)[0].trim();
   
     // Update the search bar to show the full description
     setRestaurantQuery(suggestion.description);
