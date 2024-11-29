@@ -68,3 +68,16 @@ export const subscribeToMeetUps = (collectionName, callback) => {
   });
   return unsubscribe;
 };
+
+// Function to create or update user profile
+export const addUserProfile = async (userId, data) => {
+  try {
+    console.log("Adding user profile:", data);
+    const docRef = doc(database, "users", userId); // Use userId as the document ID for easy access
+    await setDoc(docRef, data, { merge: true }); // Merge allows updates without overwriting
+    console.log("User profile added/updated successfully");
+  } catch (err) {
+    console.error("Error adding/updating user profile:", err);
+    throw err;
+  }
+};
