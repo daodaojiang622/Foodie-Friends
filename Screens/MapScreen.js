@@ -222,9 +222,21 @@ const MapScreen = () => {
     }
   };
   
-  
-  
+  const handleZoom = (type) => {
+    if (!initialRegion) return;
 
+    // Adjust zoom by modifying the latitudeDelta and longitudeDelta
+    const zoomFactor = type === 'in' ? 0.5 : 2; // Reduce delta to zoom in; increase delta to zoom out
+    const newRegion = {
+      ...initialRegion,
+      latitudeDelta: initialRegion.latitudeDelta * zoomFactor,
+      longitudeDelta: initialRegion.longitudeDelta * zoomFactor,
+    };
+
+    setInitialRegion(newRegion); // Update the state
+    mapRef.current.animateToRegion(newRegion, 500); // Smoothly animate the map to the new region
+  };
+  
   return (
     <View style={styles.container}>
       <TextInput
@@ -257,9 +269,19 @@ const MapScreen = () => {
             fetchNearbyPlaces(region.latitude, region.longitude);
           }}
         >
+          {/* Zoom Controls */}
+          <View style={styles.zoomControls}>
+            <Pressable style={[styles.zoomButton, { backgroundColor: theme.backgroundColor }]} onPress={() => handleZoom('in')}>
+              <Ionicons name="add-circle-outline" size={30} color={theme.textColor} />
+            </Pressable>
+            <Pressable style={[styles.zoomButton, { backgroundColor: theme.backgroundColor }]} onPress={() => handleZoom('out')}>
+              <Ionicons name="remove-circle-outline" size={30} color={theme.textColor} />
+            </Pressable>
+          </View>
+
           {/* Button to return to the current location */}
           <Pressable
-            style={styles.currentLocationButton}
+            style={[styles.currentLocationButton, { backgroundColor: theme.backgroundColor }]}
             onPress={handleReturnToCurrentLocation}
           >
             <Ionicons name="navigate-circle-outline" size={30} color={theme.textColor}  />
@@ -395,6 +417,22 @@ const styles = StyleSheet.create({
     right: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: 25,
+    padding: 1,
+  },
+  zoomButton: {
+    borderRadius: 25,
+    padding: 1,
+    marginVertical: 5,
+  },
+  zoomControls: {
+    position: 'absolute',
+    bottom: 50, // Adjust position above other UI components
+    right: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 100, // Adjust the height for spacing between buttons
   },
 });
 
