@@ -136,8 +136,7 @@ export default function RestaurantDetailScreen() {
           text: review.description,
           rating: review.rating,
           author_name: review.username || 'Anonymous',
-          profile_photo_url: review.profileImage || null,
-          relative_time_description: 'From Database', // Static indicator for DB reviews
+          profile_photo_url: review.profileImage,
           id: review.id, // Include the unique ID for navigation
         }));
   
@@ -271,12 +270,12 @@ export default function RestaurantDetailScreen() {
                   <View key={index} style={styles.reviewItem}>
     
                     <View style={styles.reviewContainer}>
-                      <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
+                      <Image source={{ uri: review.profile_photo_url || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
       
                         <View style={styles.reviewInfoContainer}>
                           <View style={styles.reviewDateTimeContainer}>
                               <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
-                              <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
+                              <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description || 'Time not available'}</Text>
                           </View>
                             <Text style={styles.reviewText}>{review.text}</Text>
                         </View>
