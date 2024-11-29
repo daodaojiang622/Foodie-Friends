@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
@@ -77,7 +77,7 @@ export default function EditPostScreen() {
     console.log("Selected suggestion:", suggestion); // Debug
   
     // Extract the name (part before the first punctuation mark)
-    const name = suggestion.description.split(/[.,-]/)[0].trim();
+    const name = suggestion.description.split(/[,]/)[0].trim();
   
     // Update the search bar to show the full description
     setRestaurantQuery(suggestion.description);
@@ -189,6 +189,7 @@ export default function EditPostScreen() {
         userId,
         restaurantName: selectedRestaurant.name,
         restaurantId: selectedRestaurant.place_id,
+        time: Date.now(),
       };
   
       Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
@@ -253,7 +254,7 @@ export default function EditPostScreen() {
   };
   
   return (
-    <ScrollView>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
         {/* Restaurant Search */}
         <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
@@ -345,7 +346,7 @@ export default function EditPostScreen() {
           <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
         </View>
       </View>
-    </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -383,6 +384,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    maxHeight: 200,
   },
   suggestionItem: {
     padding: 15,

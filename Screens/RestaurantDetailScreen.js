@@ -7,6 +7,24 @@ import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup'; 
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
+
+// Function to calculate relative time
+const calculateRelativeTime = (timestamp) => {
+  if (!timestamp) return 'Invalid timestamp';
+  
+  // Convert the timestamp to milliseconds (if it's in seconds)
+  const timestampInMilliseconds = timestamp * 1000;
+
+  // Calculate the relative time using `date-fns`
+  return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
+};
+
+// Example usage
+const timestamp = 1732843440987; // Example timestamp from your DB
+const relativeTime = calculateRelativeTime(timestamp);
+console.log('Relative Time:', relativeTime); // Output: e.g., "2 days ago"
+
 
 const { width } = Dimensions.get('window');
 
@@ -42,6 +60,18 @@ export default function RestaurantDetailScreen() {
   const [restaurant, setRestaurant] = useState(null); // Store fetched restaurant details
   const [loading, setLoading] = useState(true); // Loading state
   const [combinedReviews, setCombinedReviews] = useState([]); 
+  
+  // Function to calculate relative time
+  const calculateRelativeTime = (timestamp) => {
+    if (!timestamp) return 'Invalid timestamp';
+    
+    // Convert the timestamp to milliseconds (if it's in seconds)
+    const timestampInMilliseconds = timestamp;
+
+    // Calculate the relative time using `date-fns`
+    return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
+  };
+
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -49,17 +79,17 @@ export default function RestaurantDetailScreen() {
       const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
   
       try {
+        // Fetch restaurant details from the API
         const response = await axios.get(url);
-        console.log(response.data); // Log the API response
         const place = response.data.result;
-      
+  
         if (!place) {
           throw new Error('No place details found in the API response.');
         }
-      
+  
         const restaurantDetails = {
           name: place.name,
-          rating:place.rating || 'N/A',
+          rating: place.rating || 'N/A',
           photos: place.photos
             ? place.photos.map((photo) =>
                 `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
@@ -69,24 +99,28 @@ export default function RestaurantDetailScreen() {
           phone: place.formatted_phone_number || 'Phone number not available',
           reviews: place.reviews || [], // Include reviews if available
         };
-
+  
         setRestaurant(restaurantDetails);
-
+  
         // Fetch reviews from Firestore
-        const dbReviews = await fetchDataFromDB('reviews', { placeId });
-        const formattedDbReviews = dbReviews.map(review => ({
-          text: review.text,
+        const dbReviews = await fetchDataFromDB('posts'); // Fetch all posts
+        const matchingDbReviews = dbReviews.filter((review) => review.restaurantId === placeId);
+  
+        // Format Firestore reviews
+        const formattedDbReviews = matchingDbReviews.map((review) => ({
+          text: review.description,
           rating: review.rating,
           author_name: review.username || 'Anonymous',
-          profile_photo_url: review.profileImage || null,
-          relative_time_description: review.timestamp || 'Recently',
+          profile_photo_url: review.profileImage,
+          id: review.id, // Include the unique ID for navigation
+          relative_time_description: calculateRelativeTime(review.time) || 'Recently',
         }));
-
+  
         console.log('Firestore reviews:', formattedDbReviews);
-
-        // Combine API and Firestore reviews
-        setCombinedReviews([...formattedDbReviews, ...restaurantDetails.reviews]);
-
+  
+        // Combine API reviews with Firestore reviews
+        setCombinedReviews([...formattedDbReviews, ...(restaurantDetails.reviews || [])]);
+  
         setLoading(false);
       } catch (error) {
         console.error('Error fetching restaurant details:', error);
@@ -97,6 +131,7 @@ export default function RestaurantDetailScreen() {
   
     fetchRestaurantDetails();
   }, [placeId]);
+  
   
 
   if (loading) {
@@ -211,12 +246,12 @@ export default function RestaurantDetailScreen() {
                   <View key={index} style={styles.reviewItem}>
     
                     <View style={styles.reviewContainer}>
-                      <Image source={{ uri: review.profile_photo_url }} style={styles.reviewImage} />
+                      <Image source={{ uri: review.profile_photo_url || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg'}} style={styles.reviewImage} />
       
                         <View style={styles.reviewInfoContainer}>
                           <View style={styles.reviewDateTimeContainer}>
                               <Ionicons name="time-outline" style={[styles.reviewDateTimeIcon, { color: theme.textColor }]} />
-                              <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description}</Text>
+                              <Text style={[styles.reviewText, { color: theme.textColor }]}>{review.relative_time_description || 'Time not available'}</Text>
                           </View>
                             <Text style={styles.reviewText}>{review.text}</Text>
                         </View>

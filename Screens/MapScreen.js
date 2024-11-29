@@ -18,6 +18,8 @@ const MapScreen = () => {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [selectedPlaceDetails, setSelectedPlaceDetails] = useState(null);
+  const [markers, setMarkers] = useState([]); // State for multiple markers
+
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating); // Number of full stars
@@ -44,23 +46,41 @@ const MapScreen = () => {
 
   useEffect(() => {
     (async () => {
-      // Request permission to access location
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission Denied', 'Location access is required to use this feature.');
         return;
       }
-
-      // Fetch the user's current location
+  
       const location = await Location.getCurrentPositionAsync({});
-      setInitialRegion({
+      const region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
-      });
+      };
+  
+      setInitialRegion(region);
+      fetchNearbyPlaces(location.coords.latitude, location.coords.longitude); // Fetch nearby places
     })();
   }, []);
+  
+  const handleReturnToCurrentLocation = async () => {
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+      const region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+
+      mapRef.current.animateToRegion(region, 1000);
+    } catch (error) {
+      console.error('Error fetching current location:', error);
+      Alert.alert('Error', 'Unable to fetch current location.');
+    }
+  };
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -152,8 +172,71 @@ const MapScreen = () => {
     }
   };
   
+  const fetchNearbyPlaces = async (latitude, longitude) => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1500&type=restaurant|cafe|bar&key=${apiKey}`;
   
+    try {
+      const response = await axios.get(url);
+      const places = response.data.results;
+  
+      const markersData = places.map((place) => ({
+        id: place.place_id,
+        name: place.name,
+        latitude: place.geometry.location.lat,
+        longitude: place.geometry.location.lng,
+        rating: place.rating || 'N/A',
+      }));
+  
+      setMarkers(markersData); // Update the markers state
+    } catch (error) {
+      console.error('Error fetching nearby places:', error);
+    }
+  };
 
+  const handleMarkerPress = async (marker) => {
+    setSelectedMarker(marker); // Set the selected marker
+    setSearchQuery(''); // Clear the search query
+    
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${marker.id}&key=${apiKey}`;
+  
+    try {
+      const response = await axios.get(url);
+      const place = response.data.result;
+  
+      const placeDetails = {
+        name: place.name,
+        rating: place.rating || 'N/A',
+        photos: place.photos
+          ? place.photos.slice(0, 10).map((photo) =>
+              `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
+            )
+          : [], // Default to empty if no photos
+      };
+  
+      console.log('Marker pressed, place details:', placeDetails);
+      setSelectedPlaceDetails(placeDetails); // Update the selected place details
+    } catch (error) {
+      console.error('Error fetching place details for marker:', error);
+    }
+  };
+  
+  const handleZoom = (type) => {
+    if (!initialRegion) return;
+
+    // Adjust zoom by modifying the latitudeDelta and longitudeDelta
+    const zoomFactor = type === 'in' ? 0.5 : 2; // Reduce delta to zoom in; increase delta to zoom out
+    const newRegion = {
+      ...initialRegion,
+      latitudeDelta: initialRegion.latitudeDelta * zoomFactor,
+      longitudeDelta: initialRegion.longitudeDelta * zoomFactor,
+    };
+
+    setInitialRegion(newRegion); // Update the state
+    mapRef.current.animateToRegion(newRegion, 500); // Smoothly animate the map to the new region
+  };
+  
   return (
     <View style={styles.container}>
       <TextInput
@@ -179,41 +262,64 @@ const MapScreen = () => {
       )}
       {initialRegion && (
         <MapView
-          ref={mapRef} // Attach the ref to the MapView
+          ref={mapRef}
           style={styles.map}
           initialRegion={initialRegion}
+          onRegionChangeComplete={(region) => {
+            fetchNearbyPlaces(region.latitude, region.longitude);
+          }}
         >
-          {selectedMarker && (
+          {/* Zoom Controls */}
+          <View style={styles.zoomControls}>
+            <Pressable style={[styles.zoomButton, { backgroundColor: theme.backgroundColor }]} onPress={() => handleZoom('in')}>
+              <Ionicons name="add-circle-outline" size={30} color={theme.textColor} />
+            </Pressable>
+            <Pressable style={[styles.zoomButton, { backgroundColor: theme.backgroundColor }]} onPress={() => handleZoom('out')}>
+              <Ionicons name="remove-circle-outline" size={30} color={theme.textColor} />
+            </Pressable>
+          </View>
+
+          {/* Button to return to the current location */}
+          <Pressable
+            style={[styles.currentLocationButton, { backgroundColor: theme.backgroundColor }]}
+            onPress={handleReturnToCurrentLocation}
+          >
+            <Ionicons name="navigate-circle-outline" size={30} color={theme.textColor}  />
+          </Pressable>
+
+          {markers.map((marker) => (
             <Marker
+              key={marker.id}
               coordinate={{
-                latitude: selectedMarker.latitude,
-                longitude: selectedMarker.longitude,
+                latitude: marker.latitude,
+                longitude: marker.longitude,
               }}
-              title={selectedMarker.name}
+              title={marker.name}
+              onPress={() => handleMarkerPress(marker)} // Set marker as selected when clicked
             />
-          )}
+          ))}
         </MapView>
       )}
 
-      {selectedPlaceDetails && searchQuery !== '' && (
+      {/* Restaurant compact window - Display selected marker details */}
+      {selectedMarker && selectedPlaceDetails && (
+        <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.imageScrollView}
+          >
+            {selectedPlaceDetails.photos.length > 0 ? (
+              selectedPlaceDetails.photos.map((photo, index) => (
+                <Image key={index} source={{ uri: photo }} style={styles.image} />
+              ))
+            ) : (
+              <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
+            )}
+          </ScrollView>
 
-          <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.imageScrollView}
-            >
-              {selectedPlaceDetails.photos.length > 0 ? (
-                selectedPlaceDetails.photos.map((photo, index) => (
-                  <Image key={index} source={{ uri: photo }} style={styles.image} />
-                ))
-              ) : (
-                <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
-              )}
-            </ScrollView>
-            
-            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { placeId: selectedMarker?.id})}>
+          <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { placeId: selectedMarker.id })}>
             <View style={styles.restaurantInfoCompactContainer}>
               <Text style={[styles.title, { color: theme.textColor }]}>
                 {selectedPlaceDetails.name}
@@ -221,12 +327,12 @@ const MapScreen = () => {
 
               <View style={styles.infoContainer}>
                 <Text style={[styles.rating, { color: theme.textColor }]}>
-                  {renderStars(selectedPlaceDetails.rating)} 
+                  {renderStars(selectedPlaceDetails.rating)}
                 </Text>
               </View>
             </View>
-            </Pressable>
-          </View>
+          </Pressable>
+        </View>
 
       )}
 
@@ -304,6 +410,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     marginBottom: -10,
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    bottom: 5,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 25,
+    padding: 1,
+  },
+  zoomButton: {
+    borderRadius: 25,
+    padding: 1,
+    marginVertical: 10,
+  },
+  zoomControls: {
+    position: 'absolute',
+    bottom: 50, // Adjust position above other UI components
+    right: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 100, // Adjust the height for spacing between buttons
   },
 });
 
