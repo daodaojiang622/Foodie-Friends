@@ -2,8 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert, Pressable } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { writeToDB, updateDB, deleteFromDB, subscribeToMeetUps } from '../Firebase/firestoreHelper'; 
+import { deleteFromDB, subscribeToMeetUps } from '../Firebase/firestoreHelper'; 
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -11,9 +10,8 @@ export default function MeetUpScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const [upcomingMeetUps, setUpcomingMeetUps] = useState([]);
   const [pastMeetUps, setPastMeetUps] = useState([]);
-  const route = useRoute();
   const collectionName = 'meetups';
-  
+
   const handleCreateMeetUp = () => {
     navigation.navigate('EditMeetUp');
   };
@@ -40,8 +38,8 @@ export default function MeetUpScreen({ navigation }) {
     );
   };
 
-  useEffect(() => {
-    const unsubscribe = subscribeToMeetUps(collectionName, (meetUps) => {
+  const fetchMeetUps = () => {
+    subscribeToMeetUps(collectionName, (meetUps) => {
       const currentDateTime = moment();
       const upcoming = [];
       const past = [];
@@ -58,9 +56,18 @@ export default function MeetUpScreen({ navigation }) {
       setUpcomingMeetUps(upcoming);
       setPastMeetUps(past);
     });
+  };
 
-    return () => unsubscribe();
+  useEffect(() => {
+    fetchMeetUps();
+
+    const interval = setInterval(() => {
+      fetchMeetUps(); // Refresh every 5 seconds
+    }, 5000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
+
 
   const handleEditMeetUp = (meetUp, isPast) => {
     navigation.navigate('EditMeetUp', { meetUp, confirmDelete: handleDeleteMeetUp, isPast });
