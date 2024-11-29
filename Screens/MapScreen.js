@@ -244,6 +244,7 @@ const MapScreen = () => {
         placeholder="Search for restaurants..."
         value={searchQuery}
         onChangeText={handleSearchChange}
+        clearButtonMode="while-editing"
       />
       {suggestions.length > 0 && (
         <FlatList
