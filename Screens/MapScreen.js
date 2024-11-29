@@ -177,6 +177,35 @@ const MapScreen = () => {
       console.error('Error fetching nearby places:', error);
     }
   };
+
+  const handleMarkerPress = async (marker) => {
+    setSelectedMarker(marker); // Set the selected marker
+    setSearchQuery(''); // Clear the search query
+    
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${marker.id}&key=${apiKey}`;
+  
+    try {
+      const response = await axios.get(url);
+      const place = response.data.result;
+  
+      const placeDetails = {
+        name: place.name,
+        rating: place.rating || 'N/A',
+        photos: place.photos
+          ? place.photos.slice(0, 10).map((photo) =>
+              `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
+            )
+          : [], // Default to empty if no photos
+      };
+  
+      console.log('Marker pressed, place details:', placeDetails);
+      setSelectedPlaceDetails(placeDetails); // Update the selected place details
+    } catch (error) {
+      console.error('Error fetching place details for marker:', error);
+    }
+  };
+  
   
   
 
@@ -220,44 +249,43 @@ const MapScreen = () => {
                 longitude: marker.longitude,
               }}
               title={marker.name}
-              onPress={() => setSelectedMarker(marker)} // Set marker as selected when clicked
+              onPress={() => handleMarkerPress(marker)} // Set marker as selected when clicked
             />
           ))}
         </MapView>
       )}
 
-      {selectedPlaceDetails && searchQuery !== '' && (
+      {selectedMarker && selectedPlaceDetails && (
+        <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.imageScrollView}
+          >
+            {selectedPlaceDetails.photos.length > 0 ? (
+              selectedPlaceDetails.photos.map((photo, index) => (
+                <Image key={index} source={{ uri: photo }} style={styles.image} />
+              ))
+            ) : (
+              <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
+            )}
+          </ScrollView>
 
-          <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.imageScrollView}
-            >
-              {selectedPlaceDetails.photos.length > 0 ? (
-                selectedPlaceDetails.photos.map((photo, index) => (
-                  <Image key={index} source={{ uri: photo }} style={styles.image} />
-                ))
-              ) : (
-                <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
-              )}
-            </ScrollView>
-            
-            <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { placeId: selectedMarker?.id})}>
+          <Pressable onPress={() => navigation.navigate('RestaurantDetailScreen', { placeId: selectedMarker.id })}>
             <View style={styles.restaurantInfoCompactContainer}>
               <Text style={[styles.title, { color: theme.textColor }]}>
                 {selectedPlaceDetails.name}
               </Text>
 
               <View style={styles.infoContainer}>
-                <Text style={[styles.rating, { color: theme.textColor }]}>
-                  {renderStars(selectedPlaceDetails.rating)} 
-                </Text>
+              <Text style={[styles.rating, { color: theme.textColor }]}>
+                {renderStars(selectedPlaceDetails.rating)}
+              </Text>
               </View>
             </View>
-            </Pressable>
-          </View>
+          </Pressable>
+        </View>
 
       )}
 
