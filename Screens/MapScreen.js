@@ -65,6 +65,22 @@ const MapScreen = () => {
     })();
   }, []);
   
+  const handleReturnToCurrentLocation = async () => {
+    try {
+      const location = await Location.getCurrentPositionAsync({});
+      const region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      };
+
+      mapRef.current.animateToRegion(region, 1000);
+    } catch (error) {
+      console.error('Error fetching current location:', error);
+      Alert.alert('Error', 'Unable to fetch current location.');
+    }
+  };
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -241,6 +257,14 @@ const MapScreen = () => {
             fetchNearbyPlaces(region.latitude, region.longitude);
           }}
         >
+          {/* Button to return to the current location */}
+          <Pressable
+            style={styles.currentLocationButton}
+            onPress={handleReturnToCurrentLocation}
+          >
+            <Ionicons name="navigate-circle-outline" size={30} color={theme.textColor}  />
+          </Pressable>
+
           {markers.map((marker) => (
             <Marker
               key={marker.id}
@@ -364,6 +388,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
     marginBottom: -10,
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    bottom: 5,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

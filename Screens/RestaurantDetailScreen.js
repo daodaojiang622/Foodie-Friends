@@ -60,61 +60,6 @@ export default function RestaurantDetailScreen() {
   const [restaurant, setRestaurant] = useState(null); // Store fetched restaurant details
   const [loading, setLoading] = useState(true); // Loading state
   const [combinedReviews, setCombinedReviews] = useState([]); 
-
-  // useEffect(() => {
-  //   const fetchRestaurantDetails = async () => {
-  //     const apiKey = process.env.EXPO_PUBLIC_apiKey;
-  //     const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
-  
-  //     try {
-  //       const response = await axios.get(url);
-  //       console.log(response.data); // Log the API response
-  //       const place = response.data.result;
-      
-  //       if (!place) {
-  //         throw new Error('No place details found in the API response.');
-  //       }
-      
-  //       const restaurantDetails = {
-  //         name: place.name,
-  //         rating:place.rating || 'N/A',
-  //         photos: place.photos
-  //           ? place.photos.map((photo) =>
-  //               `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${apiKey}`
-  //             )
-  //           : [], // Default to empty if no photos
-  //         address: place.formatted_address || 'Address not available',
-  //         phone: place.formatted_phone_number || 'Phone number not available',
-  //         reviews: place.reviews || [], // Include reviews if available
-  //       };
-
-  //       setRestaurant(restaurantDetails);
-
-  //       // Fetch reviews from Firestore
-  //       const dbReviews = await fetchDataFromDB('reviews', { placeId });
-  //       const formattedDbReviews = dbReviews.map(review => ({
-  //         text: review.text,
-  //         rating: review.rating,
-  //         author_name: review.username || 'Anonymous',
-  //         profile_photo_url: review.profileImage || null,
-  //         relative_time_description: review.timestamp || 'Recently',
-  //       }));
-
-  //       console.log('Firestore reviews:', formattedDbReviews);
-
-  //       // Combine API and Firestore reviews
-  //       setCombinedReviews([...formattedDbReviews, ...restaurantDetails.reviews]);
-
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error('Error fetching restaurant details:', error);
-  //       Alert.alert('Error', 'Unable to fetch restaurant details.');
-  //       setLoading(false);
-  //     }
-  //   };
-  
-  //   fetchRestaurantDetails();
-  // }, [placeId]);
   
   // Function to calculate relative time
   const calculateRelativeTime = (timestamp) => {
