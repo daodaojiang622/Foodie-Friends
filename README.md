@@ -87,7 +87,7 @@ At the end of iteration 1, we have React Native components created to represent 
 <img src="./Demo/FoodGalleryScreen.png" alt=" Food Gallery Screen" width="400">
 
 
-## Contributions
+### Contributions
 Chenyu has worked on below aspects:
 - Front-end: Built Map, Home, Settings, Meet-up, Edit Meetup, and Support screens.
 - Back-end: Set up the Firestore database online and in the project. Set up Google API credentials. 
@@ -141,7 +141,7 @@ At the end of iteration 2, we have implemented Authentication, Camera use, Locat
 ### Notification
 <img src="https://github.com/user-attachments/assets/02b74c21-8bf0-445d-b81e-5d63bdc8636c" width="400">
 
-## Contributions
+### Contributions
 Chenyu has worked on below aspects:
 - Front-end: Implemented API use in Map and Edit Meet Up screens, implemented refresh function in home screen, implemented notification in Edit Meet Up Screen
 - Back-end: Enabled image upload to Firebase.
@@ -154,7 +154,7 @@ Yihe has worked on below aspects:
 ## Current State of the App - Iteration 3
 At the end of iteration 3, we worked on tasks with the lowest priorities.
 
-## Contributions
+### Contributions
 Chenyu has worked on below aspects:
 - Implemented multiple markers rendering, zoom-in/out and locate buttons on map scree, updated the profile screen to upload profile info to the db, combined data from db and api to render together to the user, modified on post fields, implemented refresh function on home screen and enable meet-up screen to auto refresh every 5s.
 - Code walk video: 
