@@ -44,8 +44,10 @@ export default function SignUpScreen() {
       // Save the account creation time to Firestore
       await addUserProfile(user.uid, {
         email: user.email,
-        createdAt: new Date().toISOString(),
+        username: '', // Optional: Add a default username or prompt the user later
+        profileImage: '', // Optional: Add a default profile image URL
     });
+    
       console.log('User registered:', user);
       Alert.alert('Registration Successful', 'Your account has been created successfully!');
       navigation.navigate('Home');

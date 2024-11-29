@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where } from "firebase/firestore"; 
+import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where, setDoc } from "firebase/firestore"; 
 import { database } from "./firebaseSetup";
 
 export async function writeToDB(data, collectionName) {
@@ -70,14 +70,16 @@ export const subscribeToMeetUps = (collectionName, callback) => {
 };
 
 // Function to create or update user profile
-export const addUserProfile = async (userId, data) => {
+export async function addUserProfile(userId, data) {
   try {
-    console.log("Adding user profile:", data);
-    const docRef = doc(database, "users", userId); // Use userId as the document ID for easy access
-    await setDoc(docRef, data, { merge: true }); // Merge allows updates without overwriting
-    console.log("User profile added/updated successfully");
-  } catch (err) {
-    console.error("Error adding/updating user profile:", err);
-    throw err;
+    const userDocRef = doc(database, 'users', userId);
+    await setDoc(userDocRef, {
+      ...data,
+      createdAt: new Date().toISOString(), // Add the creation date
+    });
+    console.log('User profile created successfully.');
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    throw error;
   }
-};
+}
