@@ -84,7 +84,7 @@ export default function EditPostScreen() {
   
     // Update the selected restaurant with extracted name and place_id
     setSelectedRestaurant({
-      name: suggestion.name, // Extracted name
+      name: name, // Extracted name
       place_id: suggestion.id, // Assign the id to place_id
     });
   
@@ -189,6 +189,7 @@ export default function EditPostScreen() {
         userId,
         restaurantName: selectedRestaurant.name,
         restaurantId: selectedRestaurant.place_id,
+        time: Date.now(),
       };
   
       Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [

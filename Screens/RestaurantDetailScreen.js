@@ -7,6 +7,24 @@ import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup'; 
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
+
+// Function to calculate relative time
+const calculateRelativeTime = (timestamp) => {
+  if (!timestamp) return 'Invalid timestamp';
+  
+  // Convert the timestamp to milliseconds (if it's in seconds)
+  const timestampInMilliseconds = timestamp * 1000;
+
+  // Calculate the relative time using `date-fns`
+  return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
+};
+
+// Example usage
+const timestamp = 1732843440987; // Example timestamp from your DB
+const relativeTime = calculateRelativeTime(timestamp);
+console.log('Relative Time:', relativeTime); // Output: e.g., "2 days ago"
+
 
 const { width } = Dimensions.get('window');
 
@@ -98,6 +116,18 @@ export default function RestaurantDetailScreen() {
   //   fetchRestaurantDetails();
   // }, [placeId]);
   
+  // Function to calculate relative time
+  const calculateRelativeTime = (timestamp) => {
+    if (!timestamp) return 'Invalid timestamp';
+    
+    // Convert the timestamp to milliseconds (if it's in seconds)
+    const timestampInMilliseconds = timestamp;
+
+    // Calculate the relative time using `date-fns`
+    return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
+  };
+
+
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
       const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -138,6 +168,7 @@ export default function RestaurantDetailScreen() {
           author_name: review.username || 'Anonymous',
           profile_photo_url: review.profileImage,
           id: review.id, // Include the unique ID for navigation
+          relative_time_description: calculateRelativeTime(review.time) || 'Recently',
         }));
   
         console.log('Firestore reviews:', formattedDbReviews);
@@ -270,7 +301,7 @@ export default function RestaurantDetailScreen() {
                   <View key={index} style={styles.reviewItem}>
     
                     <View style={styles.reviewContainer}>
-                      <Image source={{ uri: review.profile_photo_url || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
+                      <Image source={{ uri: review.profile_photo_url || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg'}} style={styles.reviewImage} />
       
                         <View style={styles.reviewInfoContainer}>
                           <View style={styles.reviewDateTimeContainer}>
