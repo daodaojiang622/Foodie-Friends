@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where } from "firebase/firestore"; 
+import { collection, addDoc, doc, getDocs, updateDoc, deleteDoc, onSnapshot, query, where, setDoc } from "firebase/firestore"; 
 import { database } from "./firebaseSetup";
 
 export async function writeToDB(data, collectionName) {
@@ -68,3 +68,18 @@ export const subscribeToMeetUps = (collectionName, callback) => {
   });
   return unsubscribe;
 };
+
+// Function to create or update user profile
+export async function addUserProfile(userId, data) {
+  try {
+    const userDocRef = doc(database, 'users', userId);
+    await setDoc(userDocRef, {
+      ...data,
+      createdAt: new Date().toISOString(), // Add the creation date
+    });
+    console.log('User profile created successfully.');
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    throw error;
+  }
+}

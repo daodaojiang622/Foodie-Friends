@@ -177,6 +177,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
         style={styles.inputContainer} 
         value={restaurantQuery}
         onChangeText={handleSearchChange}
+        clearButtonMode="while-editing"
       />
       {restaurantSuggestions.length > 0 && (
         <View style={styles.suggestionsContainer}>
