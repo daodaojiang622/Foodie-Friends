@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   zoomButton: {
     borderRadius: 25,
     padding: 1,
-    marginVertical: 5,
+    marginVertical: 10,
   },
   zoomControls: {
     position: 'absolute',
