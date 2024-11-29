@@ -111,7 +111,7 @@ Yihe has worked on below aspects:
 - Back-end: Set up the Firestore authentication online and in the project, modified Firestore database online and in the project. 
 - Code walk video: https://drive.google.com/file/d/1al7BHpT1PxIm4SWF27_FDa5Vr35Ldics/view?usp=drive_link
 
-## Current State of the App - Iteration 2
+## Iteration 2
 At the end of iteration 2, we have implemented Authentication, Camera use, Location use, Notification, and External API use.
 
 1. External API key:
@@ -163,3 +163,15 @@ Chenyu has worked on below aspects:
 Yihe has worked on below aspects:
 - Front-end: Modified Login Screen and Signup Screen to be professional, Home Screen, EditPost Screen, Profile Screen(details in the video)
 - Code walk video: https://drive.google.com/file/d/1DLFMA3OeFjV9BZdu14F0brozRR9aPpV5/view?usp=drive_link
+
+## Current State of the App - Iteration 3
+At the end of iteration 3, we worked on tasks with the lowest priorities and finzalizing the app.
+
+## Contributions
+Chenyu has worked on below aspects:
+- Implemented multiple markers rendering, zoom-in/out and locate buttons on map scree, updated the profile screen to upload profile info to the db, combined data from db and api to render together to the user, modified on post fields, implemented refresh function on home screen and enable meet-up screen to auto refresh every 5s.
+- Code walk video: 
+
+Yihe has worked on below aspects:
+- Front-end: 
+- Code walk video: 
