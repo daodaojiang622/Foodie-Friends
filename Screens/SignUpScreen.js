@@ -4,6 +4,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { addUserProfile } from '../Firebase/firestoreHelper';
 
 export default function SignUpScreen() {
   const { theme } = useContext(ThemeContext);
@@ -39,6 +40,12 @@ export default function SignUpScreen() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Save the account creation time to Firestore
+      await addUserProfile(user.uid, {
+        email: user.email,
+        createdAt: new Date().toISOString(),
+    });
       console.log('User registered:', user);
       Alert.alert('Registration Successful', 'Your account has been created successfully!');
       navigation.navigate('Home');
