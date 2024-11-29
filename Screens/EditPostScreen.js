@@ -77,14 +77,14 @@ export default function EditPostScreen() {
     console.log("Selected suggestion:", suggestion); // Debug
   
     // Extract the name (part before the first punctuation mark)
-    const name = suggestion.description.split(/[.,-]/)[0].trim();
+    const name = suggestion.description.split(/[,]/)[0].trim();
   
     // Update the search bar to show the full description
     setRestaurantQuery(suggestion.description);
   
     // Update the selected restaurant with extracted name and place_id
     setSelectedRestaurant({
-      name: name, // Extracted name
+      name: suggestion.name, // Extracted name
       place_id: suggestion.id, // Assign the id to place_id
     });
   

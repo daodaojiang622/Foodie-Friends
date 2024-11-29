@@ -255,6 +255,7 @@ const MapScreen = () => {
         </MapView>
       )}
 
+      {/* Restaurant compact window - Display selected marker details */}
       {selectedMarker && selectedPlaceDetails && (
         <View style={[styles.restaurantCompactContainer, { borderColor: theme.textColor }]}>
           <ScrollView
@@ -279,9 +280,9 @@ const MapScreen = () => {
               </Text>
 
               <View style={styles.infoContainer}>
-              <Text style={[styles.rating, { color: theme.textColor }]}>
-                {renderStars(selectedPlaceDetails.rating)}
-              </Text>
+                <Text style={[styles.rating, { color: theme.textColor }]}>
+                  {renderStars(selectedPlaceDetails.rating)}
+                </Text>
               </View>
             </View>
           </Pressable>
