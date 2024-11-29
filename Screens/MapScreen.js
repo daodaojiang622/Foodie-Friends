@@ -18,6 +18,8 @@ const MapScreen = () => {
   const { theme } = useContext(ThemeContext);
   const navigation = useNavigation();
   const [selectedPlaceDetails, setSelectedPlaceDetails] = useState(null);
+  const [markers, setMarkers] = useState([]); // State for multiple markers
+
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating); // Number of full stars
@@ -44,23 +46,25 @@ const MapScreen = () => {
 
   useEffect(() => {
     (async () => {
-      // Request permission to access location
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission Denied', 'Location access is required to use this feature.');
         return;
       }
-
-      // Fetch the user's current location
+  
       const location = await Location.getCurrentPositionAsync({});
-      setInitialRegion({
+      const region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
-      });
+      };
+  
+      setInitialRegion(region);
+      fetchNearbyPlaces(location.coords.latitude, location.coords.longitude); // Fetch nearby places
     })();
   }, []);
+  
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -152,6 +156,28 @@ const MapScreen = () => {
     }
   };
   
+  const fetchNearbyPlaces = async (latitude, longitude) => {
+    const apiKey = process.env.EXPO_PUBLIC_apiKey;
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=1500&type=restaurant|cafe|bar&key=${apiKey}`;
+  
+    try {
+      const response = await axios.get(url);
+      const places = response.data.results;
+  
+      const markersData = places.map((place) => ({
+        id: place.place_id,
+        name: place.name,
+        latitude: place.geometry.location.lat,
+        longitude: place.geometry.location.lng,
+        rating: place.rating || 'N/A',
+      }));
+  
+      setMarkers(markersData); // Update the markers state
+    } catch (error) {
+      console.error('Error fetching nearby places:', error);
+    }
+  };
+  
   
 
   return (
@@ -179,19 +205,24 @@ const MapScreen = () => {
       )}
       {initialRegion && (
         <MapView
-          ref={mapRef} // Attach the ref to the MapView
+          ref={mapRef}
           style={styles.map}
           initialRegion={initialRegion}
+          onRegionChangeComplete={(region) => {
+            fetchNearbyPlaces(region.latitude, region.longitude);
+          }}
         >
-          {selectedMarker && (
+          {markers.map((marker) => (
             <Marker
+              key={marker.id}
               coordinate={{
-                latitude: selectedMarker.latitude,
-                longitude: selectedMarker.longitude,
+                latitude: marker.latitude,
+                longitude: marker.longitude,
               }}
-              title={selectedMarker.name}
+              title={marker.name}
+              onPress={() => setSelectedMarker(marker)} // Set marker as selected when clicked
             />
-          )}
+          ))}
         </MapView>
       )}
 
