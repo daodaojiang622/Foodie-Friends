@@ -11,9 +11,9 @@ import axios from 'axios';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import * as FileSystem from 'expo-file-system';
 import { storage } from '../Firebase/firebaseSetup'; 
+import ImageItem from '../Components/ImageItem';
 
 const { width } = Dimensions.get('window');
-const { height } = Dimensions.get('window');
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -298,19 +298,11 @@ export default function EditPostScreen() {
         <View>
         <ScrollView horizontal style={styles.imageScroll}>
           {images.map((uri, index) => (
-            <View key={index} style={styles.imageWrapper}>
-            <Image source={{ uri }} style={styles.image} />
-              <Pressable
-              style={styles.deleteButton}
-              onPress={() => {
-                // Remove the selected image from the images array
-                const updatedImages = images.filter((_, imgIndex) => imgIndex !== index);
-                setImages(updatedImages);
-                }}
-            >
-              <Ionicons name="close-circle" size={24} color="red" />
-            </Pressable>
-            </View>
+            <ImageItem
+            key={index}
+            uri={uri}
+            onDelete={() => setImages(images.filter((_, imgIndex) => imgIndex !== index))}
+          />
         ))}
           <Pressable
             onPress={() => {
@@ -399,28 +391,9 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 18,
   },
-  imageWrapper: {
-    position: 'relative', // Allows the delete button to be positioned absolutely
-    margin: 5,
-  },
   imageScroll: {
     flexDirection: 'row',
     marginVertical: 10,
-  },
-  image: {
-    width: width / 3 - 20,
-    height: 100,
-    borderRadius: 8,
-    margin: 5,
-  },
-  deleteButton: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'white',
-    borderRadius: 50,
-    padding: 2,
-    elevation: 3, // For Android shadow
   },
   addImageContainer: {
     width: width / 3 - 20,

@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Image, Pressable, StyleSheet } from 'react-native';
+import { View, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 
 const ImageItem = ({ uri, onDelete }) => {
   return (
@@ -19,9 +21,10 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   image: {
-    width: 160,
-    height: 160,
+    width: width / 3 - 20,
+    height: 100,
     borderRadius: 8,
+    margin: 5,
   },
   deleteButton: {
     position: 'absolute',
