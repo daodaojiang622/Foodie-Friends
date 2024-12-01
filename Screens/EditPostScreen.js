@@ -9,11 +9,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 import axios from 'axios';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import * as FileSystem from 'expo-file-system';
 import { storage } from '../Firebase/firebaseSetup'; 
 import ImageItem from '../Components/ImageItem';
+import ImagePickerHandler from '../Components/ImagePickerHandler';
 
 const { width } = Dimensions.get('window');
+const { pickImage, captureImage } = ImagePickerHandler();
 
 export default function EditPostScreen() {
   const { theme } = useContext(ThemeContext);
@@ -92,64 +93,17 @@ export default function EditPostScreen() {
     setRestaurantSuggestions([]);
   };  
 
-  const requestPermissions = async () => {
-    const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!granted) {
-      Alert.alert('Permission Denied', 'Please allow access to the gallery in your device settings.');
-      return false;
-    }
-    return true;
-  };
-
-  const pickImage = async () => {
-    console.log('Opening gallery...');
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-  
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: true,
-        quality: 1,
-      });
-      console.log('ImagePicker Result:', result);
-  
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const selectedImageUri = result.assets[0].uri;
-        console.log('Selected Image URI:', selectedImageUri);
-        setImages([...images, selectedImageUri]);
-      } else {
-        console.log('No image selected or operation canceled.');
-      }
-    } catch (error) {
-      console.error('Error opening gallery:', error);
+  const pickImageForPost = async () => {
+    const selectedImageUri = await pickImage();
+    if (selectedImageUri) {
+      setImages([...images, selectedImageUri]); // Add the image to the list
     }
   };
   
-  const captureImage = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Permission to access the camera is required.');
-      return;
-    }
-  
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.canceled) {
-      const normalizedUri = uri.startsWith('file://') ? uri.replace('file://', '') : uri;
-      const selectedImageUri = normalizedUri || (result.assets && result.assets[0].uri);
-      if (selectedImageUri) {
-        try {
-          const downloadURL = await uploadImageToFirebase(selectedImageUri);
-          setImages([...images, downloadURL]); // Add the download URL to the images array
-        } catch (error) {
-          Alert.alert('Upload Error', 'There was an issue uploading the image.');
-        }
-      }
+  const captureImageForPost = async () => {
+    const capturedImageUri = await captureImage();
+    if (capturedImageUri) {
+      setImages([...images, capturedImageUri]); // Add the image to the list
     }
   };
   
@@ -307,8 +261,8 @@ export default function EditPostScreen() {
           <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
-                { text: 'Camera', onPress: captureImage },
-                { text: 'Gallery', onPress: pickImage },
+                { text: 'Camera', onPress: captureImageForPost },
+                { text: 'Gallery', onPress: pickImageForPost },
                 { text: 'Cancel', style: 'cancel' },
               ]);
             }}
