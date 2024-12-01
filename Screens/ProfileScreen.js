@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
+import ImagePickerHandler from '../Components/ImagePickerHandler';
 import { fetchDataFromDB, deleteFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +19,8 @@ export default function ProfileScreen() {
   const [usernameModalVisible, setUsernameModalVisible] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
   const [profileImage, setProfileImage] = useState(null); // Set initial value to null
+  const { pickImage, captureImage } = ImagePickerHandler();
+
 
   const uploadImageToStorage = async (uri, userId) => {
     try {
@@ -150,75 +153,24 @@ export default function ProfileScreen() {
     checkUsernameAndProfileImage();
   }, []);
   
-
   const pickProfileImage = async () => {
-  try {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets[0].uri) {
-      const selectedImageUri = result.assets[0].uri.replace("file://", "");
-
-      const userId = auth.currentUser?.uid;
-      if (!userId) {
-        Alert.alert("Error", "User is not logged in.");
-        return;
-      }
-
-      // Upload image to Firebase Storage and get the download URL
-      const downloadURL = await uploadImageToStorage(selectedImageUri, userId);
-
-      // Save the URL in Firestore
-      const userCollection = "users";
-      const existingUsers = await fetchDataFromDB(userCollection, { userId });
-      if (existingUsers.length > 0) {
-        // Update if user already exists
-        const existingUserDocId = existingUsers[0].id;
-        await updateDB(existingUserDocId, { profileImage: downloadURL }, userCollection);
-        console.log("Profile image updated successfully.");
-      } else {
-        // Write a new user document if none exists
-        await writeToDB({ userId, profileImage: downloadURL }, userCollection);
-        console.log("New user created successfully.");
-      }
-
-      setProfileImage(downloadURL); // Update the local state with the Firebase URL
-      await AsyncStorage.setItem("profileImage", downloadURL); // Save locally
-      Alert.alert("Success", "Profile picture updated successfully.");
-    } else {
-      console.log("No image selected.");
-    }
-  } catch (error) {
-    console.error("Error picking and uploading image:", error);
-    Alert.alert("Error", "Failed to select or upload image.");
-  }
-};
-  
-
-  const captureProfileImage = async () => {
-    try {
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!result.canceled && result.assets && result.assets[0].uri) {
-        const capturedImageUri = result.assets[0].uri;
-        setProfileImage(capturedImageUri);
-        await AsyncStorage.setItem('profileImage', capturedImageUri); // Save locally
-      } else {
-        console.log("No image captured.");
-      }
-    } catch (error) {
-      console.error("Error capturing image:", error);
-      Alert.alert("Error", "Failed to capture image.");
+    const selectedImageUri = await pickImage();
+    if (selectedImageUri) {
+      console.log('Selected Image:', selectedImageUri); // Debug log
+      setProfileImage(selectedImageUri);
+      await updateProfileImageInFirestore(selectedImageUri);
     }
   };
+  
+  const captureProfileImage = async () => {
+    const capturedImageUri = await captureImage();
+    if (capturedImageUri) {
+      console.log('Captured Image:', capturedImageUri); // Debug log
+      setProfileImage(capturedImageUri);
+      await updateProfileImageInFirestore(capturedImageUri);
+    }
+  };
+  
 
   const handleProfileImagePress = async () => {
     Alert.alert(
