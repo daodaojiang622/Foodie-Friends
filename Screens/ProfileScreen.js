@@ -126,10 +126,15 @@ export default function ProfileScreen() {
   }, []);
 
   useEffect(() => {
-    const checkUsernameAndProfileImage = async () => {
+    const initializeUserProfile = async () => {
       try {
+        // Get current user's ID
         const userId = auth.currentUser?.uid;
+  
+        // If no user is logged in, clear state and alert
         if (!userId) {
+          setUsername('');
+          setProfileImage(null);
           Alert.alert('Error', 'User is not logged in.');
           return;
         }
@@ -138,20 +143,38 @@ export default function ProfileScreen() {
   
         // Fetch user data from Firestore
         const existingUsers = await fetchDataFromDB(userCollection, { userId });
+  
         if (existingUsers.length > 0) {
           const user = existingUsers[0];
           setUsername(user.username || '');
-          setProfileImage(user.profileImage || ''); 
+          setProfileImage(user.profileImage || '');
+  
+          // If the user doesn't have a username, prompt to create one
+          if (!user.username) {
+            setUsernameModalVisible(true);
+          }
+  
+          // Save data to AsyncStorage as a fallback
+          await AsyncStorage.setItem('username', user.username || '');
+          await AsyncStorage.setItem('profileImage', user.profileImage || '');
         } else {
-          setUsernameModalVisible(true); 
+          // No user data found in Firestore, prompt for setup
+          setUsername('');
+          setProfileImage(null);
+          setUsernameModalVisible(true);
+  
+          // Clear AsyncStorage
+          await AsyncStorage.removeItem('username');
+          await AsyncStorage.removeItem('profileImage');
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.error('Error initializing user profile:', error);
+        Alert.alert('Error', 'Unable to load profile information. Please try again.');
       }
     };
   
-    checkUsernameAndProfileImage();
-  }, []);
+    initializeUserProfile();
+  }, []);  
   
   const pickProfileImage = async () => {
     const selectedImageUri = await pickImage();
