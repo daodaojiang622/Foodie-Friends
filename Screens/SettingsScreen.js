@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius, Opacity } from '../Utils/Style';
+import { Colors, Padding, Margin, ContainerStyle, Font, Align, BorderRadius } from '../Utils/Style';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../Firebase/firebaseSetup';
-import { signOut } from 'firebase/auth'; // Import signOut function
+import { signOut } from 'firebase/auth';
+import { cleanupListeners } from '../Firebase/firestoreHelper';
 
 export default function SettingsScreen() {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -32,14 +33,15 @@ export default function SettingsScreen() {
           text: "Yes",
           onPress: async () => {
             try {
+              cleanupListeners(); // Stop all active Firestore listeners
               await signOut(auth); // Firebase sign out
               navigation.navigate('SignUpScreen'); // Redirect to login/signup screen
             } catch (error) {
               console.error("Error logging out:", error);
               Alert.alert("Logout Error", "There was a problem logging you out.");
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -56,7 +58,7 @@ export default function SettingsScreen() {
         buttonStyle={{ marginTop: Margin.medium }}
       />
       <PressableButton
-        title={isGreenTheme ? "Change to Green Theme" : "Change to Purple Theme"}
+        title={isGreenTheme ? 'Change to Green Theme' : 'Change to Purple Theme'}
         onPress={toggleTheme}
       />
       <PressableButton

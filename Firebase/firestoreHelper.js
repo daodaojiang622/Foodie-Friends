@@ -83,3 +83,15 @@ export async function addUserProfile(userId, data) {
     throw error;
   }
 }
+
+export const unsubscribeFirestoreListeners = [];
+
+// Utility to unsubscribe all listeners
+export const cleanupListeners = () => {
+  unsubscribeFirestoreListeners.forEach((unsubscribe) => {
+    if (typeof unsubscribe === 'function') {
+      unsubscribe(); // Unsubscribe the listener
+    }
+  });
+  unsubscribeFirestoreListeners.length = 0; // Clear the array
+};
