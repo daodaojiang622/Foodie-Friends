@@ -5,6 +5,7 @@ import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
 import Rating from '../Components/Rating';
+import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 
 const { width } = Dimensions.get('window');
 
@@ -51,16 +52,7 @@ export default function ReviewDetailScreen() {
     <ScrollView style={[styles.scrollView, {backgroundColor: theme.backgroundColor}]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
         <View style={styles.textContainer}>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.imageScrollView}
-        >
-          {reviewData.images.map((uri, index) => (
-            <Image key={index} source={{ uri }} style={styles.image} />
-          ))}
-        </ScrollView>
+        <ImageHorizontalScrolling images={reviewData.images} imageStyle={styles.image}/>
         </View>
         <View style={styles.textContainer}>
         
