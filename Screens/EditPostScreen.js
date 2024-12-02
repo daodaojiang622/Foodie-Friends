@@ -13,6 +13,7 @@ import { storage } from '../Firebase/firebaseSetup';
 import ImageItem from '../Components/ImageItem';
 import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
+import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -251,14 +252,15 @@ export default function EditPostScreen() {
 
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
-        <ScrollView horizontal style={styles.imageScroll}>
+        {/* <ScrollView horizontal style={styles.imageScroll}>
           {images.map((uri, index) => (
             <ImageItem
             key={index}
             uri={uri}
             onDelete={() => setImages(images.filter((_, imgIndex) => imgIndex !== index))}
           />
-        ))}
+        ))} */}
+          <ImageHorizontalScrolling images={images} setImages={images}/>
           <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
@@ -272,7 +274,7 @@ export default function EditPostScreen() {
             <Ionicons name="add" size={40} color="#aaa" />
             <Text style={styles.addImageText}>Add Image</Text>
           </Pressable>
-        </ScrollView>
+        {/* </ScrollView> */}
         </View>
 
         <Rating rating={rating} onPress={setRating} />

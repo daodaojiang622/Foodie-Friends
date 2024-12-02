@@ -15,8 +15,8 @@ export default function ImageHorizontalScrolling({ images }) {
 
 const styles = StyleSheet.create({
   image: {
-    width: width,
-    height: 300,
+    width: 100,
+    height: 100,
     resizeMode: 'cover',
   },
 });
