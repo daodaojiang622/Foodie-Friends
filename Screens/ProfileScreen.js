@@ -52,6 +52,7 @@ export default function ProfileScreen() {
       if (storedUsername) {
         setUsername(storedUsername);
         loadUserPosts(storedUsername);
+        setUsernameModalVisible(false);
       } else {
         setUsernameModalVisible(true);
       }
