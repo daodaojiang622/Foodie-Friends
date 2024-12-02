@@ -21,30 +21,6 @@ export default function ProfileScreen() {
   const [profileImage, setProfileImage] = useState(null); // Set initial value to null
   const { pickImage, captureImage } = ImagePickerHandler();
 
-
-  const uploadImageToStorage = async (uri, userId) => {
-    try {
-      // Fetch the file as a blob
-      const response = await fetch(uri);
-      const blob = await response.blob();
-  
-      // Create a storage reference with a unique path
-      const storageRef = ref(storage, `profileImages/${userId}/${Date.now()}.jpg`);
-  
-      // Upload the file
-      const snapshot = await uploadBytes(storageRef, blob);
-  
-      // Get the download URL
-      const downloadURL = await getDownloadURL(snapshot.ref);
-  
-      console.log("Image uploaded successfully. URL:", downloadURL);
-      return downloadURL;
-    } catch (error) {
-      console.error("Error uploading image to Firebase Storage:", error);
-      throw error;
-    }
-  };
-
   useEffect(() => {
     const checkUsername = async () => {
       const storedUsername = await AsyncStorage.getItem('username');
@@ -176,12 +152,51 @@ export default function ProfileScreen() {
     initializeUserProfile();
   }, []);  
   
+  const updateProfileImage = async (imageUri) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        Alert.alert('Error', 'User is not logged in.');
+        return;
+      }
+  
+      // Upload the image to Firebase Storage
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+      const storageRef = ref(storage, `profileImages/${userId}/${Date.now()}.jpg`);
+      const snapshot = await uploadBytes(storageRef, blob);
+      const uploadedImageUrl = await getDownloadURL(snapshot.ref);
+  
+      // Update the user's document in Firestore with the new profile image URL
+      const userCollection = 'users';
+      const existingUsers = await fetchDataFromDB(userCollection, { userId });
+  
+      if (existingUsers.length > 0) {
+        const userDocId = existingUsers[0].id;
+        await updateDB(userDocId, { profileImage: uploadedImageUrl }, userCollection);
+      } else {
+        await writeToDB({ userId, profileImage: uploadedImageUrl }, userCollection);
+      }
+  
+      // Save the image URL locally
+      await AsyncStorage.setItem('profileImage', uploadedImageUrl);
+  
+      // Update state
+      setProfileImage(uploadedImageUrl);
+  
+      Alert.alert('Success', 'Profile image updated successfully.');
+    } catch (error) {
+      console.error('Error updating profile image:', error);
+      Alert.alert('Error', 'Failed to update profile image. Please try again.');
+    }
+  };
+  
+  
   const pickProfileImage = async () => {
     const selectedImageUri = await pickImage();
     if (selectedImageUri) {
       console.log('Selected Image:', selectedImageUri); // Debug log
-      setProfileImage(selectedImageUri);
-      await updateProfileImageInFirestore(selectedImageUri);
+      await updateProfileImage(selectedImageUri);
     }
   };
   
@@ -190,7 +205,7 @@ export default function ProfileScreen() {
     if (capturedImageUri) {
       console.log('Captured Image:', capturedImageUri); // Debug log
       setProfileImage(capturedImageUri);
-      await updateProfileImageInFirestore(capturedImageUri);
+      await updateProfileImage(capturedImageUri);
     }
   };
   
