@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
 import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
@@ -10,10 +9,10 @@ import { auth } from '../Firebase/firebaseSetup';
 import axios from 'axios';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../Firebase/firebaseSetup'; 
-import ImageItem from '../Components/ImageItem';
 import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
+import ScreenHeader from '../Components/ScreenHeader';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -42,14 +41,14 @@ export default function EditPostScreen() {
     }
   }, [initialRestaurantName, route.params?.restaurantId]);
 
-  // Set header text
-  useEffect(() => {
-    if (postId) {
-      navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
-    } else {
-      navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
-    }
-  }, [postId, navigation]);
+  // // Set header text
+  // useEffect(() => {
+  //   if (postId) {
+  //     navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
+  //   } else {
+  //     navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
+  //   }
+  // }, [postId, navigation]);
   
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
@@ -212,6 +211,7 @@ export default function EditPostScreen() {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <ScreenHeader title={route.params?.postId ? 'Edit Post' : 'Add New Post'} />
         {/* Restaurant Search */}
         <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
         <TextInput
@@ -252,14 +252,6 @@ export default function EditPostScreen() {
 
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
-        {/* <ScrollView horizontal style={styles.imageScroll}>
-          {images.map((uri, index) => (
-            <ImageItem
-            key={index}
-            uri={uri}
-            onDelete={() => setImages(images.filter((_, imgIndex) => imgIndex !== index))}
-          />
-        ))} */}
           <ImageHorizontalScrolling images={images} setImages={images}/>
           <Pressable
             onPress={() => {
