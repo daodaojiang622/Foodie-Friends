@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
-import { Ionicons } from '@expo/vector-icons';
-import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import { fetchReviewDetails } from '../Utils/HelperFunctions';
@@ -14,7 +12,6 @@ const { width } = Dimensions.get('window');
 
 export default function ReviewDetailScreen() {
   const { theme } = useContext(ThemeContext);
-  const navigation = useNavigation();
   const route = useRoute();
   const { postId } = route.params;
 
@@ -69,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    width: width, // Full screen width
+    width: width, 
     height: 300,
     resizeMode: 'cover',
   },

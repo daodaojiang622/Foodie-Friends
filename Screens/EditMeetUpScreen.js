@@ -11,6 +11,7 @@ import { updateDB } from '../Firebase/firestoreHelper';
 import * as Notifications from 'expo-notifications';
 import axios from 'axios';
 import notificationSound from '../assets/sounds/notification.mp3';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function EditMeetUpScreen({ navigation, route }) {
   const { theme } = useContext(ThemeContext);
@@ -96,6 +97,7 @@ export default function EditMeetUpScreen({ navigation, route }) {
       date: formattedDate,
       details: details,
       time: time,
+      userId: auth.currentUser?.uid,
     };
 
     console.log(meetUp);
