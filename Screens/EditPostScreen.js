@@ -12,6 +12,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../Firebase/firebaseSetup'; 
 import ImageItem from '../Components/ImageItem';
 import ImagePickerHandler from '../Components/ImagePickerHandler';
+import Rating from '../Components/Rating';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -274,18 +275,7 @@ export default function EditPostScreen() {
         </ScrollView>
         </View>
 
-        <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-        <View style={[styles.ratingContainer, { marginTop: 20 }]}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Pressable key={star} onPress={() => setRating(star)}>
-              <Ionicons
-                name={star <= rating ? 'star' : 'star-outline'}
-                size={28}
-                color={star <= rating ? '#FFD700' : '#aaa'}
-              />
-            </Pressable>
-          ))}
-        </View>
+        <Rating rating={rating} onPress={setRating} />
 
         <View style={styles.buttonContainer}>
           <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
