@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Pressable } from 'react-native';
+import { View, Image, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
+import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 
@@ -82,9 +82,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageScrollView: {
-    alignItems: 'center',
-  },
   image: {
     width: width, // Full screen width
     height: 300,
@@ -104,10 +101,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     fontStyle: 'italic',
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   locationContainer: {
     flexDirection: 'row',

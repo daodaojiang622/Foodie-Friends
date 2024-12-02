@@ -7,13 +7,11 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
 import axios from 'axios';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '../Firebase/firebaseSetup'; 
 import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
-import SuggestionList from '../Components/SuggestionList';
+import { uploadImageToFirebase, fetchSuggestions } from '../Utils/HelperFunctions';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -41,22 +39,6 @@ export default function EditPostScreen() {
       setSelectedRestaurant({ name: initialRestaurantName, place_id: route.params?.restaurantId || '' });
     }
   }, [initialRestaurantName, route.params?.restaurantId]);
-  
-  const fetchSuggestions = async (query) => {
-    const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
-    try {
-      const response = await axios.get(url);
-      console.log('Restaurant Suggestions:', response.data.predictions);
-      const results = response.data.predictions.map((place) => ({
-        id: place.place_id,
-        description: place.description,
-      }));
-      setRestaurantSuggestions(results);
-    } catch (error) {
-      console.error('Error fetching restaurant suggestions:', error);
-    }
-  };
   
   const handleSearchChange = (query) => {
     setRestaurantQuery(query);
@@ -169,35 +151,6 @@ export default function EditPostScreen() {
 
   const handleCancel = () => {
     navigation.goBack();
-  };
-  
-  const uploadImageToFirebase = async (uri) => {
-    try {
-      if (!uri) {
-        throw new Error('Invalid URI');
-      }
-  
-      console.log('Uploading Image URI:', uri);
-  
-      const response = await fetch(uri);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image. Status: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-  
-      const fileName = `${Date.now()}.jpg`;
-  
-      const storageRef = ref(storage, `images/${fileName}`);
-  
-      const snapshot = await uploadBytes(storageRef, blob);
-  
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      console.log('Image uploaded successfully. URL:', downloadURL);
-      return downloadURL;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
   };
   
   return (
@@ -321,10 +274,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 18,
   },
-  imageScroll: {
-    flexDirection: 'row',
-    marginVertical: 10,
-  },
   addImageContainer: {
     width: width / 3 - 20,
     height: 100,
@@ -340,11 +289,6 @@ const styles = StyleSheet.create({
     color: '#aaa',
     marginTop: 5,
     fontSize: 14,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
