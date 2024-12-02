@@ -47,45 +47,12 @@ export default function ReviewDetailScreen() {
     fetchReview();
   }, [postId]);
 
-  const handleDelete = async () => {
-    const currentUserId = auth.currentUser?.uid;
-    if (reviewData.userId === currentUserId) {
-      Alert.alert("Confirm Delete", "Are you sure you want to delete this review?", [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          onPress: async () => {
-            await deleteFromDB(postId, 'posts');
-            navigation.goBack();
-          },
-          style: "destructive",
-        },
-      ]);
-    } else {
-      Alert.alert("Permission Denied", "You can only delete your own posts.");
-    }
-  };
-
 
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, index) => (
       <Ionicons key={index} name="star" size={16} color="gold" />
     ));
   };
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Ionicons
-          name="trash"
-          size={24}
-          color="white"
-          onPress={handleDelete}
-          style={{ marginRight: 15 }}
-        />
-      ),
-    });
-  }, [navigation]);
 
   return (
     <ScrollView style={[styles.scrollView, {backgroundColor: theme.backgroundColor}]}>
