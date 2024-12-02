@@ -11,7 +11,7 @@ import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
-import { uploadImageToFirebase, fetchSuggestions, savePost } from '../Utils/HelperFunctions';
+import { uploadImageToFirebase, fetchSuggestions, savePost, ImagePickerActions } from '../Utils/HelperFunctions';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -207,7 +207,7 @@ export default function EditPostScreen() {
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
           <ImageHorizontalScrolling images={images} setImages={images}/>
-          <Pressable
+          {/* <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
                 { text: 'Camera', onPress: captureImageForPost },
@@ -219,7 +219,8 @@ export default function EditPostScreen() {
           >
             <Ionicons name="add" size={40} color="#aaa" />
             <Text style={styles.addImageText}>Add Image</Text>
-          </Pressable>
+          </Pressable> */}
+          <ImagePickerActions onPickImage={pickImageForPost} onCaptureImage={captureImageForPost} />
         {/* </ScrollView> */}
         </View>
 

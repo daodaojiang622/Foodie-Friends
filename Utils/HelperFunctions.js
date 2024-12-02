@@ -51,3 +51,20 @@ export const savePost = async ({ postId, newData, onSuccess, onError }) => {
     if (onError) onError(error);
   }
 };
+
+export const ImagePickerActions = ({ onPickImage, onCaptureImage }) => (
+  <Pressable
+    onPress={() => {
+      Alert.alert('Add Image', 'Choose an image source', [
+        { text: 'Camera', onPress: onCaptureImage },
+        { text: 'Gallery', onPress: onPickImage },
+        { text: 'Cancel', style: 'cancel' },
+      ]);
+    }}
+    style={styles.addImageContainer}
+  >
+    <Ionicons name="add" size={40} color="#aaa" />
+    <Text style={styles.addImageText}>Add Image</Text>
+  </Pressable>
+);
+
