@@ -6,6 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
+import { fetchReviewDetails } from '../Utils/HelperFunctions';
+import UserInfo from '../Components/UserInfo';
 
 const { width } = Dimensions.get('window');
 
@@ -27,21 +29,13 @@ export default function ReviewDetailScreen() {
   useEffect(() => {
     const fetchReview = async () => {
       if (!reviewData.title || !reviewData.description) {
-        const allPosts = await fetchDataFromDB('posts');
-        const post = allPosts.find((p) => p.id === postId);
-        if (post) {
-          // Fetch the user data from the users collection
-          const allUsers = await fetchDataFromDB('users');
-          const user = allUsers.find((u) => u.userId === post.userId);
-          setReviewData({
-            description: post.description || '',
-            images: post.images || [],
-            rating: post.rating || 0,
-            userId: post.userId || '', // Store the userId of the post creator
-            restaurant: post.restaurantName ||'',
-            profilePhotoUrl: user?.profileImage,
-            username: user?.username || 'Anonymous',
-          });
+        try {
+          const fetchedData = await fetchReviewDetails(postId);
+          if (fetchedData) {
+            setReviewData(fetchedData);
+          }
+        } catch (error) {
+          console.error('Error fetching review data:', error);
         }
       }
     };
@@ -65,11 +59,12 @@ export default function ReviewDetailScreen() {
 
         <Rating rating={reviewData.rating} onPress={() => {}}/>
 
-        <View style={styles.locationContainer}>
+        {/* <View style={styles.locationContainer}>
           <Image 
           source={{ uri: reviewData.profilePhotoUrl || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
           <Text style={[styles.user, { color: theme.textColor }]}>{reviewData.username}</Text>
-        </View>
+        </View> */}
+        <UserInfo profilePhotoUrl={reviewData.profilePhotoUrl} username={reviewData.username} textColor={theme.textColor} />
 
         <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
         </View>

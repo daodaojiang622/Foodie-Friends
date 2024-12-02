@@ -1,6 +1,33 @@
-import { getDownloadURL, ref, uploadBytes, writeToDB, updateDB  } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../Firebase/firebaseSetup';
 import axios from 'axios';
+import { fetchDataFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
+
+export const fetchReviewDetails = async (postId) => {
+  try {
+    const allPosts = await fetchDataFromDB('posts');
+    const post = allPosts.find((p) => p.id === postId);
+
+    if (!post) return null;
+
+    const allUsers = await fetchDataFromDB('users');
+    const user = allUsers.find((u) => u.userId === post.userId);
+
+    return {
+      description: post.description || '',
+      images: post.images || [],
+      rating: post.rating || 0,
+      userId: post.userId || '',
+      restaurant: post.restaurantName || '',
+      profilePhotoUrl: user?.profileImage || '',
+      username: user?.username || 'Anonymous',
+    };
+  } catch (error) {
+    console.error('Error fetching review details:', error);
+    throw error;
+  }
+};
+
 
 export const uploadImageToFirebase = async (uri) => {
   try {
