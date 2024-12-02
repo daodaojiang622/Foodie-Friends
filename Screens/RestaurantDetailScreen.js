@@ -9,23 +9,6 @@ import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import Rating from '../Components/Rating';
 
-// Function to calculate relative time
-const calculateRelativeTime = (timestamp) => {
-  if (!timestamp) return 'Time not available';
-  
-  // Convert the timestamp to milliseconds (if it's in seconds)
-  const timestampInMilliseconds = timestamp;
-
-  // Calculate the relative time using `date-fns`
-  return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
-};
-
-// Example usage
-const timestamp = 1732843440987; // Example timestamp from your DB
-const relativeTime = calculateRelativeTime(timestamp);
-console.log('Relative Time:', relativeTime); // Output: e.g., "2 days ago"
-
-
 const { width } = Dimensions.get('window');
 
 export default function RestaurantDetailScreen() {
@@ -40,7 +23,7 @@ export default function RestaurantDetailScreen() {
   
   // Function to calculate relative time
   const calculateRelativeTime = (timestamp) => {
-    if (!timestamp) return 'Invalid timestamp';
+    if (!timestamp) return 'Time not available';
     
     // Convert the timestamp to milliseconds (if it's in seconds)
     const timestampInMilliseconds = timestamp;
@@ -90,7 +73,7 @@ export default function RestaurantDetailScreen() {
           author_name: review.username || 'Anonymous',
           profile_photo_url: review.profileImage,
           id: review.id, // Include the unique ID for navigation
-          relative_time_description: calculateRelativeTime(review.time) || 'Recently',
+          relative_time_description: calculateRelativeTime(review.time),
         }));
   
         console.log('Firestore reviews:', formattedDbReviews);

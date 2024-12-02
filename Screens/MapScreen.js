@@ -23,30 +23,6 @@ const MapScreen = () => {
   const [selectedPlaceDetails, setSelectedPlaceDetails] = useState(null);
   const [markers, setMarkers] = useState([]); // State for multiple markers
 
-
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating); // Number of full stars
-    const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
-
-    // Create an array of star components
-    return (
-      <>
-        {Array(fullStars)
-          .fill()
-          .map((_, index) => (
-            <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
-          ))}
-        {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
-        {Array(emptyStars)
-          .fill()
-          .map((_, index) => (
-            <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
-          ))}
-      </>
-    );
-  };
-
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -105,7 +81,6 @@ const MapScreen = () => {
       }
     }
   };
-  
 
   const handleSuggestionSelect = async (suggestion) => {
     setSearchQuery(suggestion.description);
@@ -380,11 +355,6 @@ const styles = StyleSheet.create({
   },
   restaurantInfoCompactContainer: {
     flexDirection: 'row',
-  },
-  locationIcon: {
-    fontSize: 16,
-    marginBottom: -10,
-    marginLeft: 10,
   },
   rating: {
     marginTop: 20,
