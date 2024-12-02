@@ -8,6 +8,7 @@ import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { fetchSuggestions } from '../Utils/HelperFunctions';
 import Rating from '../Components/Rating';
+import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 
 const { width } = Dimensions.get('window');
 
@@ -296,9 +297,7 @@ const MapScreen = () => {
             contentContainerStyle={styles.imageScrollView}
           >
             {selectedPlaceDetails.photos.length > 0 ? (
-              selectedPlaceDetails.photos.map((photo, index) => (
-                <Image key={index} source={{ uri: photo }} style={styles.image} />
-              ))
+              <ImageHorizontalScrolling images={selectedPlaceDetails.photos} imageStyle={styles.image} />
             ) : (
               <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
             )}
@@ -310,11 +309,6 @@ const MapScreen = () => {
                 {selectedPlaceDetails.name}
               </Text>
 
-              {/* <View style={styles.infoContainer}>
-                <Text style={[styles.rating, { color: theme.textColor }]}>
-                  {renderStars(selectedPlaceDetails.rating)}
-                </Text>
-              </View> */}
               <Rating rating={selectedPlaceDetails.rating} style={[styles.rating, { color: theme.textColor }]}/>
             </View>
           </Pressable>
