@@ -8,6 +8,7 @@ import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import { fetchReviewDetails } from '../Utils/HelperFunctions';
 import UserInfo from '../Components/UserInfo';
+import RestaurantLocation from '../Components/RestaurantLocation';
 
 const { width } = Dimensions.get('window');
 
@@ -50,20 +51,10 @@ export default function ReviewDetailScreen() {
         </View>
         <View style={styles.textContainer}>
         
-        <View style={styles.locationContainer}>
-          <Ionicons name="location-outline" size={20} color={theme.textColor} />
-          <Text style={[styles.title, { color: theme.textColor }]}>
-              {reviewData.restaurant}
-            </Text>
-        </View>
+        <RestaurantLocation restaurantName={reviewData.restaurant} textColor={theme.textColor} />
 
         <Rating rating={reviewData.rating} onPress={() => {}}/>
 
-        {/* <View style={styles.locationContainer}>
-          <Image 
-          source={{ uri: reviewData.profilePhotoUrl || 'https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Kitten-In-Pink-Blanket-Looking-415440131.jpg' }} style={styles.reviewImage} />
-          <Text style={[styles.user, { color: theme.textColor }]}>{reviewData.username}</Text>
-        </View> */}
         <UserInfo profilePhotoUrl={reviewData.profilePhotoUrl} username={reviewData.username} textColor={theme.textColor} />
 
         <Text style={[styles.description, { color: theme.textColor }]}>{reviewData.description}</Text>
