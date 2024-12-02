@@ -11,7 +11,7 @@ import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
-import { uploadImageToFirebase, fetchSuggestions } from '../Utils/HelperFunctions';
+import { uploadImageToFirebase, fetchSuggestions, savePost } from '../Utils/HelperFunctions';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -121,32 +121,41 @@ export default function EditPostScreen() {
         time: Date.now(),
       };
   
-      Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Save',
-          onPress: async () => {
-            try {
-              if (postId) {
-                await updateDB(postId, newData, 'posts');
-              } else {
-                await writeToDB(newData, 'posts');
-              }
-              navigation.goBack();
-            } catch (error) {
-              console.error('Error saving post:', error);
-              Alert.alert('Save Error', 'There was a problem saving your post.');
-            }
-          },
-        },
-      ]);
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
-    }
+    //   Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Save',
+    //       onPress: async () => {
+    //         try {
+    //           if (postId) {
+    //             await updateDB(postId, newData, 'posts');
+    //           } else {
+    //             await writeToDB(newData, 'posts');
+    //           }
+    //           navigation.goBack();
+    //         } catch (error) {
+    //           console.error('Error saving post:', error);
+    //           Alert.alert('Save Error', 'There was a problem saving your post.');
+    //         }
+    //       },
+    //     },
+    //   ]);
+    // } catch (error) {
+    //   console.error('Error uploading images:', error);
+    //   Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
+    // }
+      savePost({
+        postId,
+        newData,
+        onSuccess: () => navigation.goBack(),
+        onError: (error) => Alert.alert('Save Error', 'There was a problem saving your post.'),
+      });
+      } catch (error) {
+        console.error('Error preparing post save:', error);
+      }
   };
 
   const handleCancel = () => {

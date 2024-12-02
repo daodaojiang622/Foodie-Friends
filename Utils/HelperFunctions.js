@@ -1,4 +1,4 @@
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes, writeToDB, updateDB  } from 'firebase/storage';
 import { storage } from '../Firebase/firebaseSetup';
 import axios from 'axios';
 
@@ -35,5 +35,19 @@ export const fetchSuggestions = async (query, apiKey) => {
   } catch (error) {
     console.error('Error fetching restaurant suggestions:', error);
     throw error;
+  }
+};
+
+export const savePost = async ({ postId, newData, onSuccess, onError }) => {
+  try {
+    if (postId) {
+      await updateDB(postId, newData, 'posts');
+    } else {
+      await writeToDB(newData, 'posts');
+    }
+    if (onSuccess) onSuccess();
+  } catch (error) {
+    console.error('Error saving post:', error);
+    if (onError) onError(error);
   }
 };
