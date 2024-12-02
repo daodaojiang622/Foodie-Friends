@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
-import { auth } from '../Firebase/firebaseSetup'; // Import auth
+import Rating from '../Components/Rating';
 
 const { width } = Dimensions.get('window');
 
@@ -47,13 +47,6 @@ export default function ReviewDetailScreen() {
     fetchReview();
   }, [postId]);
 
-
-  const renderStars = (rating) => {
-    return Array.from({ length: rating }, (_, index) => (
-      <Ionicons key={index} name="star" size={16} color="gold" />
-    ));
-  };
-
   return (
     <ScrollView style={[styles.scrollView, {backgroundColor: theme.backgroundColor}]}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -78,10 +71,7 @@ export default function ReviewDetailScreen() {
             </Text>
         </View>
 
-        <View style={styles.ratingContainer}>
-          {renderStars(reviewData.rating)}
-          <Text style={[styles.rating, {color: theme.textColor}]}>({reviewData.rating})</Text>
-        </View>
+        <Rating rating={reviewData.rating} onPress={() => {}}/>
 
         <View style={styles.locationContainer}>
           <Image 

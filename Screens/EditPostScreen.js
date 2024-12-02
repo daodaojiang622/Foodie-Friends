@@ -13,6 +13,7 @@ import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
+import SuggestionList from '../Components/SuggestionList';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -40,15 +41,6 @@ export default function EditPostScreen() {
       setSelectedRestaurant({ name: initialRestaurantName, place_id: route.params?.restaurantId || '' });
     }
   }, [initialRestaurantName, route.params?.restaurantId]);
-
-  // // Set header text
-  // useEffect(() => {
-  //   if (postId) {
-  //     navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
-  //   } else {
-  //     navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
-  //   }
-  // }, [postId, navigation]);
   
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.EXPO_PUBLIC_apiKey;
