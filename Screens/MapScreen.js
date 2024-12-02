@@ -6,6 +6,8 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { fetchSuggestions } from '../Utils/HelperFunctions';
+import Rating from '../Components/Rating';
 
 const { width } = Dimensions.get('window');
 
@@ -82,30 +84,12 @@ const MapScreen = () => {
     }
   };
 
-  const fetchSuggestions = async (query) => {
-    const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
-
-    try {
-      const response = await axios.get(url);
-      const results = response.data.predictions;
-
-      const fetchedSuggestions = results.map((place) => ({
-        id: place.place_id,
-        description: place.description,
-      }));
-    
-      setSuggestions(fetchedSuggestions);
-    } catch (error) {
-      console.error('Error fetching autocomplete suggestions', error);
-    }
-  };
-
-  const handleSearchChange = (query) => {
+  const handleSearchChange = async (query) => {
     setSearchQuery(query);
   
     if (query.length > 2) {
-      fetchSuggestions(query);
+      const suggestions = await fetchSuggestions(query, process.env.EXPO_PUBLIC_apiKey);
+    setSuggestions(suggestions);
     } else {
       setSuggestions([]);
   
@@ -326,11 +310,12 @@ const MapScreen = () => {
                 {selectedPlaceDetails.name}
               </Text>
 
-              <View style={styles.infoContainer}>
+              {/* <View style={styles.infoContainer}>
                 <Text style={[styles.rating, { color: theme.textColor }]}>
                   {renderStars(selectedPlaceDetails.rating)}
                 </Text>
-              </View>
+              </View> */}
+              <Rating rating={selectedPlaceDetails.rating} style={[styles.rating, { color: theme.textColor }]}/>
             </View>
           </Pressable>
         </View>
@@ -408,9 +393,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   rating: {
-    fontSize: 16,
-    marginLeft: 10,
-    marginBottom: -10,
+    marginTop: 20,
   },
   currentLocationButton: {
     position: 'absolute',

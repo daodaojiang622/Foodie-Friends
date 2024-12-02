@@ -7,7 +7,6 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 export default function ChangeSettingsScreen() {
     const { theme, toggleTheme } = useContext(ThemeContext);
     const { isGreenTheme, setIsGreenTheme } = useContext(ThemeContext);
-    // const navigation = useNavigation();
   
     return (
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
@@ -18,7 +17,6 @@ export default function ChangeSettingsScreen() {
         />
         <PressableButton
             title="Log Out"
-            // onPress={toggleTheme}
             buttonStyle={{marginTop: Margin.medium}}
         />
     </View>

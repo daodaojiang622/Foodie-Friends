@@ -50,7 +50,7 @@ export default function ReviewDetailScreen() {
         
         <RestaurantLocation restaurantName={reviewData.restaurant} textColor={theme.textColor} />
 
-        <Rating rating={reviewData.rating} onPress={() => {}}/>
+        <Rating rating={reviewData.rating} style={styles.rating} onPress={() => {}}/>
 
         <UserInfo profilePhotoUrl={reviewData.profilePhotoUrl} username={reviewData.username} textColor={theme.textColor} />
 
@@ -100,5 +100,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 20,
     marginBottom: 0,
+  },
+  rating: {
+    marginTop: 10,
   },
 });
