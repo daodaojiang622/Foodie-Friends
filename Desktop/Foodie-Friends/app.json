@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "newArchEnabled": true,
+    "name": "Foodie_Friends",
+    "slug": "Foodie_Friends",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "android": {
+      "package": "com.anonymous.Foodie_Friends",
+      "permissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier": "ios",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show restaurant results."
+      },
+      "sound": true
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d9f114b5-bd05-4fb2-97fa-422a2c35af5b"
+      }
+    },
+    "owner": "chenyudaodao"
+  }
+}
