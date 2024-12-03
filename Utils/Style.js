@@ -135,7 +135,7 @@ const Stylings = {
         opacity: Opacity.partialOpaque,
     },
     buttonText: {
-        fontSize: Font.SizeLarge,
+        fontSize: Font.SizeXLarge,
         fontWeight: Font.weight,
     },
     image: {
@@ -149,14 +149,14 @@ const Stylings = {
         margin: Padding.small,
         alignItems: Align.center,
     },
-    deleteButton: {
-        position: Position.absolute,
-        top: Padding.small,
-        right: Padding.small,
-        backgroundColor: Colors.tertiary,
-        borderRadius: BorderRadius.large,
-        padding: Padding.small,
-    },
+    // deleteButton: {
+    //     position: Position.absolute,
+    //     top: Padding.small,
+    //     right: Padding.small,
+    //     backgroundColor: Colors.tertiary,
+    //     borderRadius: BorderRadius.large,
+    //     padding: Padding.small,
+    // },
     suggestionsContainer: {
         position: Position.absolute,
         zIndex: 10,
