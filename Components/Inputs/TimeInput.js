@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import { Colors, Padding, Font, BorderWidth, BorderRadius, Margin, Width } from '../../Utils/Style';
+import { Colors, Padding, Font, BorderWidth, BorderRadius, Margin, Width, Stylings } from '../../Utils/Style';
 import { ThemeContext } from '../ThemeContext';
 
 export default function TimeInput({ time, setTime }) {
@@ -43,10 +43,10 @@ export default function TimeInput({ time, setTime }) {
 
   return (
     <View>
-      <Text style={styles.label}>Time*</Text>
+      <Text style={[Stylings.label, { fontWeight: "normal" }]}>Time*</Text>
       <TouchableOpacity onPress={toggleTimePicker} activeOpacity={0.8}>
         <TextInput
-          style={styles.input}
+          style={Stylings.input}
           value={displayTime}
           editable={false}
           placeholder="Select time"
@@ -65,19 +65,3 @@ export default function TimeInput({ time, setTime }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: Colors.black,
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: 'lightgray',
-    padding: 8,
-    borderRadius: 5,
-    marginBottom: 8,
-    width: 350,
-  },
-});

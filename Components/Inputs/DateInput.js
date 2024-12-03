@@ -27,7 +27,7 @@ export default function DateInput({ date, setDate }) {
 
   return (
     <View>
-      <Text style={styles.label}>Date*</Text>
+      <Text style={[Stylings.label, { fontWeight: "normal" }]}>Date*</Text>
       <TouchableOpacity onPress={toggleDatePicker} activeOpacity={0.8}>
       <TextInput
         style={Stylings.input}
@@ -49,11 +49,3 @@ export default function DateInput({ date, setDate }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: Font.sizeMedium,
-    marginBottom: Margin.small,
-    color: Colors.black,
-  },
-});
