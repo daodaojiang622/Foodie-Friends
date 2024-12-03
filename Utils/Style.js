@@ -18,6 +18,7 @@ const Colors = {
     borderColor: 'lightgray',
     gray: 'gray',
     gold: 'gold',
+    postBackground: '#c2d1c6',
 };
 
 const Padding = {
@@ -30,6 +31,7 @@ const Padding = {
     large: 10,
     xlarge: 20,
     xxlarge: 30,
+    header: 80,
 };
 
 const Font = {
@@ -127,6 +129,7 @@ const Height = {
     input: 40,
     suggestionContainer: 150,
     image: 30,
+    postImage: 180,
 };
 
 const Stylings = {

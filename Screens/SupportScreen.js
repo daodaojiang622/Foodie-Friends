@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { ThemeContext } from '../Components/ThemeContext';
+import { ContainerStyle, Font, Padding } from '../Utils/Style';
 
 export default function SupportScreen() {
   const { theme } = useContext(ThemeContext);
@@ -29,10 +30,10 @@ export default function SupportScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flex: ContainerStyle.flex,
+    padding: Padding.xlarge,
   },
   text: {
-    fontSize: 16,
+    fontSize: Font.sizeMedium,
   },
 });

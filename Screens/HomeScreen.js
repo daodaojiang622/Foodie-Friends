@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup';
-import { ContainerStyle, Padding, Align, Font } from '../Utils/Style';
+import { ContainerStyle, Padding, Align, Font, Height, Colors } from '../Utils/Style';
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -159,36 +159,36 @@ const styles = StyleSheet.create({
   imageWrapper: {
     margin: Padding.small,
     alignItems: Align.center,
-    width: 180,
-    backgroundColor: '#c2d1c6',
+    width: Height.postImage,
+    backgroundColor: Colors.postBackground,
   },
   image: {
-    width: 180,
-    height: 180,
+    width: Height.postImage,
+    height: Height.postImage,
   },
   title: {
     fontSize: Font.sizeSmall,
     margin: Padding.large,
-    width: 180,
+    width: Height.postImage,
   },
   header: {
     flexDirection: ContainerStyle.flexDirection,
     justifyContent: ContainerStyle.spaceBetween,
     alignItems: Align.center,
     margin: Padding.large,
-    marginTop: 80,
+    marginTop: Padding.header,
   },
   addPostIcon: {
     fontSize: Font.sizeXLarge,
   },
   headerText: {
     fontSize: Font.sizeLarge,
-    fontWeight: 'bold',
+    fontWeight: Font.weight,
   },
   footerText: {
     textAlign: Align.center,
     fontSize: Font.sizeMedium,
-    color: '#666',
+    color: Colors.gray,
     marginVertical: Padding.large,
   },
 });
