@@ -160,5 +160,5 @@ Chenyu has worked on below aspects:
 - Code walk video: https://northeastern-my.sharepoint.com/:v:/g/personal/jiang_chenyu_northeastern_edu/EdGVbpJxslFEvG9Dc2rXy8sBEYrXCKSXQOb_kMDG2r9b-w?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=OTv6tl
 
 Yihe has worked on below aspects:
-- Front-end: 
-- Code walk video: 
+- Created users data collection; Created ImageItem component and ImagePickerHandler component; Made sure the profile images are uploaded to the Storage instead of being saved locally; Fixed the issue when user logged out, the Firestore listeners are still active.
+- Code walk video: https://drive.google.com/file/d/1vzPagJzyF85QzLyq__Qyxkn57iocNFvl/view?usp=drive_link
