@@ -9,7 +9,7 @@ import ScreenHeader from '../Components/ScreenHeader';
 import { uploadImageToFirebase, fetchSuggestions, savePost, ImagePickerHandler } from '../Utils/HelperFunctions';
 import { Ionicons } from '@expo/vector-icons';
 import ImageItem from '../Components/ImageItem';
-import { ContainerStyle, Padding, Font, Stylings, Position, Colors, BorderRadius, BorderWidth, Height } from '../Utils/Style';
+import { ContainerStyle, Padding, Font, Stylings, Colors, BorderRadius, BorderWidth, Height, Align } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     borderWidth: BorderWidth.thin,
     paddingHorizontal: Padding.large,
     marginVertical: Padding.large,
-    textAlignVertical: ContainerStyle.top,
+    textAlignVertical: Align.top,
     fontSize: Font.sizeMedium,
   },
   addImageText: {

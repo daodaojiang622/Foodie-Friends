@@ -26,6 +26,6 @@ export default function ChangeSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: ContainerStyle.flex,
-    padding: 20,
+    padding: Padding.xlarge,
   },
 })

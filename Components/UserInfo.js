@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
+import { Align, ContainerStyle, Font, Padding, Height, BorderRadius } from '../Utils/Style';
 
 const UserInfo = ({ profilePhotoUrl, username, textColor }) => (
   <View style={styles.userContainer}>
@@ -13,18 +14,18 @@ const UserInfo = ({ profilePhotoUrl, username, textColor }) => (
 
 const styles = StyleSheet.create({
   userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: Align.center,
+    marginTop: Padding.large,
   },
   profileImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-    marginRight: 10,
+    width: Height.image,
+    height: Height.image,
+    borderRadius: BorderRadius.large,
+    marginRight: Padding.large,
   },
   username: {
-    fontSize: 16,
+    fontSize: Font.sizeMedium,
   },
 });
 

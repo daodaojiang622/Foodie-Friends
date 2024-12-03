@@ -17,6 +17,7 @@ const Colors = {
     postColor: '#d5d6db',
     borderColor: 'lightgray',
     gray: 'gray',
+    gold: 'gold',
 };
 
 const Padding = {
@@ -34,8 +35,8 @@ const Padding = {
 const Font = {
     sizeSmall: 12,
     sizeMedium: 16,
-    SizeLarge: 20,
-    SizeXLarge: 24,
+    sizeLarge: 20,
+    sizeXLarge: 24,
     sizeXXLarge: 30,
     weight: 'bold',
 };
@@ -64,7 +65,6 @@ const ContainerStyle = {
     flexGrow: 1,
     alignItems: 'center',
     addImageWidth: width / 3 - 20,
-    top: 'top',
 };
 
 const Width = {
@@ -88,15 +88,11 @@ const Margin = {
     xxxxxlarge: 640,
 };
 
-const Image = {
-    height: 25,
-    width: 25,
-};
-
 const Align = {
     center: 'center',
     left: 'left',
     right: 'right',
+    top: 'top',
 };
 
 const Position = {
@@ -130,6 +126,7 @@ const Resize = {
 const Height = {
     input: 40,
     suggestionContainer: 150,
+    image: 30,
 };
 
 const Stylings = {
@@ -157,7 +154,7 @@ const Stylings = {
         opacity: Opacity.partialOpaque,
     },
     buttonText: {
-        fontSize: Font.SizeXLarge,
+        fontSize: Font.sizeXLarge,
         fontWeight: Font.weight,
     },
     image: {
@@ -216,4 +213,4 @@ const Stylings = {
     },
 };
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Resize, Height, Stylings };
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Align, Position, Icon, Opacity, ButtonStyle, Resize, Height, Stylings };

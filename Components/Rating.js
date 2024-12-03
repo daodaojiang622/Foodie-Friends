@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Align, ContainerStyle, Font, Padding, Colors } from '../Utils/Style';
 
 const Rating = ({ rating, style, starStyle }) => {
   const fullStars = Math.floor(rating);
@@ -26,15 +27,15 @@ const Rating = ({ rating, style, starStyle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: -10,
-    marginBottom: 10,
-    marginLeft: 20,
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: Align.center,
+    marginTop: Padding.negative,
+    marginBottom: Padding.large,
+    marginLeft: Padding.xlarge,
   },
   star: {
-    size: 16,
-    color: 'gold',
+    size: Font.sizeMedium,
+    color: Colors.gold,
   },
 });
 
