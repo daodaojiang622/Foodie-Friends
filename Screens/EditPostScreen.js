@@ -8,7 +8,9 @@ import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
-import { uploadImageToFirebase, fetchSuggestions, savePost, ImagePickerActions } from '../Utils/HelperFunctions';
+import ImagePicker from '../Components/ImagePicker';
+import { uploadImageToFirebase, fetchSuggestions, savePost } from '../Utils/HelperFunctions';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -204,7 +206,7 @@ export default function EditPostScreen() {
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
           <ImageHorizontalScrolling images={images} setImages={images}/>
-          {/* <Pressable
+          <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
                 { text: 'Camera', onPress: captureImageForPost },
@@ -216,12 +218,12 @@ export default function EditPostScreen() {
           >
             <Ionicons name="add" size={40} color="#aaa" />
             <Text style={styles.addImageText}>Add Image</Text>
-          </Pressable> */}
-          <ImagePickerActions onPickImage={pickImageForPost} onCaptureImage={captureImageForPost} />
+          </Pressable>
+          {/* <ImagePicker onPickImage={pickImageForPost} onCaptureImage={captureImageForPost} /> */}
         {/* </ScrollView> */}
         </View>
 
-        <Rating rating={rating} onPress={setRating} />
+        <Rating rating={rating} onPress={setRating} style={styles.rating} starStyle={styles.ratingStar}/>
 
         <View style={styles.buttonContainer}>
           <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
@@ -313,6 +315,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     borderRadius: 8,
+  },
+  ratingStar: {
+    marginTop: 20,
+    fontSize: 30,
+  },
+  rating: {
+    marginLeft: 0,
   },
 });
  

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Padding, BorderRadius, Margin, } from '../../Utils/Style';
+import { Stylings, Font, Margin, Colors} from '../../Utils/Style';
 import { ThemeContext } from '../ThemeContext';
 
 export default function DateInput({ date, setDate }) {
@@ -30,7 +30,7 @@ export default function DateInput({ date, setDate }) {
       <Text style={styles.label}>Date*</Text>
       <TouchableOpacity onPress={toggleDatePicker} activeOpacity={0.8}>
       <TextInput
-        style={styles.input}
+        style={styles.Stylings.input}
         value={date ? `${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleDateString('en-US', { month: 'short' })} ${date.toLocaleDateString('en-US', { day: '2-digit' })} ${date.getFullYear()}` : ''}
         editable={false}
         placeholder="Select date"
@@ -52,16 +52,8 @@ export default function DateInput({ date, setDate }) {
 
 const styles = StyleSheet.create({
   label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: "black",
+    fontSize: Font.sizeMedium,
+    marginBottom: Margin.small,
+    color: Colors.black,
   },
-  input: {
-    borderWidth: 2,
-    borderColor: 'lightgray',
-    padding: 8,
-    borderRadius: 5,
-    marginBottom: 20,
-    width: 350,
-    },
 });

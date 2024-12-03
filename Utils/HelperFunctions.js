@@ -2,6 +2,9 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../Firebase/firebaseSetup';
 import axios from 'axios';
 import { fetchDataFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
+import { Alert, Pressable, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
 export const fetchReviewDetails = async (postId) => {
   try {
@@ -79,19 +82,5 @@ export const savePost = async ({ postId, newData, onSuccess, onError }) => {
   }
 };
 
-export const ImagePickerActions = ({ onPickImage, onCaptureImage }) => (
-  <Pressable
-    onPress={() => {
-      Alert.alert('Add Image', 'Choose an image source', [
-        { text: 'Camera', onPress: onCaptureImage },
-        { text: 'Gallery', onPress: onPickImage },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }}
-    style={styles.addImageContainer}
-  >
-    <Ionicons name="add" size={40} color="#aaa" />
-    <Text style={styles.addImageText}>Add Image</Text>
-  </Pressable>
-);
+
 

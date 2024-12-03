@@ -102,7 +102,7 @@ const ButtonStyle = {
     buttonMarginHorizontal: 80,
 };
 
-const styles = {
+const Stylings = {
     container: {
         flex: 1,
         padding: Padding.medium,
@@ -188,4 +188,4 @@ const styles = {
     },
 };
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, styles };
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Stylings };
