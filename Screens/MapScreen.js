@@ -6,6 +6,9 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { fetchSuggestions } from '../Utils/HelperFunctions';
+import Rating from '../Components/Rating';
+import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 
 const { width } = Dimensions.get('window');
 
@@ -19,30 +22,6 @@ const MapScreen = () => {
   const navigation = useNavigation();
   const [selectedPlaceDetails, setSelectedPlaceDetails] = useState(null);
   const [markers, setMarkers] = useState([]); // State for multiple markers
-
-
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating); // Number of full stars
-    const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
-
-    // Create an array of star components
-    return (
-      <>
-        {Array(fullStars)
-          .fill()
-          .map((_, index) => (
-            <Ionicons key={`full-${index}`} name="star" style={styles.starIcon} />
-          ))}
-        {hasHalfStar && <Ionicons name="star-half" style={styles.starIcon} />}
-        {Array(emptyStars)
-          .fill()
-          .map((_, index) => (
-            <Ionicons key={`empty-${index}`} name="star-outline" style={styles.starIcon} />
-          ))}
-      </>
-    );
-  };
 
   useEffect(() => {
     (async () => {
@@ -82,30 +61,12 @@ const MapScreen = () => {
     }
   };
 
-  const fetchSuggestions = async (query) => {
-    const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
-
-    try {
-      const response = await axios.get(url);
-      const results = response.data.predictions;
-
-      const fetchedSuggestions = results.map((place) => ({
-        id: place.place_id,
-        description: place.description,
-      }));
-    
-      setSuggestions(fetchedSuggestions);
-    } catch (error) {
-      console.error('Error fetching autocomplete suggestions', error);
-    }
-  };
-
-  const handleSearchChange = (query) => {
+  const handleSearchChange = async (query) => {
     setSearchQuery(query);
   
     if (query.length > 2) {
-      fetchSuggestions(query);
+      const suggestions = await fetchSuggestions(query, process.env.EXPO_PUBLIC_apiKey);
+    setSuggestions(suggestions);
     } else {
       setSuggestions([]);
   
@@ -120,7 +81,6 @@ const MapScreen = () => {
       }
     }
   };
-  
 
   const handleSuggestionSelect = async (suggestion) => {
     setSearchQuery(suggestion.description);
@@ -312,9 +272,7 @@ const MapScreen = () => {
             contentContainerStyle={styles.imageScrollView}
           >
             {selectedPlaceDetails.photos.length > 0 ? (
-              selectedPlaceDetails.photos.map((photo, index) => (
-                <Image key={index} source={{ uri: photo }} style={styles.image} />
-              ))
+              <ImageHorizontalScrolling images={selectedPlaceDetails.photos} imageStyle={styles.image} />
             ) : (
               <Text style={{ color: theme.textColor, padding: 10 }}>No images available</Text>
             )}
@@ -326,11 +284,7 @@ const MapScreen = () => {
                 {selectedPlaceDetails.name}
               </Text>
 
-              <View style={styles.infoContainer}>
-                <Text style={[styles.rating, { color: theme.textColor }]}>
-                  {renderStars(selectedPlaceDetails.rating)}
-                </Text>
-              </View>
+              <Rating rating={selectedPlaceDetails.rating} style={[styles.rating, { color: theme.textColor }]}/>
             </View>
           </Pressable>
         </View>
@@ -402,15 +356,8 @@ const styles = StyleSheet.create({
   restaurantInfoCompactContainer: {
     flexDirection: 'row',
   },
-  locationIcon: {
-    fontSize: 16,
-    marginBottom: -10,
-    marginLeft: 10,
-  },
   rating: {
-    fontSize: 16,
-    marginLeft: 10,
-    marginBottom: -10,
+    marginTop: 20,
   },
   currentLocationButton: {
     position: 'absolute',

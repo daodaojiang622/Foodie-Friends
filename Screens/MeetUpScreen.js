@@ -5,6 +5,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import { deleteFromDB, subscribeToMeetUps } from '../Firebase/firestoreHelper'; 
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
+import { auth } from '../Firebase/firebaseSetup';
 
 export default function MeetUpScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
@@ -39,12 +40,16 @@ export default function MeetUpScreen({ navigation }) {
   };
 
   const fetchMeetUps = () => {
+    const userId = auth.currentUser?.uid;
+
     subscribeToMeetUps(collectionName, (meetUps) => {
       const currentDateTime = moment();
       const upcoming = [];
       const past = [];
 
-      meetUps.forEach(meetUp => {
+      meetUps
+      .filter((meetUp) => meetUp.userId === userId)
+      .forEach(meetUp => {
         const meetUpDateTime = moment(`${meetUp.date} ${meetUp.time}`, 'YYYY-MM-DD hh:mm A');
         if (meetUpDateTime.isAfter(currentDateTime)) {
           upcoming.push(meetUp);

@@ -1,17 +1,14 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, TextInput, Image, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, Text, Pressable, ScrollView, StyleSheet, Alert, FlatList, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import { writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
-import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../Firebase/firebaseSetup';
-import axios from 'axios';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '../Firebase/firebaseSetup'; 
-import ImageItem from '../Components/ImageItem';
 import ImagePickerHandler from '../Components/ImagePickerHandler';
+import Rating from '../Components/Rating';
+import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
+import ScreenHeader from '../Components/ScreenHeader';
+import { uploadImageToFirebase, fetchSuggestions, savePost, ImagePickerActions } from '../Utils/HelperFunctions';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -39,31 +36,6 @@ export default function EditPostScreen() {
       setSelectedRestaurant({ name: initialRestaurantName, place_id: route.params?.restaurantId || '' });
     }
   }, [initialRestaurantName, route.params?.restaurantId]);
-
-  // Set header text
-  useEffect(() => {
-    if (postId) {
-      navigation.setOptions({ title: 'Edit Post' }); // Editing an existing post
-    } else {
-      navigation.setOptions({ title: 'Add New Post' }); // Creating a new post
-    }
-  }, [postId, navigation]);
-  
-  const fetchSuggestions = async (query) => {
-    const apiKey = process.env.EXPO_PUBLIC_apiKey;
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=establishment&keyword=restaurant|cafe|bar&key=${apiKey}`;
-    try {
-      const response = await axios.get(url);
-      console.log('Restaurant Suggestions:', response.data.predictions);
-      const results = response.data.predictions.map((place) => ({
-        id: place.place_id,
-        description: place.description,
-      }));
-      setRestaurantSuggestions(results);
-    } catch (error) {
-      console.error('Error fetching restaurant suggestions:', error);
-    }
-  };
   
   const handleSearchChange = (query) => {
     setRestaurantQuery(query);
@@ -146,70 +118,51 @@ export default function EditPostScreen() {
         time: Date.now(),
       };
   
-      Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Save',
-          onPress: async () => {
-            try {
-              if (postId) {
-                await updateDB(postId, newData, 'posts');
-              } else {
-                await writeToDB(newData, 'posts');
-              }
-              navigation.goBack();
-            } catch (error) {
-              console.error('Error saving post:', error);
-              Alert.alert('Save Error', 'There was a problem saving your post.');
-            }
-          },
-        },
-      ]);
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
-    }
+    //   Alert.alert('Confirm Save', 'Are you sure you want to save this post?', [
+    //     {
+    //       text: 'Cancel',
+    //       style: 'cancel',
+    //     },
+    //     {
+    //       text: 'Save',
+    //       onPress: async () => {
+    //         try {
+    //           if (postId) {
+    //             await updateDB(postId, newData, 'posts');
+    //           } else {
+    //             await writeToDB(newData, 'posts');
+    //           }
+    //           navigation.goBack();
+    //         } catch (error) {
+    //           console.error('Error saving post:', error);
+    //           Alert.alert('Save Error', 'There was a problem saving your post.');
+    //         }
+    //       },
+    //     },
+    //   ]);
+    // } catch (error) {
+    //   console.error('Error uploading images:', error);
+    //   Alert.alert('Upload Error', 'Failed to upload images. Please try again.');
+    // }
+      savePost({
+        postId,
+        newData,
+        onSuccess: () => navigation.goBack(),
+        onError: (error) => Alert.alert('Save Error', 'There was a problem saving your post.'),
+      });
+      } catch (error) {
+        console.error('Error preparing post save:', error);
+      }
   };
 
   const handleCancel = () => {
     navigation.goBack();
   };
   
-  const uploadImageToFirebase = async (uri) => {
-    try {
-      if (!uri) {
-        throw new Error('Invalid URI');
-      }
-  
-      console.log('Uploading Image URI:', uri);
-  
-      const response = await fetch(uri);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image. Status: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-  
-      const fileName = `${Date.now()}.jpg`;
-  
-      const storageRef = ref(storage, `images/${fileName}`);
-  
-      const snapshot = await uploadBytes(storageRef, blob);
-  
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      console.log('Image uploaded successfully. URL:', downloadURL);
-      return downloadURL;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
-  };
-  
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <ScreenHeader title={route.params?.postId ? 'Edit Post' : 'Add New Post'} />
         {/* Restaurant Search */}
         <Text style={[styles.label, { color: theme.textColor }]}>Search for Restaurant</Text>
         <TextInput
@@ -250,15 +203,8 @@ export default function EditPostScreen() {
 
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
-        <ScrollView horizontal style={styles.imageScroll}>
-          {images.map((uri, index) => (
-            <ImageItem
-            key={index}
-            uri={uri}
-            onDelete={() => setImages(images.filter((_, imgIndex) => imgIndex !== index))}
-          />
-        ))}
-          <Pressable
+          <ImageHorizontalScrolling images={images} setImages={images}/>
+          {/* <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
                 { text: 'Camera', onPress: captureImageForPost },
@@ -270,22 +216,12 @@ export default function EditPostScreen() {
           >
             <Ionicons name="add" size={40} color="#aaa" />
             <Text style={styles.addImageText}>Add Image</Text>
-          </Pressable>
-        </ScrollView>
+          </Pressable> */}
+          <ImagePickerActions onPickImage={pickImageForPost} onCaptureImage={captureImageForPost} />
+        {/* </ScrollView> */}
         </View>
 
-        <Text style={[styles.label, { color: theme.textColor }]}>Rating</Text>
-        <View style={[styles.ratingContainer, { marginTop: 20 }]}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Pressable key={star} onPress={() => setRating(star)}>
-              <Ionicons
-                name={star <= rating ? 'star' : 'star-outline'}
-                size={28}
-                color={star <= rating ? '#FFD700' : '#aaa'}
-              />
-            </Pressable>
-          ))}
-        </View>
+        <Rating rating={rating} onPress={setRating} />
 
         <View style={styles.buttonContainer}>
           <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
@@ -345,10 +281,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     fontSize: 18,
   },
-  imageScroll: {
-    flexDirection: 'row',
-    marginVertical: 10,
-  },
   addImageContainer: {
     width: width / 3 - 20,
     height: 100,
@@ -364,11 +296,6 @@ const styles = StyleSheet.create({
     color: '#aaa',
     marginTop: 5,
     fontSize: 14,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
   },
   buttonContainer: {
     flexDirection: 'row',

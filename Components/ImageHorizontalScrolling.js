@@ -1,0 +1,22 @@
+import React from 'react';
+import { ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+export default function ImageHorizontalScrolling({ images, imageStyle }) {
+  return (
+    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
+      {images.map((uri, index) => (
+        <Image key={index} source={{ uri }} style={[styles.image, imageStyle]} />
+      ))}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+  },
+});

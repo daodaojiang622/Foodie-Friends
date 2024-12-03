@@ -3,53 +3,13 @@ import { View, Image, Text, StyleSheet, Alert, ScrollView, Dimensions, Button, P
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { fetchDataFromDB, deleteFromDB } from '../Firebase/firestoreHelper';
-import { auth } from '../Firebase/firebaseSetup'; 
+import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
-
-// Function to calculate relative time
-const calculateRelativeTime = (timestamp) => {
-  if (!timestamp) return 'Invalid timestamp';
-  
-  // Convert the timestamp to milliseconds (if it's in seconds)
-  const timestampInMilliseconds = timestamp * 1000;
-
-  // Calculate the relative time using `date-fns`
-  return formatDistanceToNow(new Date(timestampInMilliseconds), { addSuffix: true });
-};
-
-// Example usage
-const timestamp = 1732843440987; // Example timestamp from your DB
-const relativeTime = calculateRelativeTime(timestamp);
-console.log('Relative Time:', relativeTime); // Output: e.g., "2 days ago"
-
+import Rating from '../Components/Rating';
 
 const { width } = Dimensions.get('window');
-
-const renderStars = (rating, color) => {
-  const fullStars = Math.floor(rating); // Number of full stars
-  const hasHalfStar = rating % 1 >= 0.5; // Check if there's a half star
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // Remaining empty stars
-
-  // Create an array of star components
-  return (
-    <>
-      {Array(fullStars)
-        .fill()
-        .map((_, index) => (
-          <Ionicons key={`full-${index}`} name="star" style={[styles.starIcon, { color }]} />
-        ))}
-      {hasHalfStar && <Ionicons name="star-half" style={[styles.starIcon, { color }]} />}
-      {Array(emptyStars)
-        .fill()
-        .map((_, index) => (
-          <Ionicons key={`empty-${index}`} name="star-outline" style={[styles.starIcon, { color }]} />
-        ))}
-    </>
-  );
-};
 
 export default function RestaurantDetailScreen() {
   const { theme } = useContext(ThemeContext);
@@ -63,7 +23,7 @@ export default function RestaurantDetailScreen() {
   
   // Function to calculate relative time
   const calculateRelativeTime = (timestamp) => {
-    if (!timestamp) return 'Invalid timestamp';
+    if (!timestamp) return 'Time not available';
     
     // Convert the timestamp to milliseconds (if it's in seconds)
     const timestampInMilliseconds = timestamp;
@@ -113,7 +73,7 @@ export default function RestaurantDetailScreen() {
           author_name: review.username || 'Anonymous',
           profile_photo_url: review.profileImage,
           id: review.id, // Include the unique ID for navigation
-          relative_time_description: calculateRelativeTime(review.time) || 'Recently',
+          relative_time_description: calculateRelativeTime(review.time),
         }));
   
         console.log('Firestore reviews:', formattedDbReviews);
@@ -198,12 +158,7 @@ export default function RestaurantDetailScreen() {
         </View>
 
         {/* Rating */}
-        <View style={styles.infoContainer}>
-          {renderStars(restaurant.rating, theme.textColor)}
-          <Text style={[styles.ratingText, { color: theme.textColor }]}>
-            {' '}({restaurant.rating})
-          </Text>
-        </View>
+        <Rating rating={restaurant.rating} onPress={() => {}} />
 
         {/* Additional Info */}
         <View style={styles.infoContainer}>
