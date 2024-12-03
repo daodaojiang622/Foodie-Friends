@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   },
   addPostIcon: {
     fontSize: Font.sizeXLarge,
+    left: Padding.postIcon,
   },
   headerText: {
     fontSize: Font.sizeLarge,
