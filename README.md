@@ -156,7 +156,7 @@ At the end of iteration 3, we worked on tasks with the lowest priorities.
 
 ### Contributions
 Chenyu has worked on below aspects:
-- Implemented multiple markers rendering, zoom-in/out and locate buttons on map scree, updated the profile screen to upload profile info to the db, combined data from db and api to render together to the user, modified on post fields, implemented refresh function on home screen and enable meet-up screen to auto refresh every 5s.
+- Implemented multiple markers rendering, zoom-in/out and locate buttons on map scree, updated the profile screen to upload profile info to the db, combined data from db and api to render together to the user, modified on post fields, implemented refresh function on home screen and enable meet-up screen to auto refresh every 5s, refactoring components and stylings.
 - Code walk video: 
 
 Yihe has worked on below aspects:
