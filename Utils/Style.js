@@ -32,6 +32,7 @@ const Padding = {
     xlarge: 20,
     xxlarge: 30,
     header: 80,
+    postIcon: 185,
 };
 
 const Font = {
