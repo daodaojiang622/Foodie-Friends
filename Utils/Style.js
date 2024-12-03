@@ -1,4 +1,7 @@
-import { FontAwesome5, MaterialIcons, Ionicons, FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 const Colors = {
     primary: '#454580',
@@ -16,6 +19,7 @@ const Colors = {
 };
 
 const Padding = {
+    xsmall: 2,
     small: 5,
     medium: 8,
     large: 10,
@@ -39,8 +43,12 @@ const BorderWidth = {
 
 const BorderRadius = {
     small: 5,
+    smallMedium: 8,
     medium: 10,
     large: 20,
+    xlarge: 30,
+    xxlarge: 40,
+    xxxlarge: 50,
 };
 
 const ContainerStyle = {
@@ -143,25 +151,25 @@ const Stylings = {
         fontSize: Font.SizeXLarge,
         fontWeight: Font.weight,
     },
-    // image: {
-    //     width: Width.small,
-    //     height: 100,
-    //     resizeMode: 'cover',
-    //     borderRadius: BorderRadius.small,
-    //     margin: Padding.small,
-    // },
-    imageWrapper: {
-        margin: Padding.small,
-        alignItems: Align.center,
+    image: {
+        width: width / 3 - 20,
+        height: Width.Image,
+        borderRadius: BorderRadius.smallMedium,
+        margin: Margin.xsmall,
     },
-    // deleteButton: {
-    //     position: Position.absolute,
-    //     top: Padding.small,
-    //     right: Padding.small,
-    //     backgroundColor: Colors.tertiary,
-    //     borderRadius: BorderRadius.large,
-    //     padding: Padding.small,
-    // },
+    imageWrapper: {
+        position: 'relative',
+        margin: Margin.xsmall,
+    },
+    deleteButton: {
+        position: Position.absolute,
+        top: Padding.small,
+        right: Padding.small,
+        backgroundColor: Colors.tertiary,
+        borderRadius: BorderRadius.xxxlarge,
+        padding: Padding.xsmall,
+        elevation: 3,
+    },
     suggestionsContainer: {
         position: Position.absolute,
         zIndex: 10,
