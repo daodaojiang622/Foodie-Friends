@@ -79,17 +79,17 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: ContainerStyle.flex,
-    padding: Padding.xlarge,
+    padding: 20,
   },
   themeButtonText: {
     color: Colors.tertiary,
-    fontSize: Font.sizeMedium,
+    fontSize: 16,
     textAlign: Align.center,
-    padding: Padding.medium,
+    padding: 8,
   },
   themeButton: {
-    marginTop: Margin.xxxxlarge,
-    borderRadius: BorderRadius.medium,
+    marginTop: 250,
+    borderRadius: 10,
     alignSelf: Align.center,
   },
 });

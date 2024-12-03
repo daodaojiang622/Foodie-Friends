@@ -22,15 +22,15 @@ const PressableButton = ({ onPress, title, buttonStyle, textStyle }) => {
 
 const styles = StyleSheet.create({
   button: {
-    padding: Padding.large,
-    borderRadius: BorderRadius.small,
+    padding: 10,
+    borderRadius: 5,
     marginTop: 100,
   },
   buttonPressed: {
     opacity: Opacity.partialOpaque,
   },
   buttonText: {
-    fontSize: Font.SizeLarge,
+    fontSize: 24,
     fontWeight: Font.weight,
   },
 });

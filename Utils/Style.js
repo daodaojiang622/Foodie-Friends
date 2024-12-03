@@ -89,10 +89,6 @@ const Position = {
 };
 
 const Icon = {
-    activityIconComponent: FontAwesome5,
-    activityIconName: 'running',
-    dietIconComponent: MaterialIcons,
-    dietIconName: 'fastfood',
     settingsIconComponent: Ionicons,
     settingsIconName: 'settings-sharp',
     addIconComponent: Ionicons,

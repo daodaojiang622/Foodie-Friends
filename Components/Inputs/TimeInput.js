@@ -69,15 +69,15 @@ export default function TimeInput({ time, setTime }) {
 const styles = StyleSheet.create({
   label: {
     fontSize: 16,
-    marginBottom: Margin.small,
+    marginBottom: 8,
     color: "black",
   },
   input: {
     borderWidth: 2,
     borderColor: 'lightgray',
-    padding: Padding.medium,
-    borderRadius: BorderRadius.small,
-    marginBottom: Margin.large,
+    padding: 8,
+    borderRadius: 5,
+    marginBottom: 8,
     width: 350,
   },
 });

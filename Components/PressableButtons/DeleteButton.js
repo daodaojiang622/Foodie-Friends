@@ -19,7 +19,7 @@ const DeleteButton = ({ onPress }) => {
 const styles = StyleSheet.create({
   DeleteButton: {
     color: Colors.tertiary,
-    fontSize: Button.size,
+    fontSize: 20,
   },
 });
 
