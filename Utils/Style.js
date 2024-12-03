@@ -4,18 +4,12 @@ const Colors = {
     primary: '#454580',
     secondary: 'orange',
     tertiary: 'white',
-
     background: '#edeef2',
-
     toggleThemeHeader: '#405c47',
     toggleThemeBackground: '#e9f5ec',
-
     noColor: 'transparent',
-
     dropDownColor: '#fafafa',
-
     inputBorder: 'black',
-
     greenPostColor: '#c2d1c6',
     postColor: '#d5d6db',
 };
@@ -39,7 +33,7 @@ const BorderWidth = {
     thin: 1,
     medium: 2,
     thick: 4,
-}; 
+};
 
 const BorderRadius = {
     small: 5,
@@ -106,6 +100,92 @@ const ButtonStyle = {
     size: 20,
     buttonMarginTop: 300,
     buttonMarginHorizontal: 80,
-}
+};
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle};
+const styles = {
+    container: {
+        flex: 1,
+        padding: Padding.medium,
+        justifyContent: Align.center,
+    },
+    label: {
+        fontSize: Font.sizeMedium,
+        marginBottom: Padding.medium,
+        color: Colors.primary,
+        fontWeight: Font.weight,
+    },
+    input: {
+        borderWidth: BorderWidth.thin,
+        borderColor: Colors.inputBorder,
+        padding: Padding.medium,
+        borderRadius: BorderRadius.small,
+        marginBottom: Padding.large,
+        width: Width.large,
+    },
+    button: {
+        padding: Padding.large,
+        borderRadius: BorderRadius.medium,
+        marginTop: Margin.xxxlarge,
+        alignItems: Align.center,
+    },
+    buttonPressed: {
+        opacity: Opacity.partialOpaque,
+    },
+    buttonText: {
+        fontSize: Font.SizeLarge,
+        fontWeight: Font.weight,
+    },
+    image: {
+        width: Width.small,
+        height: 100,
+        resizeMode: 'cover',
+        borderRadius: BorderRadius.small,
+        margin: Padding.small,
+    },
+    imageWrapper: {
+        margin: Padding.small,
+        alignItems: Align.center,
+    },
+    deleteButton: {
+        position: Position.absolute,
+        top: Padding.small,
+        right: Padding.small,
+        backgroundColor: Colors.tertiary,
+        borderRadius: BorderRadius.large,
+        padding: Padding.small,
+    },
+    suggestionsContainer: {
+        position: Position.absolute,
+        zIndex: 10,
+        backgroundColor: Colors.background,
+        borderColor: Colors.inputBorder,
+        borderWidth: BorderWidth.thin,
+        borderRadius: BorderRadius.small,
+        maxHeight: 200,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    suggestionItem: {
+        padding: Padding.large,
+        borderBottomWidth: BorderWidth.thin,
+        borderBottomColor: Colors.dropDownColor,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: Align.center,
+        alignItems: Align.center,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: Colors.tertiary,
+        borderRadius: BorderRadius.medium,
+        padding: Padding.large,
+        alignItems: Align.center,
+    },
+};
+
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, styles };
