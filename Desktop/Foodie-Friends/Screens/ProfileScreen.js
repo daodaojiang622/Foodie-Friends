@@ -29,9 +29,9 @@ export default function ProfileScreen() {
       if (storedUsername) {
         setUsername(storedUsername);
         loadUserPosts(storedUsername);
-        setUsernameModalVisible(false);
-      } else {
-        setUsernameModalVisible(true);
+        // setUsernameModalVisible(false);
+      // } else {
+      //   setUsernameModalVisible(true);
       }
       if (storedProfileImage) {
         setProfileImage(storedProfileImage);
