@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { fetchSuggestions } from '../Utils/HelperFunctions';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
-import { Stylings } from '../Utils/Style';
+import { Padding, Stylings } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 
@@ -285,7 +285,7 @@ const MapScreen = () => {
                 {selectedPlaceDetails.name}
               </Text>
 
-              <Rating rating={selectedPlaceDetails.rating} style={[styles.rating, { color: theme.textColor }]}/>
+              <Rating rating={selectedPlaceDetails.rating} style={[styles.rating, { color: theme.textColor, marginTop: Padding.large, marginLeft: Padding.large }]}/>
             </View>
           </Pressable>
         </View>
