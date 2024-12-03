@@ -26,7 +26,8 @@ const Padding = {
 const Font = {
     sizeSmall: 12,
     sizeMedium: 16,
-    SizeLarge: 24,
+    SizeLarge: 20,
+    SizeXLarge: 24,
     weight: 'bold',
 };
 
