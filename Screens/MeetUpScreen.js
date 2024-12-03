@@ -73,7 +73,6 @@ export default function MeetUpScreen({ navigation }) {
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
 
-
   const handleEditMeetUp = (meetUp, isPast) => {
     navigation.navigate('EditMeetUp', { meetUp, confirmDelete: handleDeleteMeetUp, isPast });
   };

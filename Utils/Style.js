@@ -136,7 +136,7 @@ const Stylings = {
     label: {
         fontSize: Font.sizeMedium,
         marginBottom: Padding.medium,
-        color: Colors.primary,
+        color: Colors.black,
         fontWeight: Font.weight,
     },
     input: {
