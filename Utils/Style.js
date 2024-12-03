@@ -56,6 +56,7 @@ const Width = {
     medium: '85%',
     large: '100%',
     border: 350,
+    Image: 100,
 };
 
 const Margin = {
@@ -105,6 +106,10 @@ const ButtonStyle = {
     buttonMarginHorizontal: 80,
 };
 
+const Resize = {
+    cover: 'cover',
+}
+
 const Stylings = {
     container: {
         flex: 1,
@@ -138,13 +143,13 @@ const Stylings = {
         fontSize: Font.SizeXLarge,
         fontWeight: Font.weight,
     },
-    image: {
-        width: Width.small,
-        height: 100,
-        resizeMode: 'cover',
-        borderRadius: BorderRadius.small,
-        margin: Padding.small,
-    },
+    // image: {
+    //     width: Width.small,
+    //     height: 100,
+    //     resizeMode: 'cover',
+    //     borderRadius: BorderRadius.small,
+    //     margin: Padding.small,
+    // },
     imageWrapper: {
         margin: Padding.small,
         alignItems: Align.center,
@@ -191,4 +196,4 @@ const Stylings = {
     },
 };
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Stylings };
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Resize, Stylings };
