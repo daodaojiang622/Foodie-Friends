@@ -12,6 +12,7 @@ const Colors = {
     inputBorder: 'black',
     greenPostColor: '#c2d1c6',
     postColor: '#d5d6db',
+    borderColor: 'lightgray',
 };
 
 const Padding = {
@@ -53,6 +54,7 @@ const Width = {
     small: '35%',
     medium: '85%',
     large: '100%',
+    border: 350,
 };
 
 const Margin = {
@@ -115,12 +117,12 @@ const Stylings = {
         fontWeight: Font.weight,
     },
     input: {
-        borderWidth: BorderWidth.thin,
-        borderColor: Colors.inputBorder,
+        borderWidth: BorderWidth.medium,
+        borderColor: Colors.borderColor,
         padding: Padding.medium,
         borderRadius: BorderRadius.small,
         marginBottom: Padding.large,
-        width: Width.large,
+        width: Width.border,
     },
     button: {
         padding: Padding.large,
