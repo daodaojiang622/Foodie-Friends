@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Image, StyleSheet } from 'react-native';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup';
+import { BorderRadius, ContainerStyle, Padding, Width } from '../Utils/Style';
 
 export default function FoodGalleryScreen() {
   const [images, setImages] = useState([]);
@@ -32,14 +33,14 @@ export default function FoodGalleryScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 5, // Padding on both sides for even spacing
-    paddingTop: 10,
+    flex: ContainerStyle.flex,
+    paddingHorizontal: Padding.small, // Padding on both sides for even spacing
+    paddingTop: Padding.large,
   },
   image: {
-    width: '30%', // Ensure consistent size for each image in 3-column layout
-    aspectRatio: 1, // Maintain square shape
-    margin: 5, // Uniform margin for spacing
-    borderRadius: 8, // Optional for rounded corners
+    width: Width.xsmall, // Ensure consistent size for each image in 3-column layout
+    aspectRatio: ContainerStyle.flex, // Maintain square shape
+    margin: Padding.small, // Uniform margin for spacing
+    borderRadius: BorderRadius.smallMedium, // Optional for rounded corners
   },
 });

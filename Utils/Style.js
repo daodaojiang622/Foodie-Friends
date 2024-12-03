@@ -68,6 +68,7 @@ const ContainerStyle = {
 };
 
 const Width = {
+    xsmall: '31%',
     small: '35%',
     medium: '85%',
     large: '100%',
