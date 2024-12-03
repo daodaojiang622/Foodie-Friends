@@ -299,6 +299,10 @@ export default function ProfileScreen() {
       },
     ]);
   };
+
+  const handleCancelUsername = () => {
+    setUsernameModalVisible(false);
+  }
   
   
   return (
@@ -314,9 +318,15 @@ export default function ProfileScreen() {
               value={username}
               onChangeText={setUsername}
             />
-            <Pressable style={styles.saveButton} onPress={handleSaveUsername}>
-              <Text style={styles.saveButtonText}>Save</Text>
-            </Pressable>
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable style={styles.saveButton} onPress={handleSaveUsername}>
+                <Text style={styles.saveButtonText}>Save</Text>
+              </Pressable>
+
+              <Pressable style={styles.saveButton} onPress={handleCancelUsername}>
+                <Text style={styles.saveButtonText}>Cancel</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
