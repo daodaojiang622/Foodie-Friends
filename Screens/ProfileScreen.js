@@ -11,6 +11,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
 import { ImagePickerHandler } from '../Utils/HelperFunctions';
+import { Align, BorderWidth, Colors, ContainerStyle, Padding } from '../Utils/Style';
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);
@@ -358,25 +359,25 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   profileHeader: {
-    alignItems: 'center',
-    paddingVertical: 20,
+    alignItems: Align.center,
+    paddingVertical: Padding.xlarge,
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 2,
+    borderWidth: BorderWidth.medium,
     borderColor: '#d1d1d1',
-    marginBottom: 10,
+    marginBottom: Padding.large,
   },
   usernameContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: Align.center,
+    marginBottom: Padding.xlarge,
   },
   editIcon: {
-    marginLeft: 8,
-    padding: 4,
+    marginLeft: Padding.medium,
+    padding: Padding.small,
   },
   username: {
     fontSize: 18,
@@ -384,43 +385,43 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: Align.center,
     backgroundColor: '#d1d1d1',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: Padding.medium,
+    paddingHorizontal: Padding.large,
     borderRadius: 8,
-    marginVertical: 5,
+    marginVertical: Padding.small,
     width: '60%',
-    justifyContent: 'center',
+    justifyContent: Align.center,
   },
   buttonText: {
     fontSize: 16,
-    marginLeft: 8,
+    marginLeft: Padding.medium,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10,
-    paddingHorizontal: 15,
+    marginBottom: Padding.large,
+    paddingHorizontal: Padding.mediumLarge,
   },
   postItem: {
     flex: 0.48, // Adjusted for two posts in a row
-    margin: 5,
+    margin: Padding.small,
     backgroundColor: '#e0e0e0',
     borderRadius: 8,
-    padding: 10,
-    alignItems: 'center',
+    padding: Padding.large,
+    alignItems: Align.center,
   },
   postsList: {
     flexGrow: 1,
-    padding: 10,
+    padding: Padding.large,
     alignItems: 'flex-start', // Align items to the left
   },
   image: {
     width: 160,
     height: 160,
-    borderRadius: 8,
-    marginBottom: 5,
+    borderRadius: Padding.medium,
+    marginBottom: Padding.small,
     resizeMode: 'cover',
   },
   postTitle: {
@@ -429,51 +430,51 @@ const styles = StyleSheet.create({
   },
   postDescription: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: Align.center,
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: ContainerStyle.flex,
+    justifyContent: Align.center,
+    alignItems: Align.center,
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
     width: '80%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.tertiary,
     borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
+    padding: Padding.xlarge,
+    alignItems: Align.center,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: Padding.large,
   },
   usernameInput: {
     borderWidth: 1,
     borderColor: '#d1d1d1',
     width: '100%',
-    padding: 10,
+    padding: Padding.large,
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: Padding.xlarge,
   },
   saveButton: {
     backgroundColor: '#4169E1',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: Padding.large,
+    paddingHorizontal: Padding.xlarge,
     borderRadius: 5,
   },
   saveButtonText: {
-    color: 'white',
+    color: Colors.tertiary,
     fontWeight: 'bold',
   },
   deleteButton: {
     position: 'absolute',
     top: 5,
     right: 5,
-    backgroundColor: 'white',
+    backgroundColor: Colors.tertiary,
     borderRadius: 15,
     padding: 5,
-    elevation: 3, // Android shadow
+    elevation: 3,
   },
 });
