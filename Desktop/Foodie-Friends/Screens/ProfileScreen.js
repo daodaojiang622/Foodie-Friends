@@ -319,11 +319,11 @@ export default function ProfileScreen() {
               onChangeText={setUsername}
             />
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.saveButton} onPress={handleSaveUsername}>
+              <Pressable style={[styles.saveButton, { backgroundColor: theme.textColor }]} onPress={handleSaveUsername}>
                 <Text style={styles.saveButtonText}>Save</Text>
               </Pressable>
 
-              <Pressable style={styles.saveButton} onPress={handleCancelUsername}>
+              <Pressable style={[styles.saveButton, { backgroundColor: theme.textColor }]} onPress={handleCancelUsername}>
                 <Text style={styles.saveButtonText}>Cancel</Text>
               </Pressable>
             </View>
