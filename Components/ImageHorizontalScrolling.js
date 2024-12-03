@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
+import { Width, Resize } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 
@@ -15,8 +16,8 @@ export default function ImageHorizontalScrolling({ images, imageStyle }) {
 
 const styles = StyleSheet.create({
   image: {
-    width: 100,
-    height: 100,
-    resizeMode: 'cover',
+    width: Width.image,
+    height: Width.image,
+    resizeMode: Resize.cover,
   },
 });

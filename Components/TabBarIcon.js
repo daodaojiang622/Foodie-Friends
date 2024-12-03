@@ -19,7 +19,7 @@ const TabBarIcon = ({ routeName, iconStyle }) => {
 
 const styles = StyleSheet.create({
   icon: {
-    fontSize: Font.SizeLarge,
+    fontSize: Font.sizeXLarge,
   },
 });
 

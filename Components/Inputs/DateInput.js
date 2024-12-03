@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Padding, BorderRadius, Margin, } from '../../Utils/Style';
+import { Font, Margin, Colors, Stylings} from '../../Utils/Style';
 import { ThemeContext } from '../ThemeContext';
 
 export default function DateInput({ date, setDate }) {
@@ -27,10 +27,10 @@ export default function DateInput({ date, setDate }) {
 
   return (
     <View>
-      <Text style={styles.label}>Date*</Text>
+      <Text style={[Stylings.label, { fontWeight: "normal" }]}>Date*</Text>
       <TouchableOpacity onPress={toggleDatePicker} activeOpacity={0.8}>
       <TextInput
-        style={styles.input}
+        style={Stylings.input}
         value={date ? `${date.toLocaleDateString('en-US', { weekday: 'short' })} ${date.toLocaleDateString('en-US', { month: 'short' })} ${date.toLocaleDateString('en-US', { day: '2-digit' })} ${date.getFullYear()}` : ''}
         editable={false}
         placeholder="Select date"
@@ -39,7 +39,7 @@ export default function DateInput({ date, setDate }) {
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
-          style={{backgroundColor: theme.textColor}}
+          style={{backgroundColor: theme.backgroundColor}}
           value={date || new Date()}
           mode="date"
           display='inline'
@@ -49,19 +49,3 @@ export default function DateInput({ date, setDate }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    fontSize: 16,
-    marginBottom: Margin.small,
-    color: "black",
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: 'lightgray',
-    padding: Padding.medium,
-    borderRadius: BorderRadius.small,
-    marginBottom: Margin.large,
-    width: 350,
-    },
-});

@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import ScreenWrapper from '../Components/ScreenWrapper';
 import { fetchDataFromDB } from '../Firebase/firestoreHelper';
 import { auth } from '../Firebase/firebaseSetup';
+import { ContainerStyle, Padding, Align, Font, Height, Colors } from '../Utils/Style';
 
 export default function HomeScreen() {
   const { theme } = useContext(ThemeContext);
@@ -149,45 +150,45 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: ContainerStyle.flex,
   },
   scrollContainer: {
-    padding: 10,
-    alignItems: 'center',
+    padding: Padding.large,
+    alignItems: Align.center,
   },
   imageWrapper: {
-    margin: 5,
-    alignItems: 'center',
-    width: 180,
-    backgroundColor: '#c2d1c6',
+    margin: Padding.small,
+    alignItems: Align.center,
+    width: Height.postImage,
+    backgroundColor: Colors.postBackground,
   },
   image: {
-    width: 180,
-    height: 180,
+    width: Height.postImage,
+    height: Height.postImage,
   },
   title: {
-    fontSize: 14,
-    margin: 10,
-    width: 180,
+    fontSize: Font.sizeSmall,
+    margin: Padding.large,
+    width: Height.postImage,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: 10,
-    marginTop: 80,
+    flexDirection: ContainerStyle.flexDirection,
+    justifyContent: ContainerStyle.spaceBetween,
+    alignItems: Align.center,
+    margin: Padding.large,
+    marginTop: Padding.header,
   },
   addPostIcon: {
-    fontSize: 24,
+    fontSize: Font.sizeXLarge,
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: Font.sizeLarge,
+    fontWeight: Font.weight,
   },
   footerText: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#666',
-    marginVertical: 10,
+    textAlign: Align.center,
+    fontSize: Font.sizeMedium,
+    color: Colors.gray,
+    marginVertical: Padding.large,
   },
 });

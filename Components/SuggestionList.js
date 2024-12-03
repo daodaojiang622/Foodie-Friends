@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import { Stylings, Font, Padding, BorderRadius, BorderWidth, Height } from '../Utils/Style';
 
 const SuggestionList = ({
   query,
@@ -46,7 +47,7 @@ const SuggestionList = ({
         clearButtonMode="while-editing"
       />
       {suggestions.length > 0 && (
-        <View style={[styles.suggestionsContainer, suggestionContainerStyle]}>
+        <View style={[Stylings.suggestionsContainer, suggestionContainerStyle]}>
           <FlatList
             data={suggestions}
             keyExtractor={(item) => item.id}
@@ -58,7 +59,7 @@ const SuggestionList = ({
                 }}
                 style={styles.suggestionItem}
               >
-                <Text style={[styles.suggestionText, suggestionTextStyle]}>{item.description}</Text>
+                <Text style={[Stylings.suggestionText, suggestionTextStyle]}>{item.description}</Text>
               </TouchableOpacity>
             )}
           />
@@ -70,37 +71,15 @@ const SuggestionList = ({
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  suggestionsContainer: {
-    position: 'absolute',
-    top: -10,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    maxHeight: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  suggestionItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    height: Height.input,
+    borderWidth: BorderWidth.thin,
+    paddingHorizontal: Padding.large,
+    marginVertical: Padding.large,
+    borderRadius: BorderRadius.smallMedium,
+    fontSize: Font.sizeMedium,
   },
   suggestionText: {
-    fontSize: 16,
+    fontSize: Font.sizeMedium,
   },
 });
 

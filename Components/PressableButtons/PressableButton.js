@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Text, StyleSheet, Pressable } from 'react-native';
 import { ThemeContext } from '../ThemeContext';
-import { Colors, Padding, Font, BorderRadius, Opacity } from '../../Utils/Style';
+import { Margin, Padding, BorderRadius, Stylings } from '../../Utils/Style';
 
 const PressableButton = ({ onPress, title, buttonStyle, textStyle }) => {
   const { theme } = useContext(ThemeContext);
@@ -11,11 +11,11 @@ const PressableButton = ({ onPress, title, buttonStyle, textStyle }) => {
       style={({ pressed }) => [
         styles.button, 
         buttonStyle,
-        pressed && styles.buttonPressed
+        pressed && Stylings.buttonPressed
       ]}
       onPress={onPress}
     >
-      <Text style={[styles.buttonText, {color: theme.buttonColor}, textStyle]}>{title}</Text>
+      <Text style={[Stylings.buttonText, {color: theme.buttonColor}, textStyle]}>{title}</Text>
     </Pressable>
   );
 };
@@ -24,14 +24,7 @@ const styles = StyleSheet.create({
   button: {
     padding: Padding.large,
     borderRadius: BorderRadius.small,
-    marginTop: 100,
-  },
-  buttonPressed: {
-    opacity: Opacity.partialOpaque,
-  },
-  buttonText: {
-    fontSize: Font.SizeLarge,
-    fontWeight: Font.weight,
+    marginTop: Margin.xxxlarge,
   },
 });
 

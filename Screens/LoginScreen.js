@@ -4,6 +4,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
+import { Align, ContainerStyle, Colors, Padding, Font, BorderRadius, BorderWidth } from '../Utils/Style';
 
 export default function LoginScreen() {
   const { theme } = useContext(ThemeContext);
@@ -73,28 +74,28 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
-    justifyContent: 'center',
+    flex: ContainerStyle.flex,
+    padding: Padding.mediumLarge,
+    justifyContent: Align.center,
   },
   label: {
-    marginBottom: 8,
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: Padding.medium,
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
   },
   input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 8,
-    marginBottom: 16,
-    borderRadius: 5,
+    borderWidth: BorderWidth.thin,
+    borderColor: Colors.gray,
+    padding: Padding.medium,
+    marginBottom: Padding.mediumLarge,
+    borderRadius: BorderRadius.small,
   },
   forgotPasswordButton: {
-    marginTop: 16,
-    alignItems: 'center',
+    marginTop: Padding.mediumLarge,
+    alignItems: Align.center,
   },
   link: {
-    color: 'blue',
-    fontSize: 16,
+    color: Colors.primary,
+    fontSize: Font.sizeMedium,
   },
 });
