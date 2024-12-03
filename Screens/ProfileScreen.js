@@ -4,13 +4,13 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { ThemeContext } from '../Components/ThemeContext';
 import ScreenWrapper from '../Components/ScreenWrapper';
-import ImagePickerHandler from '../Components/ImagePickerHandler';
 import { fetchDataFromDB, deleteFromDB, writeToDB, updateDB } from '../Firebase/firestoreHelper';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../Firebase/firebaseSetup';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
+import { ImagePickerHandler } from '../Utils/HelperFunctions';
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);

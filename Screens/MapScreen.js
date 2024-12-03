@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { fetchSuggestions } from '../Utils/HelperFunctions';
 import Rating from '../Components/Rating';
 import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
+import { Stylings } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 
@@ -66,7 +67,7 @@ const MapScreen = () => {
   
     if (query.length > 2) {
       const suggestions = await fetchSuggestions(query, process.env.EXPO_PUBLIC_apiKey);
-    setSuggestions(suggestions);
+      setSuggestions(suggestions);
     } else {
       setSuggestions([]);
   
@@ -210,11 +211,11 @@ const MapScreen = () => {
         <FlatList
           data={suggestions}
           keyExtractor={(item) => item.id}
-          style={styles.suggestionsList}
+          style={Stylings.suggestionsContainer}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleSuggestionSelect(item)}
-              style={styles.suggestionItem}
+              style={Stylings.suggestionItem}
             >
               <Text>{item.description}</Text>
             </TouchableOpacity>
@@ -306,20 +307,6 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
-  },
-  suggestionsList: {
-    maxHeight: 150,
-    backgroundColor: 'transparent',
-    marginHorizontal: 20,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginTop: -20,
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
   map: {
     flex: 1,

@@ -16,12 +16,16 @@ const Colors = {
     greenPostColor: '#c2d1c6',
     postColor: '#d5d6db',
     borderColor: 'lightgray',
+    gray: 'gray',
 };
 
 const Padding = {
+    negative: -10,
+    zero: 0,
     xsmall: 2,
     small: 5,
     medium: 8,
+    mediumLarge: 15,
     large: 10,
     xlarge: 20,
     xxlarge: 30,
@@ -32,6 +36,7 @@ const Font = {
     sizeMedium: 16,
     SizeLarge: 20,
     SizeXLarge: 24,
+    sizeXXLarge: 30,
     weight: 'bold',
 };
 
@@ -39,6 +44,7 @@ const BorderWidth = {
     thin: 1,
     medium: 2,
     thick: 4,
+    dashed: 'dashed',
 };
 
 const BorderRadius = {
@@ -57,6 +63,8 @@ const ContainerStyle = {
     justifyContent: 'space-between',
     flexGrow: 1,
     alignItems: 'center',
+    addImageWidth: width / 3 - 20,
+    top: 'top',
 };
 
 const Width = {
@@ -118,12 +126,12 @@ const Resize = {
     cover: 'cover',
 }
 
+const Height = {
+    input: 40,
+    suggestionContainer: 150,
+};
+
 const Stylings = {
-    container: {
-        flex: 1,
-        padding: Padding.medium,
-        justifyContent: Align.center,
-    },
     label: {
         fontSize: Font.sizeMedium,
         marginBottom: Padding.medium,
@@ -152,10 +160,12 @@ const Stylings = {
         fontWeight: Font.weight,
     },
     image: {
-        width: width / 3 - 20,
+        width: ContainerStyle.addImageWidth,
         height: Width.Image,
         borderRadius: BorderRadius.smallMedium,
         margin: Margin.xsmall,
+        justifyContent: Align.center,
+        alignItems: ContainerStyle.alignItems
     },
     imageWrapper: {
         position: 'relative',
@@ -171,18 +181,15 @@ const Stylings = {
         elevation: 3,
     },
     suggestionsContainer: {
-        position: Position.absolute,
-        zIndex: 10,
-        backgroundColor: Colors.background,
-        borderColor: Colors.inputBorder,
+        maxHeight: Height.suggestionContainer,
+        backgroundColor: Colors.noColor,
+        marginHorizontal: Padding.xlarge,
+        borderColor: Colors.gray,
         borderWidth: BorderWidth.thin,
         borderRadius: BorderRadius.small,
-        maxHeight: 200,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        marginTop: -Padding.xlarge,
+        backgroundColor: '#fff',
+        zIndex: 1,
     },
     suggestionItem: {
         padding: Padding.large,
@@ -202,6 +209,10 @@ const Stylings = {
         padding: Padding.large,
         alignItems: Align.center,
     },
+    button: {
+        flex: ContainerStyle.flex,
+        alignItems: Align.center,
+    },
 };
 
-export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Resize, Stylings };
+export { Colors, Padding, Font, BorderWidth, BorderRadius, ContainerStyle, Width, Margin, Image, Align, Position, Icon, Opacity, ButtonStyle, Resize, Height, Stylings };

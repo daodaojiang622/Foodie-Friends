@@ -4,13 +4,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ThemeContext } from '../Components/ThemeContext';
 import PressableButton from '../Components/PressableButtons/PressableButton';
 import { auth } from '../Firebase/firebaseSetup';
-import ImagePickerHandler from '../Components/ImagePickerHandler';
 import Rating from '../Components/Rating';
-import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import ScreenHeader from '../Components/ScreenHeader';
-import ImagePicker from '../Components/ImagePicker';
-import { uploadImageToFirebase, fetchSuggestions, savePost } from '../Utils/HelperFunctions';
+import { uploadImageToFirebase, fetchSuggestions, savePost, ImagePickerHandler } from '../Utils/HelperFunctions';
 import { Ionicons } from '@expo/vector-icons';
+import ImageItem from '../Components/ImageItem';
+import { ContainerStyle, Padding, Font, Stylings, Position, Colors, BorderRadius, BorderWidth, Height } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 const { pickImage, captureImage } = ImagePickerHandler();
@@ -39,10 +38,11 @@ export default function EditPostScreen() {
     }
   }, [initialRestaurantName, route.params?.restaurantId]);
   
-  const handleSearchChange = (query) => {
+  const handleSearchChange = async (query) => {
     setRestaurantQuery(query);
     if (query.length > 2) {
-      fetchSuggestions(query);
+      const suggestions = await fetchSuggestions(query, process.env.EXPO_PUBLIC_apiKey);
+      setRestaurantSuggestions(suggestions);
     } else {
       setRestaurantSuggestions([]);
     }
@@ -175,14 +175,14 @@ export default function EditPostScreen() {
           clearButtonMode="while-editing"
         />
         {restaurantSuggestions.length > 0 && (
-          <View style={styles.suggestionsContainer}>
+          <View style={[Stylings.suggestionsContainer, { marginHorizontal: Padding.zero, marginTop: Padding.negative}]}>
           <FlatList
             data={restaurantSuggestions}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleSuggestionSelect(item)}
-                style={styles.suggestionItem}
+                style={Stylings.suggestionItem}
               >
                 <Text style={[styles.suggestionText, { color: theme.textColor }]}>
                   {item.description}
@@ -205,7 +205,14 @@ export default function EditPostScreen() {
 
         <Text style={[styles.label, { color: theme.textColor }]}>Images</Text>
         <View>
-          <ImageHorizontalScrolling images={images} setImages={images}/>
+        <ScrollView horizontal style={styles.imageScroll}>
+          {images.map((uri, index) => (
+            <ImageItem
+            key={index}
+            uri={uri}
+            onDelete={() => setImages(images.filter((_, imgIndex) => imgIndex !== index))}
+          />
+        ))}
           <Pressable
             onPress={() => {
               Alert.alert('Add Image', 'Choose an image source', [
@@ -214,20 +221,20 @@ export default function EditPostScreen() {
                 { text: 'Cancel', style: 'cancel' },
               ]);
             }}
-            style={styles.addImageContainer}
+            style={[Stylings.image, { borderWidth: BorderWidth.thin, borderColor: Colors.gray, borderStyle: BorderWidth.dashed, }]}
           >
             <Ionicons name="add" size={40} color="#aaa" />
             <Text style={styles.addImageText}>Add Image</Text>
           </Pressable>
           {/* <ImagePicker onPickImage={pickImageForPost} onCaptureImage={captureImageForPost} /> */}
-        {/* </ScrollView> */}
+        </ScrollView>
         </View>
 
         <Rating rating={rating} onPress={setRating} style={styles.rating} starStyle={styles.ratingStar}/>
 
         <View style={styles.buttonContainer}>
-          <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={styles.cancelButton} />
-          <PressableButton title="Save" onPress={handleSave} buttonStyle={styles.saveButton} />
+          <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={Stylings.button} />
+          <PressableButton title="Save" onPress={handleSave} buttonStyle={Stylings.button} />
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -236,92 +243,47 @@ export default function EditPostScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flex: ContainerStyle.flex,
+    padding: Padding.xlarge,
   },
   label: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
+    marginTop: Padding.large,
   },
   input: {
-    height: 40,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    fontSize: 16,
-    borderRadius: 8,
-  },
-  suggestionsContainer: {
-    position: 'absolute',
-    top: 95,
-    left: 20,
-    right: 20,
-    zIndex: 10,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    maxHeight: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    maxHeight: 200,
-  },
-  suggestionItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    height: Height.input,
+    borderWidth: BorderWidth.thin,
+    paddingHorizontal: Padding.large,
+    marginVertical: Padding.large,
+    fontSize: Font.sizeMedium,
+    borderRadius: BorderRadius.medium,
   },
   descriptionInput: {
-    height: 150,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    textAlignVertical: 'top',
-    fontSize: 18,
-  },
-  addImageContainer: {
-    width: width / 3 - 20,
-    height: 100,
-    borderWidth: 1,
-    borderColor: '#aaa',
-    borderRadius: 8,
-    borderStyle: 'dashed',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
+    height: Height.suggestionContainer,
+    borderWidth: BorderWidth.thin,
+    paddingHorizontal: Padding.large,
+    marginVertical: Padding.large,
+    textAlignVertical: ContainerStyle.top,
+    fontSize: Font.sizeMedium,
   },
   addImageText: {
-    color: '#aaa',
-    marginTop: 5,
-    fontSize: 14,
+    color: Colors.gray,
+    marginTop: Padding.small,
+    fontSize: Font.sizeSmall,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-    marginTop: 0,
-  },
-  cancelButton: {
-    flex: 1,
-    alignItems: 'center',
-    borderRadius: 8,
-    marginRight: 10,
-  },
-  saveButton: {
-    flex: 1,
-    alignItems: 'center',
-    borderRadius: 8,
+    flexDirection: ContainerStyle.flexDirection,
+    justifyContent: ContainerStyle.justifyContent,
+    marginVertical: Padding.xlarge,
+    marginTop: Padding.zero,
   },
   ratingStar: {
-    marginTop: 20,
-    fontSize: 30,
+    marginTop: Padding.large,
+    fontSize: Font.sizeXXLarge,
   },
   rating: {
-    marginLeft: 0,
+    marginLeft: Padding.zero,
   },
 });
  
