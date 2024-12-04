@@ -23,7 +23,7 @@ export default function LoginScreen() {
       const user = userCredential.user;
       console.log('User logged in:', user);
       Alert.alert('Success', 'User logged in successfully');
-      navigation.navigate('Home');
+      navigation.navigate('Posts');
     } catch (error) {
       console.error('Error logging in:', error);
       Alert.alert('Login Error', error.message);

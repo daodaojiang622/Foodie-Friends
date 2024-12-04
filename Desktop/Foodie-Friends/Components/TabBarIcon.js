@@ -8,7 +8,7 @@ const TabBarIcon = ({ routeName, iconStyle }) => {
 
   if (routeName === 'Map') {
     iconName = "map";
-  } else if (routeName === 'Home') {
+  } else if (routeName === 'Posts') {
     iconName = "home";
   } else if (routeName === 'Settings') {
     iconName = Icon.settingsIconName;
