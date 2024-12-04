@@ -73,6 +73,7 @@ const ContainerStyle = {
 const Width = {
     xsmall: '31%',
     small: '35%',
+    smallMedium: '60%',
     medium: '85%',
     large: '100%',
     border: 350,
@@ -96,6 +97,7 @@ const Align = {
     left: 'left',
     right: 'right',
     top: 'top',
+    flexStart: 'flex-start',
 };
 
 const Position = {

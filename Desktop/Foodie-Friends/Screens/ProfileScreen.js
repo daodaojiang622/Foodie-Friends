@@ -11,7 +11,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
 import { ImagePickerHandler } from '../Utils/HelperFunctions';
-import { Align, BorderWidth, Colors, ContainerStyle, Margin, Padding } from '../Utils/Style';
+import { Align, BorderRadius, BorderWidth, Colors, ContainerStyle, Font, Height, Margin, Padding, Position, Resize, Width } from '../Utils/Style';
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);
@@ -373,15 +373,15 @@ const styles = StyleSheet.create({
     paddingVertical: Padding.xlarge,
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: Width.image,
+    height: Width.image,
     borderRadius: 50,
     borderWidth: BorderWidth.medium,
     borderColor: '#d1d1d1',
     marginBottom: Padding.large,
   },
   usernameContainer: {
-    flexDirection: 'row',
+    flexDirection: ContainerStyle.flexDirection,
     alignItems: Align.center,
     marginBottom: Padding.xlarge,
   },
@@ -390,27 +390,27 @@ const styles = StyleSheet.create({
     padding: Padding.small,
   },
   username: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
   },
   actionButton: {
-    flexDirection: 'row',
+    flexDirection: ContainerStyle.flexDirection,
     alignItems: Align.center,
     backgroundColor: '#d1d1d1',
     paddingVertical: Padding.medium,
     paddingHorizontal: Padding.large,
-    borderRadius: 8,
+    borderRadius: BorderRadius.smallMedium,
     marginVertical: Padding.small,
-    width: '60%',
+    width: Width.smallMedium,
     justifyContent: Align.center,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: Font.sizeMedium,
     marginLeft: Padding.medium,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
     marginBottom: Padding.large,
     paddingHorizontal: Padding.mediumLarge,
   },
@@ -418,73 +418,72 @@ const styles = StyleSheet.create({
     flex: 0.48, // Adjusted for two posts in a row
     margin: Padding.small,
     backgroundColor: '#e0e0e0',
-    borderRadius: 8,
+    borderRadius: BorderRadius.smallMedium,
     padding: Padding.large,
     alignItems: Align.center,
   },
   postsList: {
-    flexGrow: 1,
+    flexGrow: ContainerStyle.flex,
     padding: Padding.large,
-    alignItems: 'flex-start', // Align items to the left
+    alignItems: Align.flexStart,
   },
   image: {
-    width: 160,
-    height: 160,
+    width: Height.postImage,
+    height: Height.postImage,
     borderRadius: Padding.medium,
     marginBottom: Padding.small,
-    resizeMode: 'cover',
+    resizeMode: Resize.cover,
   },
   postTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
   },
   postDescription: {
-    fontSize: 14,
+    fontSize: Font.sizeSmall,
     textAlign: Align.center,
   },
   modalContainer: {
     flex: ContainerStyle.flex,
     justifyContent: Align.center,
     alignItems: Align.center,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: Colors.black,
   },
   modalContent: {
-    width: '80%',
+    width: Width.medium,
     backgroundColor: Colors.tertiary,
-    borderRadius: 10,
+    borderRadius: BorderRadius.medium,
     padding: Padding.xlarge,
     alignItems: Align.center,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
     marginBottom: Padding.large,
   },
   usernameInput: {
-    borderWidth: 1,
-    borderColor: '#d1d1d1',
-    width: '100%',
+    borderWidth: BorderWidth.thin,
+    borderColor: Colors.gray,
+    width: Width.large,
     padding: Padding.large,
-    borderRadius: 5,
+    borderRadius: BorderRadius.small,
     marginBottom: Padding.xlarge,
   },
   saveButton: {
-    backgroundColor: '#4169E1',
+    backgroundColor: Colors.primary,
     paddingVertical: Padding.large,
     paddingHorizontal: Padding.xlarge,
-    borderRadius: 5,
+    borderRadius: BorderRadius.small,
   },
   saveButtonText: {
     color: Colors.tertiary,
-    fontWeight: 'bold',
+    fontWeight: Font.weight,
   },
   deleteButton: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
+    position: Position.absolute,
+    top: Padding.small,
+    right: Padding.small,
     backgroundColor: Colors.tertiary,
-    borderRadius: 15,
-    padding: 5,
-    elevation: 3,
+    borderRadius: BorderRadius.medium,
+    padding: Padding.small,
   },
 });
