@@ -7,6 +7,7 @@ import ImageHorizontalScrolling from '../Components/ImageHorizontalScrolling';
 import { fetchReviewDetails } from '../Utils/HelperFunctions';
 import UserInfo from '../Components/UserInfo';
 import RestaurantLocation from '../Components/RestaurantLocation';
+import { Align, BorderWidth, Colors, ContainerStyle, Padding, Width, BorderRadius, Font, Margin, Resize, Height } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 
@@ -63,45 +64,45 @@ export default function ReviewDetailScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: ContainerStyle.flex,
   },
   image: {
     width: width, 
-    height: 300,
-    resizeMode: 'cover',
+    height: Height.postImageLarge,
+    resizeMode: Resize.cover,
   },
   textContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
+    paddingHorizontal: Padding.xlarge,
+    marginTop: Margin.small,
   },
   title: {
-    fontSize: 16,
-    marginBottom: 10,
-    marginTop: 10,
+    fontSize: Font.sizeMedium,
+    marginBottom: Margin.small,
+    marginTop: Margin.small,
   },
   description: {
-    fontSize: 20,
-    marginTop: 20,
-    marginBottom: 20,
+    fontSize: Font.sizeLarge,
+    marginTop: Margin.large,
+    marginBottom: Margin.large,
     fontStyle: 'italic',
   },
   locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: Align.center,
   },
   reviewImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-    marginRight: 10,
-    marginBottom: -10,
+    width: Width.image,
+    height: Width.image,
+    borderRadius: BorderRadius.xxxlarge,
+    marginRight: Margin.small,
+    marginBottom: Padding.negative,
   },
   user: {
-    fontSize: 16,
-    marginTop: 20,
-    marginBottom: 0,
+    fontSize: Font.sizeMedium,
+    marginTop: Margin.large,
+    marginBottom: Padding.zero,
   },
   rating: {
-    marginTop: 10,
+    marginTop: Margin.small,
   },
 });
