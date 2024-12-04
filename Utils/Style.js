@@ -20,6 +20,7 @@ const Colors = {
     gray: 'gray',
     gold: 'gold',
     postBackground: '#c2d1c6',
+    blue: 'blue',
 };
 
 const Padding = {

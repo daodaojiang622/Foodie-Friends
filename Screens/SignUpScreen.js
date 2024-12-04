@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ThemeContext } from '../Components/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { addUserProfile } from '../Firebase/firestoreHelper';
+import { Align, BorderWidth, Colors, ContainerStyle, Padding, Width, BorderRadius, Font, Margin, Resize, Height } from '../Utils/Style';
 
 export default function SignUpScreen() {
   const { theme } = useContext(ThemeContext);
@@ -112,32 +113,32 @@ export default function SignUpScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
-    justifyContent: 'center',
+    flex: ContainerStyle.flex,
+    padding: Font.sizeMedium,
+    justifyContent: Align.center,
   },
   label: {
-    marginBottom: 8,
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: Margin.small,
+    fontSize: Font.sizeMedium,
+    fontWeight: Font.weight,
   },
   input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 8,
-    marginBottom: 16,
-    borderRadius: 5,
+    borderWidth: BorderWidth.thin,
+    borderColor: Colors.gray,
+    padding: Padding.large,
+    marginBottom: Margin.medium,
+    borderRadius: BorderRadius.small,
   },
   passwordStrength: {
-    marginBottom: 16,
-    fontSize: 14,
+    marginBottom: Margin.medium,
+    fontSize: Font.sizeMedium,
   },
   loginButton: {
-    marginTop: 16,
-    alignItems: 'center',
+    marginTop: Margin.medium,
+    alignItems: Align.center,
   },
   link: {
-    color: 'blue',
-    fontSize: 16,
+    color: Colors.blue,
+    fontSize: Font.sizeMedium,
   },
 });
