@@ -46,6 +46,7 @@ export default function SignUpScreen() {
         email: user.email,
         username: '', // Optional: Add a default username or prompt the user later
         profileImage: '', // Optional: Add a default profile image URL
+        createdAt: new Date().toISOString(),
     });
     
       console.log('User registered:', user);
