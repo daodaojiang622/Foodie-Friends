@@ -1,5 +1,6 @@
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { Dimensions } from 'react-native';
+import { ImagePickerHandler } from './HelperFunctions';
 
 const { width } = Dimensions.get('window');
 
@@ -68,15 +69,18 @@ const ContainerStyle = {
     flexGrow: 1,
     alignItems: 'center',
     addImageWidth: width / 3 - 20,
+    alignLeft: 'flex-start',
 };
 
 const Width = {
     xsmall: '31%',
     small: '35%',
+    smallMedium: '60%',
     medium: '85%',
     large: '100%',
     border: 350,
     Image: 100,
+    ImageLarge: 160,
 };
 
 const Margin = {
