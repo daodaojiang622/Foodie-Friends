@@ -230,7 +230,17 @@ export default function EditPostScreen() {
         </ScrollView>
         </View>
 
-        <Rating rating={rating} onPress={setRating} style={styles.rating} starStyle={styles.ratingStar}/>
+        <View style={[styles.ratingContainer]}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Pressable key={star} onPress={() => setRating(star)}>
+              <Ionicons
+                name={star <= rating ? 'star' : 'star-outline'}
+                size={28}
+                color={star <= rating ? '#FFD700' : '#aaa'}
+              />
+            </Pressable>
+          ))}
+        </View>
 
         <View style={styles.buttonContainer}>
           <PressableButton title="Cancel" onPress={handleCancel} buttonStyle={Stylings.button} />
@@ -247,7 +257,7 @@ const styles = StyleSheet.create({
     padding: Padding.xlarge,
   },
   label: {
-    fontSize: Font.sizeMedium,
+    fontSize: Font.sizeLarge,
     fontWeight: Font.weight,
     marginTop: Padding.large,
   },
@@ -278,12 +288,10 @@ const styles = StyleSheet.create({
     marginVertical: Padding.xlarge,
     marginTop: Padding.zero,
   },
-  ratingStar: {
-    marginTop: Padding.large,
-    fontSize: Font.sizeXXLarge,
-  },
-  rating: {
-    marginLeft: Padding.zero,
+  ratingContainer: {
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: ContainerStyle.justifyContent,
+    marginTop: Padding.xlarge,
   },
 });
  
