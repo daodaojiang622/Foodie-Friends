@@ -8,6 +8,7 @@ import PressableButton from '../Components/PressableButtons/PressableButton';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import Rating from '../Components/Rating';
+import { Align, BorderWidth, Colors, ContainerStyle, Padding, Width, BorderRadius, Font, Margin, Resize, Height } from '../Utils/Style';
 
 const { width } = Dimensions.get('window');
 
@@ -227,118 +228,105 @@ export default function RestaurantDetailScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: ContainerStyle.flex,
   },
   imageScrollView: {
-    alignItems: 'center',
+    alignItems: Align.center,
   },
   image: {
     width: width, // Full screen width
-    height: 300,
-    resizeMode: 'cover',
+    height: Height.postImageLarge,
+    resizeMode: Resize.cover,
   },
   textContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-    paddingBottom: 10,
+    paddingHorizontal: Padding.xlarge,
+    marginTop: Margin.small,
+    paddingBottom: Padding.large,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10,
+    fontSize: Font.sizeXLarge,
+    fontWeight: Font.weight,
+    marginBottom: Margin.small,
+    marginTop: Margin.small,
   },
   description: {
-    fontSize: 20,
-    marginTop: 10,
-    marginBottom: 20,
-    marginLeft: 20,
+    fontSize: Font.sizeLarge,
+    marginTop: Margin.small,
+    marginBottom: Margin.large,
+    marginLeft: Margin.large,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 20,
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: Align.center,
+    marginLeft: Margin.large,
   },
   infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 20,
-    paddingBottom: 10,
+    flexDirection: ContainerStyle.flexDirection,
+    alignItems: Align.center,
+    marginLeft: Margin.large,
+    paddingBottom: Padding.large,
   },
   locationIcon: {
-    fontSize: 24,
+    fontSize: Font.sizeXLarge,
   },
   infoText: {
-    fontSize: 14,
-    marginLeft: 10,
-  },
-  cusineType: {
-    fontSize: 14,
-    marginLeft: 20,
-    marginVertical: 10,
+    fontSize: Font.sizeSmall,
+    marginLeft: Margin.small,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
+    fontSize: Font.sizeLarge,
+    fontWeight: Font.weight,
+    marginTop: Margin.large,
+    marginBottom: Margin.small,
   },
   section: {
-    flex: 1,
-    marginBottom: 10,
-    borderColor: 'lightgray',
-    borderWidth: 2,
-    marginHorizontal: 20,
-    marginBottom: 30,
-    borderRadius: 10,
+    flex: ContainerStyle.flex,
+    marginBottom: Margin.small,
+    borderColor: Colors.borderColor,
+    borderWidth: BorderWidth.thin,
+    marginHorizontal: Padding.xlarge,
+    borderRadius: BorderRadius.medium,
+    marginBottom: Margin.large,
   },
   noReviewText: {
-    fontSize: 18,
-    marginTop: 30,
+    fontSize: Font.sizeMedium,
+    marginTop: Margin.large,
   },
   noReviewContainer: {
-    alignItems: 'center',
+    alignItems: Align.center,
   },
   addPostIcon: {
-    fontSize: 24,
-    marginLeft: 10,
-    marginBottom: -10,
-  },
-  reviewTitle: {
-    fontSize: 14,
+    fontSize: Font.sizeXLarge,
+    marginLeft: Margin.small,
+    marginBottom: Padding.negative,
   },
   reviewDateTimeContainer: {
-    flexDirection: 'row',
-  },
-  reviewTimeIcon: {
-    marginRight: 5,
-    color: 'black',
-    fontSize: 16, 
+    flexDirection: ContainerStyle.flexDirection,
   },
   reviewContainer: {
-    flexDirection: 'row',
+    flexDirection: ContainerStyle.flexDirection,
   },
   reviewDateTimeIcon: {
-    marginTop: 2,
-    marginHorizontal: 5,
-    color: 'black',
-    fontSize: 16, 
+    marginTop: Padding.xsmall,
+    marginHorizontal: Padding.small,
+    color: Colors.gray,
+    fontSize: Font.sizeMedium,
   },
   reviewText: {
     fontSize: 14,
-    color: 'black',
-    marginTop: 1,
-    maxWidth: 250,
+    color: Colors.inputBorder,
+    marginTop: Padding.small,
+    maxWidth: Margin.xxxxlarge,
   },
   reviewImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    width: BorderRadius.xxlarge,
+    height: BorderRadius.xxlarge,
+    borderRadius: BorderRadius.large,
+    marginRight: BorderRadius.medium,
   },
   reviewItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    padding: Padding.large,
+    borderBottomWidth: BorderWidth.thin,
+    borderBottomColor: Colors.borderColor,
   },
 });

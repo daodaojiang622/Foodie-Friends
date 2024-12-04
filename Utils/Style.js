@@ -135,6 +135,7 @@ const Height = {
     suggestionContainer: 150,
     image: 30,
     postImage: 180,
+    postImageLarge: 300,
 };
 
 const Stylings = {
