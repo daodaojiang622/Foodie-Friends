@@ -11,7 +11,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../Firebase/firebaseSetup";
 import { ImagePickerHandler } from '../Utils/HelperFunctions';
-import { Align, BorderWidth, Colors, ContainerStyle, Padding } from '../Utils/Style';
+import { Align, BorderWidth, Colors, ContainerStyle, Margin, Padding } from '../Utils/Style';
 
 export default function ProfileScreen() {
   const { theme } = useContext(ThemeContext);
@@ -318,12 +318,12 @@ export default function ProfileScreen() {
               value={username}
               onChangeText={setUsername}
             />
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: ContainerStyle.flexDirection }}>
               <Pressable style={[styles.saveButton, { backgroundColor: theme.textColor }]} onPress={handleSaveUsername}>
                 <Text style={styles.saveButtonText}>Save</Text>
               </Pressable>
 
-              <Pressable style={[styles.saveButton, { backgroundColor: theme.textColor }]} onPress={handleCancelUsername}>
+              <Pressable style={[styles.saveButton, { backgroundColor: theme.textColor, marginLeft: Margin.large }]} onPress={handleCancelUsername}>
                 <Text style={styles.saveButtonText}>Cancel</Text>
               </Pressable>
             </View>
