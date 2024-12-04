@@ -90,7 +90,7 @@ export default function PostScreen() {
     <Pressable
       key={item.id}
       onPress={() => navigation.navigate('ReviewDetailScreen', { postId: item.id, images: item.images, user: item.userId })}
-      style={styles.imageWrapper}
+      style={[styles.imageWrapper, {backgroundColor: theme.postColor}]}
     >
       {item.images?.[0] ? (
         <Image source={{ uri: item.images[0] }} style={styles.image} />
